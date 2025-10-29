@@ -28,8 +28,8 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
-        String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
-        String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
+        String.raw`rtl:**:[.rdp-button_next>svg]:rotate-180`,
+        String.raw`rtl:**:[.rdp-button_previous>svg]:rotate-180`,
         className
       )}
       captionLayout={captionLayout}
@@ -127,10 +127,10 @@ function Calendar({
       }}
       components={{
         Root: ({
-    className,
-    rootRef,
-    ...props
-  }: React.HTMLAttributes<HTMLDivElement> & { rootRef: React.Ref<HTMLDivElement> }) => {
+          className,
+          rootRef,
+          ...props
+        }: React.HTMLAttributes<HTMLDivElement> & { rootRef?: React.Ref<HTMLDivElement> }) => {
           return (
             <div
               data-slot="calendar"
@@ -141,10 +141,10 @@ function Calendar({
           )
         },
         Chevron: ({
-    className,
-    orientation,
-    ...props
-  }: { className?: string; orientation: "left" | "right" | "down" }) => {
+          className,
+          orientation = "down",
+          ...props
+        }: { className?: string; orientation?: "left" | "right" | "down" | "up" }) => {
           if (orientation === "left") {
             return (
               <ChevronLeftIcon className={cn("size-4", className)} {...props} />
@@ -166,9 +166,11 @@ function Calendar({
         },
         DayButton: CalendarDayButton,
         WeekNumber: ({
-    children,
-    ...props
-  }: React.HTMLAttributes<HTMLTableCellElement> & { children: React.ReactNode }) => {
+          children,
+          ...props
+        }: React.HTMLAttributes<HTMLTableCellElement> & {
+          children?: React.ReactNode
+        }) => {
           return (
             <td {...props}>
               <div className="flex size-(--cell-size) items-center justify-center text-center">
