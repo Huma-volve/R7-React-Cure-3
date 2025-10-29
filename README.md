@@ -19,3 +19,6 @@
 ## Shadcn
 `npx shadcn@latest init`
 [Shadcn Website](https://ui.shadcn.com/docs/components)
+
+## React-icons
+`npm install react-icons`
