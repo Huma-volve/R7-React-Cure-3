@@ -1,13 +1,10 @@
-function App() {
+import { Outlet } from "react-router-dom"
+
+export default function App() {
 
   return (
-    <main className='mt-10 flex items-center gap-3 justify-center'>
-      <img src="/logo.svg" alt="" />
-      <div>
-        Hello TEAM 👋
-      </div>
+    <main className='mx-5 my-5'>
+      <Outlet />
     </main>
   )
 }
-
-export default App
