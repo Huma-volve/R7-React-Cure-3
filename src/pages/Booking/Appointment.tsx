@@ -112,6 +112,7 @@ const Appointments: React.FC = () => {
                 onSelect={(date: Date) => date && setSelectedDate(date)}
                 className="bg-white w-[320px] sm:w-[374px] rounded-md"
                 initialFocus
+                required={false}
               />
             </PopoverContent>
           </Popover>
