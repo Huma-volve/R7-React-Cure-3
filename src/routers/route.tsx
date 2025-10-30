@@ -2,11 +2,6 @@ import { createBrowserRouter } from 'react-router-dom';
 // Pages
 import App from '@/App.tsx'
 import DoctorDetails from '@/pages/DoctorDetails.tsx';
-import { SignupPage } from '@/pages/SignupPage';
-import { SignInPage } from '@/pages/SignInPage';
-import { ForgetPassword } from '@/pages/ForgetPassword';
-import { OTPpage } from '@/pages/OTPpage';
-import Appointments from '@/pages/Booking/Appointment';
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +10,15 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <div>This is home</div>,
+        element: <Home/>,
+      },
+      {
+        path: 'doctors',
+        element: <DoctorsPage/>,
+      },
+      {
+        path: 'favorite',
+        element: <FavoritePage/>,
       },
       {
         path: 'doctors/:id',
@@ -25,22 +28,6 @@ export const router = createBrowserRouter([
         path: 'doctors/:id/booking',
         element: <div>This is payment</div>,
       },
-      {
-        path:"signup", element:<SignupPage/>
-      },
-      {
-        path:"signin", element:<SignInPage/>
-      },
-      {
-        path:"forget-password", element:<ForgetPassword/>
-      },
-      {
-        path:"verify", element:<OTPpage/>
-      },
-      {
-        path:"booking", 
-        element: <Appointments />
-      }
     ]
   }
 ]);
