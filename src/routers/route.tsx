@@ -5,8 +5,8 @@ import DoctorDetails from '@/pages/DoctorDetails.tsx';
 import { SignupPage } from '@/pages/SignupPage';
 import { SignInPage } from '@/pages/SignInPage';
 import { ForgetPassword } from '@/pages/ForgetPassword';
-import { OTP } from '@/components/auth/OTP';
 import { OTPpage } from '@/pages/OTPpage';
+import Appointments from '@/pages/Booking/Appointment';
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +37,10 @@ export const router = createBrowserRouter([
       {
         path:"verify", element:<OTPpage/>
       },
+      {
+        path:"booking", 
+        element: <Appointments />
+      }
     ]
   }
 ]);
