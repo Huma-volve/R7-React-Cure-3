@@ -8,6 +8,7 @@ import FavoritePage from '@/pages/FavoritePage';
 import Appointments from '@/pages/Booking/Appointment';
 import { SignInPage } from '@/pages/SignInPage';
 import { SignupPage } from '@/pages/SignupPage';
+import { OTPpage } from '@/pages/OTPpage';
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignupPage />,
+      },
+      {
+        path: 'forget-password',
+        element: <OTPpage />,
       },
       {
         path: 'doctors',
