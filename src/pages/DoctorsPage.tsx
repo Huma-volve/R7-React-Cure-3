@@ -21,7 +21,7 @@ interface Doctor {
 
 const doctors: Doctor[] = [
   {
-    id: 1,
+    id: 0,
     name: "Sarah Adams",
     specialty: "Dentist",
     clinic: "Cairo Clinic",
@@ -31,7 +31,7 @@ const doctors: Doctor[] = [
     image: "./doctor.jpg",
   },
   {
-    id: 2,
+    id: 1,
     name: "Omar Khaled",
     specialty: "Cardiologist",
     clinic: "HeartCare Center",
