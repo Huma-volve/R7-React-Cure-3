@@ -36,7 +36,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import AddReviewDialog from "@/components/reusable/doctor-details/add-review"
 import AppointmentButton from "@/components/reusable/doctor-details/appoint-button"
 
-const starColor = '#eac408';
+const starColor = '#F9E000';
 function renderStars(rating: number) {
   const stars = []
   for (let i = 1; i <= 5; i++) {
@@ -94,13 +94,15 @@ export default function DoctorDetails() {
               <p>Choose date and time</p>
               <div className="flex items-center gap-2">
                 <img src={CalenderIcon} className="cursor-pointer" />
-                  <p>{selectedDate ? 'November, 2024' : 'Please select a date first'}</p>
+                  <p>{selectedDate ? 'October, 2024' : 'Please select a date first'}</p>
                   <img src={UpDownArrows} className="cursor-pointer" />
               </div>
             </CardTitle>
             <Separator />
 
             <CardContent>
+
+              {/* Available days */}
               <div className="mb-8 flex gap-3 md:gap-0 justify-center items-center md:justify-between flex-wrap">
                 {currentDoctor.availability?.map((item, index) => {
                   const isSelected =
@@ -111,13 +113,14 @@ export default function DoctorDetails() {
                     onClick={() =>
                       setSelectedDate(item.day)
                     }
-                    className={`${isSelected ? 'bg-[#145DB8] text-white' : 'bg-card hover:bg-muted'} cursor-pointer hover:bg-[#145DB8]/80 transition-colors flex flex-col items-center justify-center p-4 rounded-xl text-center gap-1`}
+                    className={`${isSelected ? 'bg-primary-600 text-white' : 'bg-card hover:bg-primary-100'} cursor-pointer hover:bg-primary-400 hover:text-white transition-colors flex flex-col items-center justify-center p-4 rounded-xl text-center gap-1`}
                   >
                     <span className="text-sm font-medium">{item.day}</span>
                   </div>
                 })}
               </div>
               
+              {/* Time slots */}
               <div className="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 {currentDoctor.availability
                   ?.filter((item) => item.day === selectedDate)
@@ -131,8 +134,8 @@ export default function DoctorDetails() {
                           onClick={() => setSelectedTimeSlot(slot)}
                           className={`${
                             isSlotSelected
-                              ? 'bg-[#145DB8] text-white hover:bg-[#145DB8]/80'
-                              : 'bg-card hover:bg-muted'
+                              ? 'bg-primary-600 text-white hover:bg-primary-400'
+                              : 'bg-card hover:bg-primary-400 hover:text-white'
                           } cursor-pointer flex flex-col p-3 text-center rounded-lg items-center gap-2`}
                         >
                           <span>{slot}</span>
@@ -169,7 +172,7 @@ export default function DoctorDetails() {
             <DialogTrigger>
               <Button variant='link'>
                 <img src={AddReviewIcon} alt="Add Review Icon" className="h-5 w-5" />
-                <span className="text-[#145DB8]">add Review</span>
+                <span className="text-primary-500">add Review</span>
               </Button>
             </DialogTrigger>
 
@@ -191,7 +194,7 @@ export default function DoctorDetails() {
               <svg width="0" height="0">
                 <defs>
                   <linearGradient id="half-gradient">
-                    <stop offset="50%" stopColor="#EAB308" />
+                    <stop offset="50%" stopColor="#F9E000" />
                     <stop offset="50%" stopColor="transparent" />
                   </linearGradient>
                 </defs>
@@ -244,14 +247,20 @@ export default function DoctorDetails() {
         </div>
 
         <div className="flex items-center justify-center">
-          <Button className="bg-[#145DB8] hover:bg-[#145DB8]/80" onClick={() => setShowAllReviews(prev => !prev)}>{showAllReviews ? 'Show less' : 'Show all reviews'}</Button>
+          {currentDoctor.patientsReviews.length > 2 && (
+            <Button
+              variant='outline'
+              className="border-primary-600 text-primary-600"
+              onClick={() => setShowAllReviews(prev => !prev)}>
+              {showAllReviews ? 'Show less' : 'Show all reviews'}
+            </Button>
+          )}
         </div>
-
 
       </section>
 
       {/* Right Side - Doctor Info */}
-      <Card className="bg-card h-fit border-none shadow-none lg:col-span-1">
+      <Card className="bg-card pt-8 pb-6 h-fit border-none shadow-none lg:col-span-1">
         <CardHeader className="flex relative flex-col items-center justify-center text-center gap-2">
           {/* Img + Basic Info */}
           <div className="relative">
@@ -286,7 +295,7 @@ export default function DoctorDetails() {
         </CardContent>
 
         {/* About Section */}
-        <CardDescription className="px-5">
+        <CardDescription className="px-4">
           <h3 className="text-xl font-semibold mb-3 text-foreground font-serif">About Me</h3>
           <p className="leading-relaxed text-muted-foreground max-w-3xl">
             {currentDoctor.about}
@@ -294,7 +303,7 @@ export default function DoctorDetails() {
         </CardDescription>
 
         {/* Location */}
-        <CardFooter className="flex flex-col gap-3">
+        <CardFooter className="flex flex-col gap-3 px-4">
           <div className="self-start font-serif font-semibold text-xl">Location</div>
           <div className="relative">
             <img src="/map.png" className="rounded-2xl w-[397px] h-[201px]" />
