@@ -14,17 +14,53 @@ interface Appointment {
   doctor: string;
   specialty: string;
   address: string;
-  status: "Upcoming" | "Completed" | "Canceled" | "Pending"; //api add backend
+  status: "Upcoming" | "Completed" | "Canceled" | "Pending";
   imageSrc: string;
 }
 
 const todayString = format(new Date(), "yyyy-MM-dd");
 
 const appointmentsData: Appointment[] = [
-  { id: 1, date: todayString, time: "09:00 AM", doctor: "Dr. Jennifer Miller", specialty: "Psychiatrist", address: "12 St. Nasr Street, Cairo, Egypt", status: "Upcoming", imageSrc: "/Ellipse 1538 (1).png" },
-  { id: 2, date: todayString, time: "01:00 PM", doctor: "Dr. Alex Carter", specialty: "Dermatologist", address: "15 Giza Road, Cairo, Egypt", status: "Completed", imageSrc: "/Ellipse 1538 (1).png" },
-  { id: 3, date: todayString, time: "05:00 PM", doctor: "Dr. Sarah Ibrahim", specialty: "Dentist", address: "22 Dokki Street, Giza, Egypt", status: "Canceled", imageSrc: "/Ellipse 1538 (1).png" },
-  { id: 4, date: todayString, time: "10:30 AM", doctor: "Dr. Omar Khaled", specialty: "Cardiologist", address: "45 Zamalek Street, Cairo, Egypt", status: "Upcoming", imageSrc: "/Ellipse 1538 (1).png" },
+  {
+    id: 1,
+    date: todayString,
+    time: "09:00 AM",
+    doctor: "Dr. Jennifer Miller",
+    specialty: "Psychiatrist",
+    address: "12 St. Nasr Street, Cairo, Egypt",
+    status: "Upcoming",
+    imageSrc: "/Ellipse 1538 (1).png",
+  },
+  {
+    id: 2,
+    date: todayString,
+    time: "01:00 PM",
+    doctor: "Dr. Alex Carter",
+    specialty: "Dermatologist",
+    address: "15 Giza Road, Cairo, Egypt",
+    status: "Completed",
+    imageSrc: "/Ellipse 1538 (1).png",
+  },
+  {
+    id: 3,
+    date: todayString,
+    time: "05:00 PM",
+    doctor: "Dr. Sarah Ibrahim",
+    specialty: "Dentist",
+    address: "22 Dokki Street, Giza, Egypt",
+    status: "Canceled",
+    imageSrc: "/Ellipse 1538 (1).png",
+  },
+  {
+    id: 4,
+    date: todayString,
+    time: "10:30 AM",
+    doctor: "Dr. Omar Khaled",
+    specialty: "Cardiologist",
+    address: "45 Zamalek Street, Cairo, Egypt",
+    status: "Upcoming",
+    imageSrc: "/Ellipse 1538 (1).png",
+  },
 ];
 
 const STORAGE_KEY = "appointmentsData";
@@ -56,13 +92,12 @@ const Appointments: React.FC = () => {
     );
     setModalAppt(null);
   };
+
   return (
-    <div className="py-6  sm:px-8 lg:px-[72px] relative">
+    <div className="py-6 sm:px-8 lg:px-[72px] relative">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-6">
         <div className="flex flex-col gap-3 justify-center md:justify-start items-center md:items-start">
-          <h2 className="text-xl font-semibold capitalize">
-            Your appointments
-          </h2>
+          <h2 className="text-xl font-semibold capitalize">Your appointments</h2>
 
           <Tabs
             defaultValue="All"
@@ -70,7 +105,7 @@ const Appointments: React.FC = () => {
               setFilter(v as "All" | "Upcoming" | "Completed" | "Canceled")
             }
           >
-           <TabsList
+            <TabsList
               className="
                 flex flex-wrap gap-2
                 bg-background
@@ -81,13 +116,12 @@ const Appointments: React.FC = () => {
                 <TabsTrigger
                   key={tab}
                   value={tab}
-                  className="cursor-pointer sm:mb-3 px-4 sm:px-6 text-sm sm:text-base text-[#6D7379] font-medium rounded-lg data-[state=active]:bg-[#0056D2] data-[state=active]:text-white data-[state=active]:shadow-sm  py-3 lg:py-4"
+                  className="cursor-pointer sm:mb-3 px-4 sm:px-6 text-sm sm:text-base text-[#6D7379] font-medium rounded-lg data-[state=active]:bg-[#0056D2] data-[state=active]:text-white data-[state=active]:shadow-sm py-3 lg:py-4"
                 >
                   {tab}
                 </TabsTrigger>
               ))}
             </TabsList>
-
           </Tabs>
         </div>
 
@@ -102,14 +136,17 @@ const Appointments: React.FC = () => {
                 <ChevronDownIcon className="w-5 h-5 text-gray-500" />
               </Button>
             </PopoverTrigger>
+
             <PopoverContent
               className="w-auto p-0 border border-[#B2B7BE] bg-white shadow-md rounded-lg"
               align="end"
-              >
+            >
               <Calendar
                 mode="single"
                 selected={selectedDate}
-                onSelect={(date: Date) => date && setSelectedDate(date)}
+                onSelect={(date: Date | undefined) => {
+                  if (date) setSelectedDate(date);
+                }}
                 className="bg-white w-[320px] sm:w-[374px] rounded-md"
                 initialFocus
                 required={false}
@@ -119,13 +156,12 @@ const Appointments: React.FC = () => {
         </div>
       </div>
 
-    
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 gap-x-20 justify-items-center">
         {filteredAppointments.length > 0 ? (
           filteredAppointments.map((appt) => (
             <Card
               key={appt.id}
-              className="pt-1 me-2  pb-5 w-full sm:w-[380px] md:w-[385px] rounded-xl"
+              className="pt-1 me-2 pb-5 w-full sm:w-[380px] md:w-[385px] rounded-xl"
             >
               <CardContent className="w-full">
                 <div className="flex justify-between items-center border-b border-[#B2B7BE] mb-4">
@@ -170,40 +206,39 @@ const Appointments: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-3 w-full justify-center sm:justify-start">
-                  {
-                    appt.status === "Upcoming"? (
-                      <>
-                        <Button
-                          className="border w-[140px] sm:w-40"
-                          onClick={() => setModalAppt(appt)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button className="w-[140px] sm:w-40 bg-primary-600">
-                          Reschedule
-                        </Button>
-                      </>
-                  ): 
-                    appt.status === "Completed" ? (
-                      <>
-                        <Button className="border w-[140px] sm:w-40">
-                          Book again
-                        </Button>
-                        <Button className="w-[140px] sm:w-40 bg-primary-600">
-                          Feedback
-                        </Button>
-                      </>
-                  ) :
-                    appt.status === "Canceled" ? (
-                      <>
-                        <Button className="border w-[140px] sm:w-40">
-                          Book again
-                        </Button>
-                        <Button className="w-[140px] sm:w-40 bg-primary-600">
-                          Support
-                        </Button>
-                      </>
-                  ) : ''}
+                  {appt.status === "Upcoming" ? (
+                    <>
+                      <Button
+                        className="border w-[140px] sm:w-40"
+                        onClick={() => setModalAppt(appt)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button className="w-[140px] sm:w-40 bg-primary-600">
+                        Reschedule
+                      </Button>
+                    </>
+                  ) : appt.status === "Completed" ? (
+                    <>
+                      <Button className="border w-[140px] sm:w-40">
+                        Book again
+                      </Button>
+                      <Button className="w-[140px] sm:w-40 bg-primary-600">
+                        Feedback
+                      </Button>
+                    </>
+                  ) : appt.status === "Canceled" ? (
+                    <>
+                      <Button className="border w-[140px] sm:w-40">
+                        Book again
+                      </Button>
+                      <Button className="w-[140px] sm:w-40 bg-primary-600">
+                        Support
+                      </Button>
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -215,7 +250,6 @@ const Appointments: React.FC = () => {
         )}
       </div>
 
-    
       {modalAppt && (
         <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white p-6 rounded-[30px] w-full max-w-[400px] flex flex-col items-center text-center">
