@@ -57,17 +57,10 @@ const schema = z.object({
 type FormField=z.infer<typeof schema>;
 
 export const PatientSignupForm = () => {
-<<<<<<< HEAD
-  const [date, setDate] = useState<Date | undefined>(
-    new Date(2025, 5, 12)
-  )
-  const [dropdown, setDropdown] =useState<React.ComponentProps<typeof Calendar>["captionLayout"]>(
-=======
   const [date] = useState<Date | undefined>(
     new Date(2025, 5, 12)
   )
   const [dropdown] =useState<React.ComponentProps<typeof Calendar>["captionLayout"]>(
->>>>>>> fe1188d963ea9d511a96bff6e08390d4e5502df4
       "dropdown"
     )
 
@@ -122,11 +115,7 @@ export const PatientSignupForm = () => {
                         defaultMonth={date}
                         selected={field.value}
                         onSelect={field.onChange} // Crucial: This calls React Hook Form's onChange
-<<<<<<< HEAD
-                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-=======
                         disabled={(date: Date) => date > new Date() || date < new Date("1900-01-01")}
->>>>>>> fe1188d963ea9d511a96bff6e08390d4e5502df4
                         captionLayout={dropdown}
                     />
                 </PopoverContent>

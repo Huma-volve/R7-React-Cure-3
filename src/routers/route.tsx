@@ -2,6 +2,12 @@ import { createBrowserRouter } from 'react-router-dom';
 // Pages
 import App from '@/App.tsx'
 import DoctorDetails from '@/pages/DoctorDetails.tsx';
+import DoctorsPage from '@/pages/DoctorsPage';
+import Home from '@/pages/home';
+import FavoritePage from '@/pages/FavoritePage';
+import Appointments from '@/pages/Booking/Appointment';
+import { SignInPage } from '@/pages/SignInPage';
+import { SignupPage } from '@/pages/SignupPage';
 
 export const router = createBrowserRouter([
   {
@@ -11,6 +17,14 @@ export const router = createBrowserRouter([
       {
         path: '',
         element: <Home/>,
+      },
+      {
+        path: 'signin',
+        element: <SignInPage />,
+      },
+      {
+        path: 'signup',
+        element: <SignupPage />,
       },
       {
         path: 'doctors',
@@ -25,8 +39,8 @@ export const router = createBrowserRouter([
         element: <DoctorDetails />,
       },
       {
-        path: 'doctors/:id/booking',
-        element: <div>This is payment</div>,
+        path: 'booking',
+        element: <Appointments />,
       },
     ]
   }

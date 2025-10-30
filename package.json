@@ -23,7 +23,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
-<<<<<<< HEAD
+    "framer-motion": "^12.23.24",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.548.0",
     "react": "^19.1.1",
@@ -31,16 +31,7 @@
     "react-day-picker": "^9.11.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.65.0",
-=======
-    "framer-motion": "^12.23.24",
-    "input-otp": "^1.4.2",
-    "lucide-react": "^0.548.0",
-    "react": "^19.1.1",
-    "react-day-picker": "^9.11.1",
-    "react-dom": "^19.1.1",
-    "react-hook-form": "^7.65.0",
     "react-icons": "^5.5.0",
->>>>>>> fe1188d963ea9d511a96bff6e08390d4e5502df4
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.4",
     "tailwind-merge": "^3.3.1",
