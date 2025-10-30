@@ -59,7 +59,7 @@ export const router = createBrowserRouter([
       {
         path: 'map',
         element: <Map />,
-      }
+      },
     ]
   }
 ]);

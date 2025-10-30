@@ -29,7 +29,7 @@ export interface DoctorProps {
   }[]
 }
 
-const initialState: DoctorProps[] = [
+export const initialState: DoctorProps[] = [
   {
     id: 0,
     name: 'Mohamed',
