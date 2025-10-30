@@ -2,13 +2,15 @@ import { createBrowserRouter } from 'react-router-dom';
 // Pages
 import App from '@/App.tsx'
 import DoctorDetails from '@/pages/DoctorDetails.tsx';
-import { SignupPage } from '@/pages/SignupPage';
-import { SignInPage } from '@/pages/SignInPage';
-import { ForgetPassword } from '@/pages/ForgetPassword';
-import { OTPpage } from '@/pages/OTPpage';
+import { SignupPage } from '@/pages/auth/SignupPage';
+import { SignInPage } from '@/pages/auth/SignInPage';
+import { ForgetPassword } from '@/pages/auth/ForgetPassword';
+import { OTPpage } from '@/pages/auth/OTPpage';
 import Home from '@/pages/home';
 import DoctorsPage from '@/pages/DoctorsPage';
 import FavoritePage from '@/pages/FavoritePage';
+import { ProfileMain } from '@/pages/profile/ProfileMain';
+import { ProfileEdit } from '@/pages/profile/ProfileEdit';
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +48,12 @@ export const router = createBrowserRouter([
       },
       {
         path:"verify", element:<OTPpage/>
+      },
+      {
+        path:"profile-setting", element:<ProfileMain/>
+      }, 
+      {
+        path:"profile-edit", element:<ProfileEdit/>
       },
     ]
   }
