@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const DeleteAccount = () => {
   return (
     <div className="space-y-4">
