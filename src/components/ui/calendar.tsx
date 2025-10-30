@@ -28,13 +28,22 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
+<<<<<<< HEAD
+        String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
+        String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
+=======
         String.raw`rtl:**:[.rdp-button_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button_previous>svg]:rotate-180`,
+>>>>>>> fe1188d963ea9d511a96bff6e08390d4e5502df4
         className
       )}
       captionLayout={captionLayout}
       formatters={{
+<<<<<<< HEAD
+        formatMonthDropdown: (date) =>
+=======
         formatMonthDropdown: (date: Date) =>
+>>>>>>> fe1188d963ea9d511a96bff6e08390d4e5502df4
           date.toLocaleString("default", { month: "short" }),
         ...formatters,
       }}
@@ -126,11 +135,15 @@ function Calendar({
         ...classNames,
       }}
       components={{
+<<<<<<< HEAD
+        Root: ({ className, rootRef, ...props }) => {
+=======
         Root: ({
           className,
           rootRef,
           ...props
         }: React.HTMLAttributes<HTMLDivElement> & { rootRef?: React.Ref<HTMLDivElement> }) => {
+>>>>>>> fe1188d963ea9d511a96bff6e08390d4e5502df4
           return (
             <div
               data-slot="calendar"
@@ -140,11 +153,15 @@ function Calendar({
             />
           )
         },
+<<<<<<< HEAD
+        Chevron: ({ className, orientation, ...props }) => {
+=======
         Chevron: ({
           className,
           orientation = "down",
           ...props
         }: { className?: string; orientation?: "left" | "right" | "down" | "up" }) => {
+>>>>>>> fe1188d963ea9d511a96bff6e08390d4e5502df4
           if (orientation === "left") {
             return (
               <ChevronLeftIcon className={cn("size-4", className)} {...props} />
@@ -165,12 +182,16 @@ function Calendar({
           )
         },
         DayButton: CalendarDayButton,
+<<<<<<< HEAD
+        WeekNumber: ({ children, ...props }) => {
+=======
         WeekNumber: ({
           children,
           ...props
         }: React.HTMLAttributes<HTMLTableCellElement> & {
           children?: React.ReactNode
         }) => {
+>>>>>>> fe1188d963ea9d511a96bff6e08390d4e5502df4
           return (
             <td {...props}>
               <div className="flex size-(--cell-size) items-center justify-center text-center">
