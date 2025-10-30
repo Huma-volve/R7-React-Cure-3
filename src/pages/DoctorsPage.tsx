@@ -257,7 +257,9 @@ const DoctorsPage: React.FC = () => {
               >
                 {/* ❤️ أيقونة المفضلة */}
                 <button
-                  onClick={() => toggleFavorite(doc.id)}
+                  onClick={(e) => {
+                    e.stopPropagation(); 
+                    toggleFavorite(doc.id)}}
                   className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition"
                 >
                   {favorites.includes(doc.id) ? (
@@ -302,7 +304,9 @@ const DoctorsPage: React.FC = () => {
 
                 {/* 📅 الزرار */}
                 <button className="bg-[#145DB8] text-white px-5 py-2 h-12 rounded-lg hover:bg-blue-700 mt-4"
-                 onClick={()=> navigate('booking')}>
+                 onClick={(e)=>{
+                  e.stopPropagation(); 
+                  navigate('booking')}}>
                   Book appointment
                 </button>
               </div>
