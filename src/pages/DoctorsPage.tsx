@@ -252,7 +252,8 @@ const DoctorsPage: React.FC = () => {
             {doctors.map((doc) => (
               <div
                 key={doc.id}
-                className="relative border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between"
+                onClick={() => navigate(`${doc.id}`)}
+                className="relative border cursor-pointer border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between"
               >
                 {/* ❤️ أيقونة المفضلة */}
                 <button
