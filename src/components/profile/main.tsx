@@ -38,6 +38,14 @@ export default function ProfileSettings() {
     }
   };
 
+  const handleMainCard=(label:string,path:string)=>{
+    if (isMobile) {
+      setActiveSection(path);
+    } else {
+      setActiveSection(label);
+    }
+  };
+
   const menuItems = [
     { icon: Bell, label: "Notifications", type: "switch" },
     { icon: CreditCard, label: "Payment Method", path: "/payment" },
@@ -75,7 +83,7 @@ export default function ProfileSettings() {
         <div className="lg:w-1/3 space-y-4">
           <Card
             className="flex flex-row bg-[#F5F6F7] border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
-            onClick={() => handleCardClick("Profile", "/profile-edit")}
+            onClick={() => handleMainCard("Profile", "/profile-edit")}
           >
             <div className="flex items-center space-x-4">
               <img

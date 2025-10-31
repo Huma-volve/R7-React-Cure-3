@@ -61,9 +61,9 @@ export const SignIn = () => {
           
 
 
-            <Button type="submit" className="mt-2 w-full bg-[#145DB8] hover:bg-[#145DB8] hover:cursor-pointer">Sign In</Button>
+            <Button type="submit" className=" text-white mt-2 w-full bg-[#145DB8] hover:bg-[#145DB8] hover:cursor-pointer">Sign In</Button>
           </form>
-          <Button className="w-full flex items-center justify-center gap-2 border hover:cursor-pointer mt-5  bg-[#ffffff] hover:bg-[#ffffff] text-color-black">
+          <Button className=" w-full flex items-center justify-center gap-2 border hover:cursor-pointer mt-5  bg-[#ffffff] hover:bg-[#ffffff] text-color-black">
   <img src={googleIcon} alt="Google logo" className="w-5 h-5"/>
   Sign in with Google
 </Button>
