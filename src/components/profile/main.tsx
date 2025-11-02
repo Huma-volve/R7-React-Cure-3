@@ -22,7 +22,7 @@ export default function ProfileSettings() {
   const [activeSection, setActiveSection] = useState<string>("Profile");
   const [isMobile, setIsMobile] = useState(false);
 
-
+  // Detect mobile vs desktop
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     handleResize();
@@ -30,30 +30,14 @@ export default function ProfileSettings() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleCardClick = (label: string, path: string) => {
-    if (isMobile) {
-      setActiveSection(label);
-    } else {
-      setActiveSection(label);
-    }
-  };
-
-  const handleMainCard=(label:string,path:string)=>{
-    if (isMobile) {
-      setActiveSection(path);
-    } else {
-      setActiveSection(label);
-    }
-  };
-
   const menuItems = [
     { icon: Bell, label: "Notifications", type: "switch" },
-    { icon: CreditCard, label: "Payment Method", path: "/payment" },
-    { icon: Heart, label: "Favorites", path: "/favorites" },
+    { icon: CreditCard, label: "Payment Method" },
+    { icon: Heart, label: "Favorites" },
     { icon: Settings, label: "Settings" },
-    { icon: HelpCircle, label: "FAQs", path: "/faqs" },
-    { icon: Shield, label: "Privacy Policy", path: "/privacy-policy" },
-    { icon: LogOut, label: "Log out", path: "#logout", danger: true },
+    { icon: HelpCircle, label: "FAQs" },
+    { icon: Shield, label: "Privacy Policy" },
+    { icon: LogOut, label: "Log out", danger: true },
   ];
 
   const renderContent = () => {
@@ -70,20 +54,36 @@ export default function ProfileSettings() {
         return <p>Privacy policy and terms of use.</p>;
       case "Log out":
         return <p>Clicked Log out.</p>;
+          case "ProfileContent":
+            return <ProfileInfo />;
+          case "Profile":
+            return <ProfileInfo />;
       default:
-        return <ProfileInfo />;
+        return null;
     }
   };
 
+  const handleCardClick = (label: string) => {
+    setActiveSection(label);
+  };
+
+  const handleMainCardClick = () => {
+    if (isMobile) {
+      setActiveSection("ProfileContent");
+    } else {
+      setActiveSection("Profile");
+    }
+  };
+  
+
   return (
     <div className="flex flex-col lg:flex-row max-w-6xl mx-auto px-4 sm:px-6 py-8 gap-6">
-      
- 
-      {(!isMobile || (isMobile && activeSection === "Profile")) && (
+      {/* LEFT PANEL */}
+      {(!isMobile || activeSection === "Profile") && (
         <div className="lg:w-1/3 space-y-4">
           <Card
             className="flex flex-row bg-[#F5F6F7] border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
-            onClick={() => handleMainCard("Profile", "/profile-edit")}
+            onClick={() => handleMainCardClick()}
           >
             <div className="flex items-center space-x-4">
               <img
@@ -113,9 +113,7 @@ export default function ProfileSettings() {
                 className={`flex flex-row bg-[#F5F6F7] border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer ${
                   item.danger ? "hover:bg-red-50 dark:hover:bg-red-950" : ""
                 }`}
-                onClick={() => {
-                  if (item.type !== "switch") handleCardClick(item.label, item.path || "#");
-                }}
+                onClick={() => item.type !== "switch" && handleCardClick(item.label)}
               >
                 <div className="flex items-center space-x-3">
                   <item.icon
@@ -136,11 +134,10 @@ export default function ProfileSettings() {
         </div>
       )}
 
-
-      {(!isMobile || (isMobile && activeSection !== "Profile")) && (
+      {/* RIGHT PANEL */}
+      {(!isMobile || activeSection !== "Profile") && (
         <div className="flex-1">
           <Card className="w-full p-6">
-
             {isMobile && (
               <button
                 className="flex items-center text-sm text-muted-foreground mb-4"
@@ -150,7 +147,6 @@ export default function ProfileSettings() {
                 Back
               </button>
             )}
-
             <h2 className="text-lg font-semibold mb-1">{activeSection}</h2>
             <div className="text-sm text-muted-foreground leading-relaxed">
               {renderContent()}
