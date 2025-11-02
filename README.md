@@ -22,3 +22,6 @@
 
 ## React-icons
 `npm install react-icons`
+
+## React-switch
+`npm install @radix-ui/react-switch`

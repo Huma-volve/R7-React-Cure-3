@@ -29,25 +29,25 @@ export const PasswordManagement = () => {
   return (
     <div >
       
-    <Card className="w-full max-w-md border-0">
+    <Card className="w-full max-w-md border-0 bg-white">
       <CardHeader>
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col">
-            <Input placeholder="Current password" {...register("currentPassword")} />
+            <Input className="border-gray-400" placeholder="Current password" {...register("currentPassword")} />
             {errors.currentPassword && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.currentPassword.message}</span>}
           </div>
 
         
           <div className="flex flex-col">
-            <Input placeholder="New password" type="password" {...register("newPassword")} />
+            <Input className="border-gray-400" placeholder="New password" type="password" {...register("newPassword")} />
             {errors.newPassword && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.newPassword.message}</span>}
           </div>
 
           
           <div className="flex flex-col">
-            <Input placeholder="Confirm new password" type="password" {...register("confirmNewPassword")} />
+            <Input className="border-gray-400" placeholder="Confirm new password" type="password" {...register("confirmNewPassword")} />
             {errors.confirmNewPassword && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.confirmNewPassword.message}</span>}
             </div>
         

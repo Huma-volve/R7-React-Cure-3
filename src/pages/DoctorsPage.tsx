@@ -21,7 +21,7 @@ interface Doctor {
 
 const doctors: Doctor[] = [
   {
-    id: 1,
+    id: 0,
     name: "Sarah Adams",
     specialty: "Dentist",
     clinic: "Cairo Clinic",
@@ -31,7 +31,7 @@ const doctors: Doctor[] = [
     image: "./doctor.jpg",
   },
   {
-    id: 2,
+    id: 1,
     name: "Omar Khaled",
     specialty: "Cardiologist",
     clinic: "HeartCare Center",
@@ -252,11 +252,14 @@ const DoctorsPage: React.FC = () => {
             {doctors.map((doc) => (
               <div
                 key={doc.id}
-                className="relative border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between"
+                onClick={() => navigate(`${doc.id}`)}
+                className="relative border cursor-pointer border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between"
               >
                 {/* ❤️ أيقونة المفضلة */}
                 <button
-                  onClick={() => toggleFavorite(doc.id)}
+                  onClick={(e) => {
+                    e.stopPropagation(); 
+                    toggleFavorite(doc.id)}}
                   className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition"
                 >
                   {favorites.includes(doc.id) ? (
@@ -301,7 +304,9 @@ const DoctorsPage: React.FC = () => {
 
                 {/* 📅 الزرار */}
                 <button className="bg-[#145DB8] text-white px-5 py-2 h-12 rounded-lg hover:bg-blue-700 mt-4"
-                 onClick={()=> navigate('booking')}>
+                 onClick={(e)=>{
+                  e.stopPropagation(); 
+                  navigate('booking')}}>
                   Book appointment
                 </button>
               </div>
