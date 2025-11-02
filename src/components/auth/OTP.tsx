@@ -76,17 +76,15 @@ export const OTP = () => {
           name="otp"
           render={({ field }) => (
             <InputOTP
-              maxLength={6}
+              maxLength={4}
               value={field.value}
               onChange={field.onChange}
             >
               <InputOTPGroup >
-                <InputOTPSlot index={0} />
-                <InputOTPSlot index={1} />
-                <InputOTPSlot index={2} />
-                <InputOTPSlot index={3} />
-                <InputOTPSlot index={4} />
-                <InputOTPSlot index={5} />
+                <InputOTPSlot className="border border-gray-400" index={0} />
+                <InputOTPSlot className="border border-gray-400" index={1} />
+                <InputOTPSlot className="border border-gray-400" index={2} />
+                <InputOTPSlot className="border border-gray-400" index={3} />
               </InputOTPGroup>
             </InputOTP>
           )}
