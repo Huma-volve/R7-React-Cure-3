@@ -20,7 +20,7 @@ import { MainSetting } from "./setting/mainSetting";
 import { MainPayment } from "./payment/mainPayment";
 
 export default function ProfileSettings() {
-  const [activeSection, setActiveSection] = useState<string| null>(null);
+  const [activeSection, setActiveSection] = useState<string>("Profile");
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile vs desktop
