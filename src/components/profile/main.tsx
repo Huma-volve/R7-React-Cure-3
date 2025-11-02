@@ -17,9 +17,10 @@ import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
 import { ProfileInfo } from "./profileInfo";
 import { MainSetting } from "./setting/mainSetting";
+import { MainPayment } from "./payment/mainPayment";
 
 export default function ProfileSettings() {
-  const [activeSection, setActiveSection] = useState<string>("Profile");
+  const [activeSection, setActiveSection] = useState<string| null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile vs desktop
@@ -38,12 +39,13 @@ export default function ProfileSettings() {
     { icon: HelpCircle, label: "FAQs" },
     { icon: Shield, label: "Privacy Policy" },
     { icon: LogOut, label: "Log out", danger: true },
+    {icon: CreditCard, label: "Payment Method" },
   ];
 
   const renderContent = () => {
     switch (activeSection) {
       case "Payment Method":
-        return <p>Payment Method settings go here.</p>;
+        return <MainPayment/>;
       case "Favorites":
         return <p>Your favorite items or content here.</p>;
       case "Settings":
@@ -54,12 +56,11 @@ export default function ProfileSettings() {
         return <p>Privacy policy and terms of use.</p>;
       case "Log out":
         return <p>Clicked Log out.</p>;
-          case "ProfileContent":
+          case "Profile Content":
             return <ProfileInfo />;
-          case "Profile":
-            return <ProfileInfo />;
+         
       default:
-        return null;
+        return <p>Choose from profile setting tabs.</p>;
     }
   };
 
@@ -67,13 +68,6 @@ export default function ProfileSettings() {
     setActiveSection(label);
   };
 
-  const handleMainCardClick = () => {
-    if (isMobile) {
-      setActiveSection("ProfileContent");
-    } else {
-      setActiveSection("Profile");
-    }
-  };
   
 
   return (
@@ -83,7 +77,7 @@ export default function ProfileSettings() {
         <div className="lg:w-1/3 space-y-4">
           <Card
             className="flex flex-row bg-[#F5F6F7] border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
-            onClick={() => handleMainCardClick()}
+            onClick={() => handleCardClick("Profile Content")}
           >
             <div className="flex items-center space-x-4">
               <img
