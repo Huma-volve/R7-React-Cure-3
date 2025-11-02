@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
 import { ProfileInfo } from "./profileInfo";
 import { MainSetting } from "./setting/mainSetting";
-import { MainPayment } from "./payment/mainPayment";
+import { MainPayment } from "./payment/MainPayment";
 
 export default function ProfileSettings() {
   const [activeSection, setActiveSection] = useState<string| null>(null);
