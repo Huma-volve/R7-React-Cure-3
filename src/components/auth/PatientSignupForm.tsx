@@ -72,25 +72,25 @@ export const PatientSignupForm = () => {
   });
   const onSubmit: SubmitHandler<FormField> = data => console.log(data);
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+    <div className="flex items-center justify-center min-h-screen p-4">
       
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-full max-w-md shadow-lg bg-white">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Create new account</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col">
-              <Input placeholder="Name" {...register("name")} />
+              <Input className="border border-gray-300" placeholder="Name" {...register("name")} />
               {errors.name && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.name.message}</span>}
             </div>
 
             <div className="flex flex-col">
-              <Input placeholder="Email" type="email" {...register("email")} />
+              <Input className="border border-gray-300" placeholder="Email" type="email" {...register("email")} />
               {errors.email && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.email.message}</span>}
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col border border-gray-300">
             <Controller
   control={control}
   name="phone"
@@ -139,12 +139,12 @@ export const PatientSignupForm = () => {
 </div>
 
             <div className="flex flex-col">
-              <Input placeholder="Password" type="password" {...register("password")} />
+              <Input className="flex flex-col border border-gray-300" placeholder="Password" type="password" {...register("password")} />
               {errors.password && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.password.message}</span>}
             </div>
 
             <div className="flex flex-col">
-              <Input placeholder="Confirm Password" type="password" {...register("confirmPassword")} />
+              <Input className="flex flex-col border border-gray-300" placeholder="Confirm Password" type="password" {...register("confirmPassword")} />
               {errors.confirmPassword && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.confirmPassword.message}</span>}
             </div>
 

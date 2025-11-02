@@ -17,10 +17,10 @@ import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
 import { ProfileInfo } from "./profileInfo";
 import { MainSetting } from "./setting/mainSetting";
-import { MainPayment } from "./payment/mainPayment";
+import { MainPayment } from "./payment/MainPayment";
 
 export default function ProfileSettings() {
-  const [activeSection, setActiveSection] = useState<string| null>(null);
+  const [activeSection, setActiveSection] = useState<string>("Profile");
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile vs desktop
@@ -76,7 +76,7 @@ export default function ProfileSettings() {
       {(!isMobile || activeSection === "Profile") && (
         <div className="lg:w-1/3 space-y-4">
           <Card
-            className="flex flex-row bg-[#F5F6F7] border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
+            className="flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
             onClick={() => handleCardClick("Profile Content")}
           >
             <div className="flex items-center space-x-4">
@@ -104,7 +104,7 @@ export default function ProfileSettings() {
             {menuItems.map((item) => (
               <Card
                 key={item.label}
-                className={`flex flex-row bg-[#F5F6F7] border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer ${
+                className={`flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer ${
                   item.danger ? "hover:bg-red-50 dark:hover:bg-red-950" : ""
                 }`}
                 onClick={() => item.type !== "switch" && handleCardClick(item.label)}
@@ -131,7 +131,7 @@ export default function ProfileSettings() {
       {/* RIGHT PANEL */}
       {(!isMobile || activeSection !== "Profile") && (
         <div className="flex-1">
-          <Card className="w-full p-6">
+          <Card className="w-full p-6 bg-white">
             {isMobile && (
               <button
                 className="flex items-center text-sm text-muted-foreground mb-4"

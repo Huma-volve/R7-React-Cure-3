@@ -69,7 +69,7 @@ export const ProfileInfo = () => {
           alt="User Avatar"
           width={96}
           height={96}
-          className="rounded-full object-cover border-1"
+          className="rounded-full object-cover  border"
         />
 
       
@@ -83,6 +83,7 @@ export const ProfileInfo = () => {
 
         <input
           type="file"
+          title="file input"
           id="avatarInput"
           accept="image/*"
           className="hidden"

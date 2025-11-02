@@ -4,7 +4,6 @@ import App from '@/App.tsx'
 import Home from '@/pages/home';
 import { SignupPage } from '@/pages/auth/SignupPage';
 import { SignInPage } from '@/pages/auth/SignInPage';
-// import { ForgetPassword } from '@/pages/auth/ForgetPassword';
 import { OTPpage } from '@/pages/auth/OTPpage';
 import DoctorsPage from '@/pages/DoctorsPage';
 import FavoritePage from '@/pages/FavoritePage';

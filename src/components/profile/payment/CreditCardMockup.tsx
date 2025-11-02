@@ -20,10 +20,10 @@ export default function CreditCardMockup() {
   return (
     <div className="max-w-lg mx-auto space-y-8">
       
-      <Card className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl shadow-lg">
+      <Card className="bg-gradient-to-b from-[#0EFFB7] to-[#5200FF] text-white p-6 rounded-xl shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <span className="font-semibold text-lg">VISA</span>
-          <span className="text-sm">**** **** **** {cardNumber.slice(-4)}</span>
+          
         </div>
         <div className="text-xl tracking-widest mb-4">
           {cardNumber ? formatCardNumber(cardNumber) : "#### #### #### ####"}
@@ -32,7 +32,7 @@ export default function CreditCardMockup() {
           <span>{cardName || "Card Holder"}</span>
           <span>{expiry || "MM/YY"}</span>
         </div>
-        <div className="text-right text-sm mt-2">CVV: {cvv ? "***" : "***"}</div>
+        <div className="text-right text-sm mt-2">CVV: {cvv || "***"}</div>
       </Card>
 
      
