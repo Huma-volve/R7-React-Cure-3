@@ -1,17 +1,17 @@
 import { createBrowserRouter } from 'react-router-dom';
 // Pages
 import App from '@/App.tsx'
-import DoctorDetails from '@/pages/DoctorDetails.tsx';
+import Home from '@/pages/home';
 import { SignupPage } from '@/pages/auth/SignupPage';
 import { SignInPage } from '@/pages/auth/SignInPage';
 import { OTPpage } from '@/pages/auth/OTPpage';
-import Home from '@/pages/home';
 import DoctorsPage from '@/pages/DoctorsPage';
 import FavoritePage from '@/pages/FavoritePage';
 import { ProfileMain } from '@/pages/profile/ProfileMain';
 import { ProfileEdit } from '@/pages/profile/ProfileEdit';
 import Appointments from '@/pages/Booking/Appointment';
-
+import DoctorDetails from '@/pages/DoctorDetails.tsx';
+import Map from '@/components/reusable/Map';
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +55,10 @@ export const router = createBrowserRouter([
       }, 
       {
         path:"profile-edit", element:<ProfileEdit/>
+      },
+      {
+        path: 'map',
+        element: <Map />,
       },
     ]
   }
