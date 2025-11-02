@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
+import { PhoneInput } from "./phone-input";
 
 
 const passwordSchema = z
@@ -21,7 +22,7 @@ const passwordSchema = z
 
   const birthDate = z
   .date({
-    message: "Please select a date of birth.", // Error if no date is selected
+    message: "Please select a date of birth.", 
   })
   .refine((date) => {
     const today = new Date();
@@ -30,7 +31,7 @@ const passwordSchema = z
       today.getMonth(),
       today.getDate()
     );
-    // Check if the selected date is on or before the date 18 years ago
+
     return date <= eighteenYearsAgo;
   }, {
     message: "You must be at least 18 years old.",
@@ -97,7 +98,18 @@ export const PatientSignupForm = () => {
             </div>
 
             <div className="flex flex-col">
-              <Input placeholder="Phone" {...register("phone")} />
+            <Controller
+  control={control}
+  name="phone"
+  render={({ field }) => (
+    <PhoneInput
+      {...field}               
+      className="bg-white"
+      defaultCountry="EG"
+      placeholder="01**********"
+    />
+  )}
+/>
               {errors.phone && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.phone.message}</span>}
             </div>
 
