@@ -1,10 +1,9 @@
-import {useForm, type SubmitHandler, Controller} from "react-hook-form";
+import {useForm, type SubmitHandler} from "react-hook-form";
 import {z} from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 
 const passwordSchema = z
   .string()

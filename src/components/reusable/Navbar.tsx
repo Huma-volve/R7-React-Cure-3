@@ -3,6 +3,8 @@ import { FiSearch, FiBell, FiX } from "react-icons/fi";
 import { RiMenu4Line } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import Notifications from "@/components/reusable/NotificationsPopup";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,8 +79,15 @@ const Navbar: React.FC = () => {
             </button>
 
             {/* Notification */}
-            <button className="text-black bg-[#F5F6F7] p-3 rounded-lg">
-              <FiBell />
+            <button  className="text-black bg-[#F5F6F7] p-3 rounded-lg">
+              <Popover>
+                <PopoverTrigger>
+                  <FiBell />
+                </PopoverTrigger>
+                <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
+                  <Notifications />
+                </PopoverContent>
+              </Popover>
             </button>
 
             <button

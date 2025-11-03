@@ -1,5 +1,5 @@
 import { MapPin, Camera, CalendarIcon } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import { useState, type ChangeEvent } from "react";
 import {useForm, type SubmitHandler, Controller} from "react-hook-form";
 import {z} from "zod";
@@ -65,7 +65,7 @@ export const ProfileInfo = () => {
       <div className="flex flex-col justify-center items-center relative">
         {/* Avatar Image */}
         <img
-          src="../../public/profile.png"
+          src={avatar}
           alt="User Avatar"
           width={96}
           height={96}

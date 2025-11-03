@@ -8,18 +8,16 @@ export default function AppointmentButton() {
     return (
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger>
-                <Button className="border-[#145DB8] text-[#145DB8] p-6 w-[123px] h-12" variant='outline'>
+                <Button className="border-primary-600 text-primary-600 p-6 w-[123px] h-12" variant='outline'>
                     <span>Book</span>
                 </Button>
             </DialogTrigger>
 
             <DialogContent>
                 <div>
-                    Hi Mr/Ms tester, I am still working on this 🙆‍♂️
+                    Hi Mr/Ms tester, for the second time, I am STILL working on this 🙆‍♂️
                 </div>
             </DialogContent>
         </Dialog>
     )
-    
-    // closeDialog={() => setOpenDialog(false)} 
 }
