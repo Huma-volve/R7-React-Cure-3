@@ -6,6 +6,8 @@ import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+
 
 interface Appointment {
   id: number;
@@ -66,6 +68,7 @@ const appointmentsData: Appointment[] = [
 const STORAGE_KEY = "appointmentsData";
 
 const Appointments: React.FC = () => {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : appointmentsData;
@@ -202,7 +205,7 @@ const Appointments: React.FC = () => {
 
                 <div className="text-sm text-gray-600 flex gap-1 mb-4 items-start">
                   <img src="/Location.svg" alt="location" className="mt-0.5" />
-                  <p className="break-words">{appt.address}</p>
+                  <p className="wrap-break-words">{appt.address}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-3 w-full justify-center sm:justify-start">
@@ -220,7 +223,7 @@ const Appointments: React.FC = () => {
                     </>
                   ) : appt.status === "Completed" ? (
                     <>
-                      <Button className="border w-[140px] sm:w-40">
+                      <Button onClick={() => navigate(`/`)} className="border w-[140px] sm:w-40">
                         Book again
                       </Button>
                       <Button className="w-[140px] sm:w-40 bg-primary-600">
@@ -259,6 +262,9 @@ const Appointments: React.FC = () => {
             <h2 className="text-[#FFA726] text-[26px] font-semibold mb-2">Warning!</h2>
             <p className="text-md text-gray-600 mb-4 px-2">
               Cancellation must be made at least 24 hours in advance to receive a refund.
+            </p>
+               <p className="text-md text-gray-600 mb-4 px-2">
+                 
             </p>
             <p className="text-md text-gray-600 mb-4">Are you sure?</p>
 
