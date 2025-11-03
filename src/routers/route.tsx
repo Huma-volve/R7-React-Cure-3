@@ -1,17 +1,21 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 // Pages
 import App from '@/App.tsx'
 import Home from '@/pages/home';
+import PageSkeleton from '@/components/reusable/PageSkeleton';
 import { SignupPage } from '@/pages/auth/SignupPage';
 import { SignInPage } from '@/pages/auth/SignInPage';
 import { OTPpage } from '@/pages/auth/OTPpage';
-import DoctorsPage from '@/pages/DoctorsPage';
-import FavoritePage from '@/pages/FavoritePage';
 import { ProfileMain } from '@/pages/profile/ProfileMain';
-import { ProfileEdit } from '@/pages/profile/ProfileEdit';
-import Appointments from '@/pages/Booking/Appointment';
-import DoctorDetails from '@/pages/DoctorDetails.tsx';
-import Map from '@/components/reusable/Map';
+
+// Lazily loaded
+const DoctorsPage = lazy(() => import('@/pages/DoctorsPage'));
+const DoctorDetails = lazy(() => import('@/pages/DoctorDetails'));
+const FavoritePage = lazy(() => import('@/pages/FavoritePage'));
+const Appointments = lazy(() => import('@/pages/Booking/Appointment'));
+const Map = lazy(() => import('@/components/reusable/Map'));
+const PaymentConfirmationPage = lazy(() => import('@/components/reusable/payment/PayPageAndConfirmation'));
 
 export const router = createBrowserRouter([
   {
@@ -36,29 +40,42 @@ export const router = createBrowserRouter([
       },
       {
         path: 'doctors',
-        element: <DoctorsPage/>,
+        element: <Suspense fallback={<PageSkeleton />}>
+          <DoctorsPage />
+        </Suspense>,
       },
       {
         path: 'favorite',
-        element: <FavoritePage/>,
+        element: <Suspense fallback={<PageSkeleton />}>
+          <FavoritePage />
+        </Suspense>,
       },
       {
         path: 'doctors/:id',
-        element: <DoctorDetails />,
+        element: <Suspense fallback={<PageSkeleton />}>
+          <DoctorDetails />
+        </Suspense>,
       },
       {
         path: 'doctors/booking',
-        element: <Appointments />,
+        element: <Suspense fallback={<PageSkeleton />}>
+          <Appointments />
+        </Suspense>,
       },
       {
         path:"profile-setting", element:<ProfileMain/>
       }, 
       {
-        path:"profile-edit", element:<ProfileEdit/>
+        path: 'map',
+        element: <Suspense fallback={<PageSkeleton />}>
+          <Map />
+        </Suspense>,
       },
       {
-        path: 'map',
-        element: <Map />,
+        path: 'checkout',
+        element: <Suspense fallback={<PageSkeleton />}>
+          <PaymentConfirmationPage />
+        </Suspense>,
       },
     ]
   }
