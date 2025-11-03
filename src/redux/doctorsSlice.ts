@@ -36,7 +36,7 @@ export const initialState: DoctorProps[] = [
     name: 'Mohamed Ahmed',
     specialization: 'Orthopedic',
     imgSrc: '/doctors/doctor1.png',
-    about: 'Dr. Jessica Turner, a board-certified Pulmonologist with over 8 years of experience...',
+    about: 'Dr. Jessica Turner, a board-certified Pulmonologist with over 8 years of experience in diagnosing and treating complex respiratory conditions, is dedicated to helping patients improve their lung health through personalized care and advanced medical approaches.',
     location: '129, El-Nasr Street, Cairo',
     hospital: 'El-Nasr Hospital',
     patientsNum: 2000,

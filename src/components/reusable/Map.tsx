@@ -5,8 +5,8 @@ import LocationIcon from '@/assets/icons/location.png'
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Map() {
-    return <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 mt-10 px-6 overflow-x-hidden">
-        <section className="flex flex-col gap-5 lg:col-span-1">
+    return <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-10 px-0 md:px-3  overflow-x-hidden">
+        <section className="order-2 lg:order-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-5 lg:col-span-1">
             {doctors.map((doc) => (
                 <Card
                     key={doc.id}
@@ -17,7 +17,6 @@ export default function Map() {
                         alt={`Doctor ${doc.name} Image`}
                         className="h-16 w-16 rounded-md object-cover"
                     />
-
 
                     <CardContent className="flex-1 gap-2 flex-col p-0">
                         <h2 className="text-md font-medium">{doc.name}</h2>
@@ -44,7 +43,7 @@ export default function Map() {
             ))}
 
         </section>
-        <section className="lg:col-span-3">
+        <section className="lg:col-span-3 order-1 lg:order-2">
             <div className="relative">
                 <img src="/map-in-map-page.png" className="cursor-grab w-full rounded-3xl" />
                 <div className="absolute bg-background rounded-md shadow px-3 py-1 left-3 bottom-10 z-30 flex items-center gap-2">
