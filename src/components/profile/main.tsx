@@ -39,7 +39,6 @@ export default function ProfileSettings() {
     { icon: HelpCircle, label: "FAQs" },
     { icon: Shield, label: "Privacy Policy" },
     { icon: LogOut, label: "Log out", danger: true },
-    {icon: CreditCard, label: "Payment Method" },
   ];
 
   const renderContent = () => {
@@ -76,7 +75,7 @@ export default function ProfileSettings() {
       {(!isMobile || activeSection === "Profile") && (
         <div className="lg:w-1/3 space-y-4">
           <Card
-            className="flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
+            className="!bg-gray-100 flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
             onClick={() => handleCardClick("Profile Content")}
           >
             <div className="flex items-center space-x-4">
@@ -104,7 +103,7 @@ export default function ProfileSettings() {
             {menuItems.map((item) => (
               <Card
                 key={item.label}
-                className={`flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer ${
+                className={`!bg-gray-100 flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer ${
                   item.danger ? "hover:bg-red-50 dark:hover:bg-red-950" : ""
                 }`}
                 onClick={() => item.type !== "switch" && handleCardClick(item.label)}
