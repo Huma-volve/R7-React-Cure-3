@@ -26,5 +26,5 @@
 ## React-switch
 `npm install @radix-ui/react-switch`
 
-##radux tools (this give an error)
+## radux tools (this give an error)
 `npm install @radix-ui/react-label @radix-ui/react-scroll-area`
