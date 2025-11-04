@@ -5,6 +5,32 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+
+
+const cardSchema = z.object({
+  cardNumber: z
+    .string()
+    .min(16, "Card number must be 16 digits"),
+  cardName: z
+    .string()
+    .min(2, "Name is required")
+    .regex(/^[a-zA-Z\s]+$/, "Only letters allowed"),
+  expiry: z
+    .string()
+    .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Invalid format (MM/YY)"),
+  cvv: z
+    .string()
+    .min(3, "CVV must be 3 digits")
+    .max(3, "CVV must be 3 digits")
+    .regex(/^\d{3}$/, "Only digits allowed"),
+});
+
+type CardFormValues = z.infer<typeof cardSchema>;
+
 
 export default function CreditCardMockup() {
   const [cardNumber, setCardNumber] = useState("");
@@ -12,6 +38,9 @@ export default function CreditCardMockup() {
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
 
+  const {register, handleSubmit, formState: { errors }} =useForm<CardFormValues>({resolver: zodResolver(cardSchema)});
+
+  const onSubmit = (data: CardFormValues) => {console.log(data);};
 
   const formatCardNumber = (num: string) => {
     return num.replace(/\s?/g, "").replace(/(\d{4})/g, "$1 ").trim();
@@ -19,6 +48,11 @@ export default function CreditCardMockup() {
 
   return (
     <div className="max-w-lg mx-auto space-y-8">
+
+<form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-lg mx-auto space-y-8"
+    >
       
       <Card className="bg-gradient-to-b from-[#0EFFB7] to-[#5200FF] text-white p-6 rounded-xl shadow-lg">
         <div className="flex justify-between items-center mb-6">
@@ -42,46 +76,58 @@ export default function CreditCardMockup() {
           <Input
             id="cardNumber"
             placeholder="1234 5678 9012 3456"
-            maxLength={19}
+            maxLength={16}
             value={cardNumber}
+            {...register("cardNumber")}
             onChange={(e) => setCardNumber(e.target.value)}
           />
+          {errors.cardNumber && (<p className="text-red-500 text-sm mt-1">{errors.cardNumber.message}</p>)}
         </div>
         <div>
           <Label htmlFor="cardName">Card Holder</Label>
           <Input
             id="cardName"
             placeholder="John Doe"
+            {...register("cardName")}
             value={cardName}
             onChange={(e) => setCardName(e.target.value)}
           />
+          {errors.cardName && (<p className="text-red-500 text-sm mt-1">{errors.cardName.message}</p>)}
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
             <Label htmlFor="expiry">Expiry</Label>
             <Input
               id="expiry"
+              {...register("expiry")}
               placeholder="MM/YY"
               maxLength={5}
               value={expiry}
               onChange={(e) => setExpiry(e.target.value)}
             />
+            {errors.expiry && (<p className="text-red-500 text-sm mt-1">{errors.expiry.message}</p>)}
           </div>
+
           <div className="flex-1">
             <Label htmlFor="cvv">CVV</Label>
             <Input
               id="cvv"
+              {...register("cvv")}
               placeholder="123"
               maxLength={3}
               value={cvv}
               onChange={(e) => setCvv(e.target.value)}
             />
+            {errors.cvv && (<p className="text-red-500 text-sm mt-1">{errors.cvv.message}</p>)}
           </div>
         </div>
       </div>
 
       <Separator />
-
+      <Button type="submit" className="w-full">
+        Save Card
+      </Button>
+    </form>
       
     </div>
   );

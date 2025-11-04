@@ -17,7 +17,9 @@ import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
 import { ProfileInfo } from "./profileInfo";
 import { MainSetting } from "./setting/mainSetting";
-import { MainPayment } from "./payment/MainPayment";
+import  SavedCards  from "./payment/MainPayment";
+import FAQ from "./faq";
+import { PrivacyNpolicy } from "./privacyNpolicy";
 
 export default function ProfileSettings() {
   const [activeSection, setActiveSection] = useState<string>("Profile");
@@ -44,15 +46,15 @@ export default function ProfileSettings() {
   const renderContent = () => {
     switch (activeSection) {
       case "Payment Method":
-        return <MainPayment/>;
+        return <SavedCards/>;
       case "Favorites":
         return <p>Your favorite items or content here.</p>;
       case "Settings":
         return <MainSetting />;
       case "FAQs":
-        return <p>Common questions and help topics.</p>;
+        return <FAQ/>;
       case "Privacy Policy":
-        return <p>Privacy policy and terms of use.</p>;
+        return <PrivacyNpolicy/>;
       case "Log out":
         return <p>Clicked Log out.</p>;
           case "Profile Content":
