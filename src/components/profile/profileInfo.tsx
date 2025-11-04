@@ -45,7 +45,7 @@ export const ProfileInfo = () => {
   const [avatar, setAvatar] = useState("../../public/profile.png");
 
   const { register, handleSubmit, formState: { errors }, control } = useForm<FormField>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema), defaultValues:{email:"Seifmohamed@gmail.com"}
   });
 
   const onSubmit: SubmitHandler<FormField> = data => console.log(data);
@@ -61,7 +61,7 @@ export const ProfileInfo = () => {
   return (
    <>
    
-   <Card className="border-0 items-center justify-between p-1 sm:p-2 cursor-pointer">
+   <Card className="bg-white border-0 items-center justify-between p-1 sm:p-2 cursor-pointer shadow-none">
       <div className="flex flex-col justify-center items-center relative">
         {/* Avatar Image */}
         <img
@@ -101,16 +101,16 @@ export const ProfileInfo = () => {
       </div>
     </Card>
 
-    <Card className="border-0 w-full max-w-md flex justify-center mx-auto">
+    <Card className="bg-white shadow-none border-0 w-full max-w-md flex justify-center mx-auto">
         <CardContent >
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col">
-              <Input className="border-0 bg-[#F5F6F7]" placeholder="Seif Mohamed" {...register("name")} />
+              <Input className="border-0 bg-gray-200" placeholder="Seif Mohamed" {...register("name")} />
               {errors.name && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.name.message}</span>}
             </div>
 
             <div className="flex flex-col">
-              <Input className="border-0 bg-[#F5F6F7]" placeholder="Seifmohamed@gmail.com" type="email" {...register("email")} />
+              <Input disabled className="border-0 bg-gray-300" placeholder="Seifmohamed@gmail.com" type="email" {...register("email")} />
               {errors.email && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.email.message}</span>}
             </div>
 
@@ -123,6 +123,7 @@ export const ProfileInfo = () => {
       {...field}               
       className="bg-white"
       defaultCountry="EG"
+      countries={["EG"]}
       placeholder="01**********"
     />
   )}
@@ -138,7 +139,7 @@ export const ProfileInfo = () => {
             <Popover>
                 <PopoverTrigger asChild>
                     <Button
-                        className={`w-full justify-start text-left font-normal bg-[#F5F6F7] hover:cursor-pointer ${!field.value && "text-muted-foreground"}`}
+                        className={`border text-black w-full justify-start text-left font-normal bg-gray-300 hover:bg-gray-400 hover:cursor-pointer ${!field.value && "text-black"}`}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? format(field.value, "PPP") : <span>Select date of birth</span>}
@@ -150,7 +151,7 @@ export const ProfileInfo = () => {
                         mode="single"
                         defaultMonth={date}
                         selected={field.value}
-                        onSelect={field.onChange} // Crucial: This calls React Hook Form's onChange
+                        onSelect={field.onChange} 
                         disabled={(date: Date) => date > new Date() || date < new Date("1900-01-01")}
                         captionLayout={dropdown}
                     />

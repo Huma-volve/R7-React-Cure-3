@@ -9,7 +9,6 @@ import {
   Settings,
   HelpCircle,
   Shield,
-  LogOut,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
@@ -17,7 +16,10 @@ import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
 import { ProfileInfo } from "./profileInfo";
 import { MainSetting } from "./setting/mainSetting";
-import { MainPayment } from "./payment/MainPayment";
+import  SavedCards  from "./payment/MainPayment";
+import FAQ from "./faq";
+import { PrivacyNpolicy } from "./privacyNpolicy";
+import { LogoutButton } from "./logoutButton";
 
 export default function ProfileSettings() {
   const [activeSection, setActiveSection] = useState<string>("Profile");
@@ -38,24 +40,22 @@ export default function ProfileSettings() {
     { icon: Settings, label: "Settings" },
     { icon: HelpCircle, label: "FAQs" },
     { icon: Shield, label: "Privacy Policy" },
-    { icon: LogOut, label: "Log out", danger: true },
-    {icon: CreditCard, label: "Payment Method" },
   ];
 
   const renderContent = () => {
     switch (activeSection) {
       case "Payment Method":
-        return <MainPayment/>;
+        return <SavedCards/>;
       case "Favorites":
         return <p>Your favorite items or content here.</p>;
       case "Settings":
         return <MainSetting />;
       case "FAQs":
-        return <p>Common questions and help topics.</p>;
+        return <FAQ/>;
       case "Privacy Policy":
-        return <p>Privacy policy and terms of use.</p>;
+        return <PrivacyNpolicy/>;
       case "Log out":
-        return <p>Clicked Log out.</p>;
+        return <LogoutButton/>;
           case "Profile Content":
             return <ProfileInfo />;
          
@@ -76,7 +76,7 @@ export default function ProfileSettings() {
       {(!isMobile || activeSection === "Profile") && (
         <div className="lg:w-1/3 space-y-4">
           <Card
-            className="flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
+            className="!bg-gray-100 flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 cursor-pointer"
             onClick={() => handleCardClick("Profile Content")}
           >
             <div className="flex items-center space-x-4">
@@ -104,16 +104,14 @@ export default function ProfileSettings() {
             {menuItems.map((item) => (
               <Card
                 key={item.label}
-                className={`flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer ${
-                  item.danger ? "hover:bg-red-50 dark:hover:bg-red-950" : ""
-                }`}
+                className={`!bg-gray-100 flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer`}
                 onClick={() => item.type !== "switch" && handleCardClick(item.label)}
               >
                 <div className="flex items-center space-x-3">
                   <item.icon
-                    className={`w-5 h-5 ${item.danger ? "text-red-500" : "text-muted-foreground"}`}
+                    className={`w-5 h-5 text-muted-foreground`}
                   />
-                  <span className={`text-sm sm:text-base font-medium ${item.danger ? "text-red-500" : ""}`}>
+                  <span className={`text-sm sm:text-base font-medium`}>
                     {item.label}
                   </span>
                 </div>
@@ -124,6 +122,7 @@ export default function ProfileSettings() {
                 )}
               </Card>
             ))}
+            <LogoutButton/>
           </div>
         </div>
       )}
