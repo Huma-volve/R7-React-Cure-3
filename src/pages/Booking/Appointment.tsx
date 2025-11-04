@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import AddReviewDialog from "@/components/reusable/doctor-details/add-review";
+// import axios from "axios";
 
 
 interface Appointment {
@@ -96,14 +97,74 @@ const Appointments: React.FC = () => {
     const dateMatch = appt.date === format(selectedDate, "yyyy-MM-dd");
     return statusMatch && dateMatch;
   });
+// interface Appointment {
+//   id: number;
+//   date: string;
+//   time: string;
+//   doctor: string;
+//   specialty: string;
+//   address: string;
+//   status: "Upcoming" | "Completed" | "Canceled" | "Pending";
+//   imageSrc: string;
+//   doctorId: number;
+// }
 
-  const handleConfirmCancel = () => {
-    if (!modalAppt) return;
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === modalAppt.id ? { ...a, status: "Canceled" } : a))
-    );
-    setModalAppt(null);
-  };
+// const API_URL = `https://round7-cure.huma-volve.com/api`;
+
+// const Appointments: React.FC = () => {
+//   const navigate = useNavigate();
+//   const [openDialog, setOpenDialog] = useState(false);
+//   const [appointments, setAppointments] = useState<Appointment[]>([]);
+//   const [filter, setFilter] = useState<"All" | "Upcoming" | "Completed" | "Canceled">("All");
+//   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+//   const [modalAppt, setModalAppt] = useState<Appointment | null>(null);
+//   const [loading, setLoading] = useState(true);
+
+//  useEffect(() => {
+//   const fetchAppointments = async () => {
+//     try {
+//       const token: string = "yxeMlPYTcDnotsyHFndsOh6wsqjTRfAhCDZDR8yX61ecfbf1";
+//       const res = await axios.get(`${API_URL}/patient/bookings`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+//       setAppointments(res.data.data);
+//       console.log(res.data);
+//     } catch (error) {
+//       console.error("Error fetching appointments:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+//   fetchAppointments();
+// }, []);
+
+// const filteredAppointments = Array.isArray(appointments)
+//   ? appointments.filter((appt) => {
+//       const statusMatch = filter === "All" || appt.status === filter;
+//       const dateMatch = appt.date === format(selectedDate, "yyyy-MM-dd");
+//       return statusMatch && dateMatch;
+//     })
+//   : [];
+
+
+//   const handleConfirmCancel = async () => {
+//     if (!modalAppt) return;
+//     try {
+//       await axios.put(`${API_URL}/${modalAppt.id}`, { status: "Canceled" });
+//       setAppointments((prev) =>
+//         prev.map((a) => (a.id === modalAppt.id ? { ...a, status: "Canceled" } : a))
+//       );
+//     } catch (error) {
+//       console.error("Error canceling appointment:", error);
+//     } finally {
+//       setModalAppt(null);
+//     }
+//   };
+
+//   if (loading) return <p className="text-center mt-10">Loading appointments...</p>;
+
 
   return (
     <div className="py-6 sm:px-8 lg:px-[72px] relative">
@@ -233,7 +294,7 @@ const Appointments: React.FC = () => {
                     </>
                   ) : appt.status === "Completed" ? (
                     <>
-                      <Button variant='outline' className="text-primary-400 border-primary-400 w-[140px] sm:w-40">
+                      <Button variant='outline' className="text-gray-500 border-gray-500 hover:shadow hover:text-gray-600 hover:border-gray-600 w-[140px] sm:w-40">
                         Book again
                       </Button>
                             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
