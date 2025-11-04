@@ -49,6 +49,7 @@ const API_URL = "https://round7-cure.huma-volve.com/api";
 
 const Appointments: React.FC = () => {
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = React.useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filter, setFilter] = useState<"All" | "Upcoming" | "Completed" | "Canceled" | "Pending">("All");

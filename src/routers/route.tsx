@@ -77,6 +77,10 @@ export const router = createBrowserRouter([
           <PaymentConfirmationPage />
         </Suspense>,
       },
+      {
+        path:"chat",
+        element:<div>chat page</div>
+      }
     ]
   }
 ]);
