@@ -9,7 +9,6 @@ import {
   Settings,
   HelpCircle,
   Shield,
-  LogOut,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
@@ -20,6 +19,7 @@ import { MainSetting } from "./setting/mainSetting";
 import  SavedCards  from "./payment/MainPayment";
 import FAQ from "./faq";
 import { PrivacyNpolicy } from "./privacyNpolicy";
+import { LogoutButton } from "./logoutButton";
 
 export default function ProfileSettings() {
   const [activeSection, setActiveSection] = useState<string>("Profile");
@@ -40,7 +40,6 @@ export default function ProfileSettings() {
     { icon: Settings, label: "Settings" },
     { icon: HelpCircle, label: "FAQs" },
     { icon: Shield, label: "Privacy Policy" },
-    { icon: LogOut, label: "Log out", danger: true },
   ];
 
   const renderContent = () => {
@@ -56,7 +55,7 @@ export default function ProfileSettings() {
       case "Privacy Policy":
         return <PrivacyNpolicy/>;
       case "Log out":
-        return <p>Clicked Log out.</p>;
+        return <LogoutButton/>;
           case "Profile Content":
             return <ProfileInfo />;
          
@@ -105,16 +104,14 @@ export default function ProfileSettings() {
             {menuItems.map((item) => (
               <Card
                 key={item.label}
-                className={`!bg-gray-100 flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer ${
-                  item.danger ? "hover:bg-red-50 dark:hover:bg-red-950" : ""
-                }`}
+                className={`!bg-gray-100 flex flex-row bg-white border-0 items-center justify-between p-4 sm:p-5 hover:bg-muted transition cursor-pointer`}
                 onClick={() => item.type !== "switch" && handleCardClick(item.label)}
               >
                 <div className="flex items-center space-x-3">
                   <item.icon
-                    className={`w-5 h-5 ${item.danger ? "text-red-500" : "text-muted-foreground"}`}
+                    className={`w-5 h-5 text-muted-foreground`}
                   />
-                  <span className={`text-sm sm:text-base font-medium ${item.danger ? "text-red-500" : ""}`}>
+                  <span className={`text-sm sm:text-base font-medium`}>
                     {item.label}
                   </span>
                 </div>
@@ -125,6 +122,7 @@ export default function ProfileSettings() {
                 )}
               </Card>
             ))}
+            <LogoutButton/>
           </div>
         </div>
       )}
