@@ -87,6 +87,8 @@ export default function DoctorDetails() {
 
   if (!currentDoctor) return <div className="text-center py-20">Doctor not found!</div>;
 
+  const onCardHoverStyle = 'transition-all duration-500 ease-in-out hover:shadow-lg hover:border-primary-600/80';
+
   return (
     <main className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10 px-6 overflow-x-hidden">
       
@@ -100,9 +102,9 @@ export default function DoctorDetails() {
             <span className="font-serif">Make an appointment</span>
           </div>
 
-          <Card className="px-3 text-muted-foreground bg-background">
+          <Card className={`group px-3 text-muted-foreground bg-background hover:scale-101 ${onCardHoverStyle}`}>
             <CardTitle className="flex justify-between flex-col md:flex-row gap-3 md:gap-0 font-normal items-center">
-              <p>Choose date and time</p>
+              <p className="group-hover:text-primary-600">Choose date and time</p>
               <div className="flex items-center gap-2.5">
                 <Popover>
                   <PopoverTrigger>
@@ -133,7 +135,7 @@ export default function DoctorDetails() {
                     ? currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })
                     : "Please select a date first"}
                 </p>
-                <div className={`flex flex-col items-center gap-2 justify-center *:cursor-pointer ${selectedDate && '*:hover:opacity-70'}`}>
+                <div className={`flex flex-col items-center gap-1 justify-center *:cursor-pointer ${selectedDate && '*:hover:opacity-70'}`}>
                     <IoIosArrowUp
                       onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}/>
 
@@ -143,7 +145,8 @@ export default function DoctorDetails() {
                 </div>
               </div>
             </CardTitle>
-            <Separator />
+
+            <Separator className="transition-all group-hover:bg-primary-600 -mt-4" />
 
             <CardContent>
 
@@ -209,7 +212,7 @@ export default function DoctorDetails() {
                   )}
               </div>
 
-              <AppointmentButton />
+              <AppointmentButton doctor={currentDoctor} timeSlot={selectedTimeSlot} date={selectedDate} />
             </CardFooter>
           </Card>
         </div>
@@ -222,7 +225,7 @@ export default function DoctorDetails() {
             <DialogTrigger>
               <Button variant='link'>
                 <img src={AddReviewIcon} alt="Add Review Icon" className="h-5 w-5" />
-                <span className="text-primary-500">add Review</span>
+                <span className="text-primary-500">Add review</span>
               </Button>
             </DialogTrigger>
 
@@ -268,7 +271,7 @@ export default function DoctorDetails() {
               currentDoctor.patientsReviews :
               currentDoctor.patientsReviews.slice(0, 2)
             ).map((rev, index) => {
-                return <Card key={index} className="bg-background p-4 h-full">
+                return <Card key={index} className={`group bg-background hover:bg-primary-600 p-4 h-full hover:scale-102 ${onCardHoverStyle}`}>
                   <CardTitle className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <img
@@ -276,9 +279,9 @@ export default function DoctorDetails() {
                         className="h-[62px] w-[62px] rounded-full object-cover"
                         alt={`Review of ${rev.name}`}
                       />
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1 group-hover:text-white">
                         <h3>{rev.name}</h3>
-                        <p className="text-muted-foreground text-sm">{rev.time}</p>
+                        <p className="text-neutral-600 font-normal group-hover:text-white/60 text-sm">{rev.time}</p>
                       </div>
                     </div>
 
@@ -287,7 +290,7 @@ export default function DoctorDetails() {
                     </div>
                   </CardTitle>
 
-                  <CardContent className="-px-2 text-neutral-900 text-sm">
+                  <CardContent className="-px-2 text-neutral-900 group-hover:text-white text-sm">
                     {rev.text}
                   </CardContent>
                 </Card>
@@ -310,7 +313,7 @@ export default function DoctorDetails() {
       </section>
 
       {/* Right Side - Doctor Info */}
-      <Card className="bg-card pt-8 pb-6 h-fit border-none shadow-none lg:col-span-1">
+      <Card className={`bg-card pt-8 pb-6 h-fit border-none shadow-none lg:col-span-1 hover:bg-neutral-50/80 ${onCardHoverStyle}`}>
         <CardHeader className="flex relative flex-col items-center justify-center text-center gap-2">
           {/* Img + Basic Info */}
           <div className="relative">
@@ -350,19 +353,19 @@ export default function DoctorDetails() {
         <CardDescription className="px-4">
           <h3 className="text-xl font-semibold mb-3 text-foreground font-serif">About Me</h3>
 
-          <div className="leading-relaxed text-neutral-700 max-w-3xl inline">
-            {previewAboutText}
-            {' '}
-            {isLong && (
-              <Button
-                variant="ghost"
-                onClick={() => setExpandAboutSection(!expandAboutSection)}
-                className="cursor-pointer hover:text-primary-600 text-primary-400 p-0 hover:bg-neutral-50 font-medium hover:underline inline"
-              >
-                {expandAboutSection ? "Read Less" : "Read More"}
-              </Button>
-            )}
+          <div
+            className={`leading-relaxed text-neutral-700 transition-all duration-500 ease-in-out ${
+              expandAboutSection ? 'max-h-[500px]' : 'max-h-[100px]'
+            }`}>{previewAboutText}</div>
+
+        {isLong && (
+          <div
+            onClick={() => setExpandAboutSection(!expandAboutSection)}
+            className="cursor-pointer hover:text-primary-600 text-primary-400 p-0 font-medium hover:underline mt-2 inline-block"
+          >
+            {expandAboutSection ? "Read Less" : "Read More"}
           </div>
+        )}
         </CardDescription>
 
         {/* Location */}

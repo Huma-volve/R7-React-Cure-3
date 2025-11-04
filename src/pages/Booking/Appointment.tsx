@@ -116,7 +116,7 @@ const Appointments: React.FC = () => {
                 <TabsTrigger
                   key={tab}
                   value={tab}
-                  className="cursor-pointer sm:mb-3 px-4 sm:px-6 text-sm sm:text-base text-[#6D7379] font-medium rounded-lg data-[state=active]:bg-[#0056D2] data-[state=active]:text-white data-[state=active]:shadow-sm py-3 lg:py-4"
+                  className="cursor-pointer hover:bg-neutral-50 transition-colors sm:mb-3 px-4 sm:px-6 text-sm sm:text-base text-[#6D7379] font-medium rounded-lg data-[state=active]:bg-primary-600 data-[state=active]:hover:bg-primary-400 data-[state=active]:text-white data-[state=active]:shadow-sm py-3 lg:py-4"
                 >
                   {tab}
                 </TabsTrigger>
@@ -161,7 +161,7 @@ const Appointments: React.FC = () => {
           filteredAppointments.map((appt) => (
             <Card
               key={appt.id}
-              className="pt-1 me-2 pb-5 w-full sm:w-[380px] md:w-[385px] rounded-xl"
+              className="pt-1 me-2 pb-5 bg-background transition-colors hover:bg-neutral-50 w-full sm:w-[380px] md:w-[385px] rounded-xl"
             >
               <CardContent className="w-full">
                 <div className="flex justify-between items-center border-b border-[#B2B7BE] mb-4">
@@ -209,7 +209,8 @@ const Appointments: React.FC = () => {
                   {appt.status === "Upcoming" ? (
                     <>
                       <Button
-                        className="border w-[140px] sm:w-40"
+                        variant='outline'
+                        className="text-primary-400 border-primary-400 w-[140px] sm:w-40"
                         onClick={() => setModalAppt(appt)}
                       >
                         Cancel
@@ -220,7 +221,7 @@ const Appointments: React.FC = () => {
                     </>
                   ) : appt.status === "Completed" ? (
                     <>
-                      <Button className="border w-[140px] sm:w-40">
+                      <Button variant='outline' className="text-primary-400 border-primary-400 w-[140px] sm:w-40">
                         Book again
                       </Button>
                       <Button className="w-[140px] sm:w-40 bg-primary-600">
@@ -229,7 +230,7 @@ const Appointments: React.FC = () => {
                     </>
                   ) : appt.status === "Canceled" ? (
                     <>
-                      <Button className="border w-[140px] sm:w-40">
+                      <Button variant='outline' className="text-primary-400 border-primary-400 w-[140px] sm:w-40">
                         Book again
                       </Button>
                       <Button className="w-[140px] sm:w-40 bg-primary-600">
