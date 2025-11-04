@@ -95,7 +95,7 @@ export default function DoctorDetails() {
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
             <Link to='/doctors'>
-              <img src={GoBackArrow} />
+              <img alt="go back" src={GoBackArrow} />
             </Link>
             <span className="font-serif">Make an appointment</span>
           </div>
@@ -106,7 +106,7 @@ export default function DoctorDetails() {
               <div className="flex items-center gap-2.5">
                 <Popover>
                   <PopoverTrigger>
-                    <img src={BlackCalenderIcon} className="cursor-pointer" />
+                    <img src={BlackCalenderIcon} alt="calendar" className="cursor-pointer" />
                   </PopoverTrigger>
                   <PopoverContent
                     className="w-auto ml-3 sm:ml-0 p-0 shadow-md rounded-lg"
@@ -199,7 +199,7 @@ export default function DoctorDetails() {
             
             <CardFooter className="flex justify-between flex-col md:flex-row gap-3 md:gap-0">
               <div className="flex items-center gap-2">
-                <img src={CalenderIcon} />
+                <img alt="calendar" src={CalenderIcon} />
                   {selectedDate ? (
                     <div>
                       {selectedDate}, {selectedTimeSlot ? selectedTimeSlot : 'Choose a time.'}
@@ -369,9 +369,9 @@ export default function DoctorDetails() {
         <CardFooter className="flex flex-col gap-3 px-4">
           <div className="self-start font-serif font-semibold text-xl">Location</div>
           <div className="relative">
-            <img src="/map.png" className="cursor-pointer rounded-2xl w-[397px] h-[201px]" />
+            <img src="/map.png" alt="map" className="cursor-pointer rounded-2xl w-[397px] h-[201px]" />
             <div className="absolute bg-background rounded-md shadow px-3 py-1 left-3 bottom-5 z-3 flex items-center gap-2">
-              <img src={LocationIcon} className="h-5"/>
+              <img src={LocationIcon} alt="location" className="h-5"/>
               {currentDoctor.location}
             </div>
           </div>

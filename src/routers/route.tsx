@@ -60,6 +60,10 @@ export const router = createBrowserRouter([
         path: 'map',
         element: <Map />,
       },
+      {
+        path:"chat",
+        element:<div>chat page</div>
+      }
     ]
   }
 ]);

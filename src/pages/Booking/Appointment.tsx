@@ -7,6 +7,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import AddReviewDialog from "@/components/reusable/doctor-details/add-review";
 
 
 interface Appointment {
@@ -18,6 +20,7 @@ interface Appointment {
   address: string;
   status: "Upcoming" | "Completed" | "Canceled" | "Pending";
   imageSrc: string;
+  doctorId: number;
 }
 
 const todayString = format(new Date(), "yyyy-MM-dd");
@@ -31,6 +34,8 @@ const appointmentsData: Appointment[] = [
     specialty: "Psychiatrist",
     address: "12 St. Nasr Street, Cairo, Egypt",
     status: "Upcoming",
+        doctorId:5,
+
     imageSrc: "/Ellipse 1538 (1).png",
   },
   {
@@ -40,7 +45,8 @@ const appointmentsData: Appointment[] = [
     doctor: "Dr. Alex Carter",
     specialty: "Dermatologist",
     address: "15 Giza Road, Cairo, Egypt",
-    status: "Completed",
+    status: "Completed",    
+    doctorId:0,
     imageSrc: "/Ellipse 1538 (1).png",
   },
   {
@@ -51,12 +57,14 @@ const appointmentsData: Appointment[] = [
     specialty: "Dentist",
     address: "22 Dokki Street, Giza, Egypt",
     status: "Canceled",
+        doctorId:4,
     imageSrc: "/Ellipse 1538 (1).png",
   },
   {
     id: 4,
     date: todayString,
     time: "10:30 AM",
+    doctorId:5,
     doctor: "Dr. Omar Khaled",
     specialty: "Cardiologist",
     address: "45 Zamalek Street, Cairo, Egypt",
@@ -69,6 +77,7 @@ const STORAGE_KEY = "appointmentsData";
 
 const Appointments: React.FC = () => {
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = React.useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : appointmentsData;
@@ -217,7 +226,7 @@ const Appointments: React.FC = () => {
                       >
                         Cancel
                       </Button>
-                      <Button className="w-[140px] sm:w-40 bg-primary-600">
+                      <Button onClick={() => navigate(`/doctors/${appt.doctorId}`)} className="w-[140px] sm:w-40 bg-primary-600">
                         Reschedule
                       </Button>
                     </>
@@ -226,16 +235,34 @@ const Appointments: React.FC = () => {
                       <Button onClick={() => navigate(`/`)} className="border w-[140px] sm:w-40">
                         Book again
                       </Button>
-                      <Button className="w-[140px] sm:w-40 bg-primary-600">
+                            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    className="w-[140px] sm:w-40 bg-primary-600"
+                                    onClick={() => setOpenDialog(true)}
+                                  >
+                                    Feedback
+                                  </Button>
+                                </DialogTrigger>
+
+                                <DialogContent className="max-w-lg">
+                                  <AddReviewDialog
+                                    doctorId={appt.doctorId}
+                                    closeDialog={() => setOpenDialog(false)}
+                                  />
+                                </DialogContent>
+                              </Dialog>
+
+                      {/* <Button className="w-[140px] sm:w-40 bg-primary-600">
                         Feedback
-                      </Button>
+                      </Button> */}
                     </>
                   ) : appt.status === "Canceled" ? (
                     <>
-                      <Button className="border w-[140px] sm:w-40">
+                      <Button onClick={() => navigate(`/doctors/${appt.id}/booking`)} className="border w-[140px] sm:w-40">
                         Book again
                       </Button>
-                      <Button className="w-[140px] sm:w-40 bg-primary-600">
+                      <Button onClick={() => navigate(`/chat`)} className="w-[140px] sm:w-40 bg-primary-600">
                         Support
                       </Button>
                     </>
