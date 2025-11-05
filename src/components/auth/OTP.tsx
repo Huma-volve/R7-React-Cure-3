@@ -7,24 +7,29 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useEffect, useState, useRef } from "react";
+import { useOTP } from "@/hooks/auth/useOTP";
+import { useSelector } from "react-redux";
+import { type RootState } from "@/redux/store"; 
 
 const schema = z.object({
+  email: z.string(),
   otp: z
     .string()
-    .length(6, { message: "OTP must be 6 digits" })
-    .refine((val) => val === "123456", { message: "OTP is wrong" }),
+    .length(4, { message: "OTP must be 4 digits" })
+    .refine((val) => val === "1234", { message: "OTP is wrong" }),
 });
 
 type OTPForm = z.infer<typeof schema>;
 
 export const OTP = () => {
-  const { control, handleSubmit, formState: { errors } } = useForm<OTPForm>({
+  const {register, control, handleSubmit, formState: { errors } } = useForm<OTPForm>({
     resolver: zodResolver(schema),
   });
 
   const [secondsLeft, setSecondsLeft] = useState<number>(60);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const email = useSelector((state: RootState) => state.auth.user?.email);
 
 
   const startTimer = () => {
@@ -53,8 +58,9 @@ export const OTP = () => {
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
 
-  const onSubmit = (data: OTPForm) => console.log(data);
+  const otpMutation = useOTP();
 
+  const onSubmit = (data: OTPForm) => otpMutation.mutate(data);
   const handleResend = () => {
     startTimer(); 
   };
@@ -65,10 +71,18 @@ export const OTP = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md bg-white shadow-md rounded-lg p-6 space-y-4"
       >
+        
         <h1 className="text-2xl font-semibold text-gray-800 text-center">
           OTP Code Verification
         </h1>
         <p>Code has been sent to +02 010 *** **88</p>
+        <input
+  {...register("email")}
+  value={email || ""}
+  readOnly
+  className="w-full border border-gray-300 rounded-md p-2 bg-gray-100 text-gray-600 cursor-not-allowed"
+/>
+
 
         <div className="flex justify-center">
         <Controller

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useLogout } from "@/hooks/useLogout";
+import { useLogout } from "@/hooks/auth/useLogout";
 
 export const LogoutButton = () => {
   const { mutate: handleLogout, isPending } = useLogout();
