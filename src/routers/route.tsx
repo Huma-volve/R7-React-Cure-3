@@ -8,6 +8,7 @@ import { SignupPage } from '@/pages/auth/SignupPage';
 import { SignInPage } from '@/pages/auth/SignInPage';
 import { OTPpage } from '@/pages/auth/OTPpage';
 import { ProfileMain } from '@/pages/profile/ProfileMain';
+import { ForgetPassword } from '@/pages/ForgetPassword';
 import Chat from '@/pages/Chat/Chat';
 
 
@@ -38,8 +39,12 @@ export const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: 'forget-password',
+        path: 'verify-account',
         element: <OTPpage />,
+      },
+      {
+        path: 'forget-password',
+        element: <ForgetPassword />,
       },
       {
         path: 'doctors',

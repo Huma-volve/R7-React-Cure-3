@@ -5,7 +5,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import googleIcon from "/google-icon.svg";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { useLogin } from "@/hooks/useLogin"; 
+import { useLogin } from "@/hooks/auth/useLogin"; 
 
 const passwordSchema = z
   .string()

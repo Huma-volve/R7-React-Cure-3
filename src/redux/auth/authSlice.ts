@@ -16,7 +16,7 @@ interface PatientInfo {
   medical_notes: string | null
 }
 
- export interface User {
+export interface User {
   id: number
   name: string
   email: string
@@ -44,9 +44,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginSuccess: (state, action: PayloadAction<{ response: { 0: User; token: string } }>) => {
-      state.user = action.payload.response[0]
-      state.token = action.payload.response.token
+    loginSuccess: (state, action: PayloadAction<{ user: User; token: string }>) => {
+      state.user = action.payload.user
+      state.token = action.payload.token
       state.isAuthenticated = true
     },
     logout: (state) => {
