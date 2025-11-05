@@ -9,11 +9,6 @@ import {
   Mic as MicIcon,
 } from "lucide-react";
 
-// interface User {
-//   id: string;
-//   name: string;
-//   avatar: string;
-// }
 interface MessageFile {
   name: string;
   type: string;
