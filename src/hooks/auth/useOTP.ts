@@ -19,7 +19,8 @@ interface VerificationResponse {
 }
 
 const otpVerificationRequest = async (payload: OtpPayload): Promise<VerificationResponse> => {
-  const {data}= await api.post<VerificationResponse>("/verify-otp", payload);
+  console.log("🧾 otp payload:", payload);
+  const {data}= await api.post<VerificationResponse>("/verifyEmailOtp", payload);
   return data;
 };
 

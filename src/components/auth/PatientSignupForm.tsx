@@ -164,7 +164,7 @@ export const PatientSignupForm = () => {
 
             <div className="flex flex-col">
               <div className="flex gap-2">
-            <input type="checkbox" />
+            <input {...register("privacyPolicy")} type="checkbox" />
            <label className="text-sm">I agree to the <a href="#" className="text-[#145DB8]">Terms of Service</a> and <a href="#"  className="text-[#145DB8]">Privacy Policy</a></label></div>
            {errors.privacyPolicy && <span className="text-start text-[#fc4b4e] text-sm ml-1">{errors.privacyPolicy.message}</span>}
             </div>

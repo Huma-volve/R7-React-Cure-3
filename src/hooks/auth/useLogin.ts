@@ -35,6 +35,7 @@ interface LogInResponse {
 type authResponse = RegistrationResponse | VerificationResponse | LogInResponse
 
 const loginRequest = async (payload: LoginPayload): Promise<authResponse> => {
+  console.log("🧾 signin payload:", payload);
   const { data } = await api.post<authResponse>("/login", payload);
   return data;
 };
