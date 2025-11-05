@@ -8,6 +8,9 @@ import { SignupPage } from '@/pages/auth/SignupPage';
 import { SignInPage } from '@/pages/auth/SignInPage';
 import { OTPpage } from '@/pages/auth/OTPpage';
 import { ProfileMain } from '@/pages/profile/ProfileMain';
+import Chat from '@/pages/Chat/Chat';
+
+
 
 // Lazily loaded
 const DoctorsPage = lazy(() => import('@/pages/DoctorsPage'));
@@ -77,6 +80,10 @@ export const router = createBrowserRouter([
           <PaymentConfirmationPage />
         </Suspense>,
       },
+      {
+        path:"chat",
+        element:<Chat />
+      }
     ]
   }
 ]);
