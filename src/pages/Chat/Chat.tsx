@@ -256,7 +256,6 @@ export default function Chat(): JSX.Element {
         if (e.data && e.data.size > 0) chunks.push(e.data);
       };
 
-      // ✅ FIXED SECTION — convert audio blob to Base64 so it persists after refresh
       mediaRecorder.onstop = async () => {
         if (chunks.length === 0) return;
         const blob = new Blob(chunks, { type: "audio/webm" });

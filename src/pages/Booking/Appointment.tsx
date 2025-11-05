@@ -94,7 +94,6 @@ const Appointments: React.FC = () => {
         const apiData: ApiAppointment[] = res.data.data.data;
 
         const formattedAppointments: Appointment[] = apiData.map((item) => {
-  // Parse the MySQL-style datetime string properly
   const parsedDate = parse(item.date_time, "yyyy-MM-dd HH:mm:ss", new Date());
 
   return {
