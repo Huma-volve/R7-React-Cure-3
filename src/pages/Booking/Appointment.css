@@ -1,0 +1,46 @@
+.canceling-button {
+    color: #6b7280; /* Tailwind's gray-500 */
+    border: 1px solid #6b7280;
+    cursor: pointer;
+}
+
+.canceling-button:hover {
+    color: #374151;
+    border-color: #374151;
+    cursor: pointer;
+}
+.canceling-button:disabled {
+    background-color: #e5e7eb; /* Tailwind's gray-200 */
+    color: #9ca3af; /* Tailwind's gray-400 */
+    border-color: #9ca3af;
+    cursor: not-allowed;
+}
+.reschedule-button {
+    background-color: #2563eb; /* Tailwind's blue-600 */
+    color: #ffffff;
+    cursor: pointer;
+}
+.reschedule-button:hover {
+    background-color: #1d4ed8; /* Tailwind's blue-700 */
+    cursor: pointer;
+}
+.reschedule-button:disabled {
+    background-color: #e0e7ff; /* Tailwind's blue-200 */
+    color: #9ca3af; /* Tailwind's gray-400 */
+    cursor: not-allowed;
+}
+.reschedule-modal .modal-content {
+    padding: 1.5rem;
+}
+.reschedule-modal .modal-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+.reschedule-modal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
