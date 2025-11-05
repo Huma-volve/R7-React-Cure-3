@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { format , parse, parse} from "date-fns";
+import { format , parse} from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import AddReviewDialog from "@/components/reusable/doctor-details/add-review";
@@ -32,12 +32,7 @@ interface ApiAppointment {
   status_label: string;
   doctor?: Doctor;
 }
-import { format , parse} from "date-fns";
-import { useNavigate } from "react-router-dom";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
-import AddReviewDialog from "@/components/reusable/doctor-details/add-review";
-import axios from "axios";
-import "./Appointment.css"
+
 
 interface DoctorUser {
   name?: string;
