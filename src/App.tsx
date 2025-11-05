@@ -1,12 +1,17 @@
-import { Outlet } from "react-router-dom"
-import Navbar from "./components/reusable/Navbar"
+import { Outlet, useLocation } from "react-router-dom";
+import Navbar from "./components/reusable/Navbar";
 
 export default function App() {
+  const location = useLocation();
+  const hideNavbarOn = ["/chat"];
+  const shouldHideNavbar = hideNavbarOn.some((path) =>
+    location.pathname.startsWith(path)
+  );
 
   return (
-    <main className='mx-5 my-5'>
-      <Navbar/>
+    <main>
+      {!shouldHideNavbar && <Navbar />}
       <Outlet />
     </main>
-  )
+  );
 }
