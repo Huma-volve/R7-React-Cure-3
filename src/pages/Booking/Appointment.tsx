@@ -5,7 +5,33 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { format , parse} from "date-fns";
+import { format , parse, parse} from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import AddReviewDialog from "@/components/reusable/doctor-details/add-review";
+import axios from "axios";
+import "./Appointment.css"
+
+interface DoctorUser {
+  name?: string;
+  profile_photo?: string | null;
+}
+
+interface Doctor {
+  id?: number;
+  specialty?: string;
+  clinic_address?: string;
+  user?: DoctorUser;
+}
+
+interface ApiAppointment {
+  id: number;
+  booking_id?: number;
+  date_time: string;
+  date_time_formatted: string;
+  status_label: string;
+  doctor?: Doctor;
+}
 import { format , parse} from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
@@ -50,7 +76,6 @@ const API_URL = "https://round7-cure.huma-volve.com/api";
 
 const Appointments: React.FC = () => {
   const navigate = useNavigate();
-  const [openDialog, setOpenDialog] = React.useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filter, setFilter] = useState<"All" | "Upcoming" | "Completed" | "Canceled" | "Pending">("All");
