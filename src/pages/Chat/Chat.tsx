@@ -9,11 +9,11 @@ import {
   Mic as MicIcon,
 } from "lucide-react";
 
-interface User {
-  id: string;
-  name: string;
-  avatar: string;
-}
+// interface User {
+//   id: string;
+//   name: string;
+//   avatar: string;
+// }
 interface MessageFile {
   name: string;
   type: string;
@@ -139,7 +139,6 @@ const fakeAPI = {
     if (!db.messages[msg.conversationId]) db.messages[msg.conversationId] = [];
     db.messages[msg.conversationId].push(newMsg);
 
-    // ✅ Determine lastMessage preview
     const conv = db.conversations.find(
       (c: any) => c.id === msg.conversationId
     );
@@ -441,8 +440,8 @@ export default function Chat(): JSX.Element {
                             download={m.file.name}
                             onClick={(e) => {
                               if (
-                                m.file.url.startsWith("blob:") ||
-                                m.file.url.startsWith("data:")
+                                m.file?.url.startsWith("blob:") ||
+                                m.file?.url.startsWith("data:")
                               ) {
                                 e.preventDefault();
                                 const link = document.createElement("a");
