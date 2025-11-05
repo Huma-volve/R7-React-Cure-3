@@ -77,7 +77,7 @@ const Appointments: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [modalAppt, setModalAppt] = useState<Appointment | null>(null);
   const [rescheduleModal, setRescheduleModal] = useState<Appointment | null>(null);
-  const [selectedRescheduleDate, setSelectedRescheduleDate] = useState<Date | null>(null);
+  const [selectedRescheduleDate, setSelectedRescheduleDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [loading, setLoading] = useState(true);
 

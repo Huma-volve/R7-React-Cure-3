@@ -36,8 +36,21 @@ interface Conversation {
   name: string;
   user_id: string;
 }
+interface FakeDB {
+  users: {
+    [key: string]: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+  };
+  conversations: Conversation[];
+  messages: {
+    [conversationId: string]: Message[];
+  };
+}
 
-const initialFakeDB = {
+const initialFakeDB: FakeDB = {
   users: {
     me: { id: "me", name: "You", avatar: "public/Ellipse 1538 (1).png" },
     doctor: {
@@ -118,7 +131,7 @@ function loadFakeDB() {
   }
   return initialFakeDB;
 }
-function saveFakeDB(db: any) {
+function saveFakeDB(db: FakeDB) {
   try {
     localStorage.setItem("chatAppDB", JSON.stringify(db));
   } catch (err) {
@@ -127,9 +140,9 @@ function saveFakeDB(db: any) {
 }
 
 const fakeAPI = {
-  fetchConversations: async (db: any) => db.conversations,
-  fetchMessages: async (db: any, id: string) => db.messages[id] || [],
-  sendMessage: async (db: any, msg: Message) => {
+  fetchConversations: async (db: FakeDB) => db.conversations,
+  fetchMessages: async (db: FakeDB, id: string) => db.messages[id] || [],
+  sendMessage: async (db: FakeDB, msg: Message) => {
     await new Promise((r) => setTimeout(r, 200));
     const newMsg = {
       ...msg,
@@ -140,7 +153,7 @@ const fakeAPI = {
     db.messages[msg.conversationId].push(newMsg);
 
     const conv = db.conversations.find(
-      (c: any) => c.id === msg.conversationId
+      (c: Conversation) => c.id === msg.conversationId
     );
     if (conv) {
       if (msg.file) {
