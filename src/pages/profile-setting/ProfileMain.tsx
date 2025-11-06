@@ -1,4 +1,4 @@
-import ProfileSettings from "@/components/profile/main"
+import ProfileSettings from "@/components/profile-setting/main"
 
 export const ProfileMain = () => {
   return (

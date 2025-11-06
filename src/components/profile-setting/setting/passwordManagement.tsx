@@ -1,9 +1,11 @@
-import {useForm, type SubmitHandler} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {z} from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useChangePassword } from "@/hooks/profile-setting/useChangePassword";
+
 
 const passwordSchema = z
   .string()
@@ -13,17 +15,29 @@ const passwordSchema = z
   .regex(/[^A-Za-z0-9]/, { message: "Password must contain at least one special character" });
 
 const schema = z.object({
-currentPassword: passwordSchema,
-newPassword: passwordSchema,
+current_password: passwordSchema,
+password: passwordSchema,
 confirmNewPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmNewPassword , {message: "Passwords do not match"}
+}).refine((data) => data.password === data.confirmNewPassword , {message: "Passwords do not match"}
 );
 
 type FormField=z.infer<typeof schema>;
 
 export const PasswordManagement = () => {
+  const changePasswordMutation = useChangePassword();
+
   const {register, handleSubmit, formState: { errors }}=useForm<FormField>({resolver: zodResolver(schema),});
-  const onSubmit: SubmitHandler<FormField> = data => console.log(data);
+  
+// Inside PasswordManagement.tsx
+
+const onSubmit = (data: FormField) => {
+  changePasswordMutation.mutate({
+      current_password: data.current_password, 
+      password: data.password,
+      _method: "PUT",
+    });
+  
+};
 
   return (
     <div >
@@ -34,14 +48,14 @@ export const PasswordManagement = () => {
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col">
-            <Input className="border-gray-400" placeholder="Current password" {...register("currentPassword")} />
-            {errors.currentPassword && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.currentPassword.message}</span>}
+            <Input className="border-gray-400" placeholder="Current password" {...register("current_password")} />
+            {errors.current_password && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.current_password.message}</span>}
           </div>
 
         
           <div className="flex flex-col">
-            <Input className="border-gray-400" placeholder="New password" type="password" {...register("newPassword")} />
-            {errors.newPassword && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.newPassword.message}</span>}
+            <Input className="border-gray-400" placeholder="New password" type="password" {...register("password")} />
+            {errors.password && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.password.message}</span>}
           </div>
 
           

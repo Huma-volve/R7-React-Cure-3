@@ -22,6 +22,7 @@ export interface User {
   email: string
   mobile: string
   birthdate: string
+  gender?: 'male' | 'female'
   profile_photo: string | null
   role: 'doctor' | 'patient' | 'admin'
   doctor?: DoctorInfo

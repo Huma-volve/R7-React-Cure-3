@@ -4,6 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
 import googleIcon from "/google-icon.svg";
 import { format } from "date-fns"
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
@@ -47,6 +50,7 @@ const schema = z.object({
             birthdate: birthDate,
   password: passwordSchema,
   confirmPassword: z.string(),
+  gender:z.enum(["male", "female"]).optional(),
   privacyPolicy: z.boolean().refine(val => val === true, {
     message: "You must agree to the Privacy Policy",
   }),
@@ -150,6 +154,39 @@ export const PatientSignupForm = () => {
     />
     {/* Display error message if it exists */}
     {errors.birthdate && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.birthdate.message}</span>}
+</div>
+
+
+
+<div className="flex flex-col space-y-2">
+  <Label htmlFor="gender">Gender</Label>
+
+  <Controller
+    control={control}
+    name="gender"
+    render={({ field }) => (
+      <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <SelectTrigger
+          className={cn(
+            "bg-gray-100 border-0 focus:ring-2 focus:ring-blue-500",
+            errors.gender && "border-red-500 focus:ring-red-500"
+          )}
+        >
+          <SelectValue placeholder="Select gender" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="male">Male</SelectItem>
+          <SelectItem value="female">Female</SelectItem>
+        </SelectContent>
+      </Select>
+    )}
+  />
+
+  {errors.gender && (
+    <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">
+      {errors.gender.message}
+    </span>
+  )}
 </div>
 
             <div className="flex flex-col">

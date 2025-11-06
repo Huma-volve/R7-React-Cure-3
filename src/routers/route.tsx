@@ -7,9 +7,12 @@ import PageSkeleton from '@/components/reusable/PageSkeleton';
 import { SignupPage } from '@/pages/auth/SignupPage';
 import { SignInPage } from '@/pages/auth/SignInPage';
 import { OTPpage } from '@/pages/auth/OTPpage';
-import { ProfileMain } from '@/pages/profile/ProfileMain';
+import { ProfileMain } from '@/pages/profile-setting/ProfileMain';
 import { ForgetPassword } from '@/pages/ForgetPassword';
+import { ResetPassword } from '@/pages/auth/ResetPassword';
+import { ForgetPasswordOTPPage } from '@/pages/auth/ForgetPasswordOTP';
 import Chat from '@/pages/Chat/Chat';
+
 
 
 
@@ -45,6 +48,14 @@ export const router = createBrowserRouter([
       {
         path: 'forget-password',
         element: <ForgetPassword />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPassword/>,
+      },
+      {
+        path: 'forget-password-otp',
+        element: <ForgetPasswordOTPPage/>,
       },
       {
         path: 'doctors',
