@@ -11,6 +11,9 @@ import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import AddReviewDialog from "@/components/reusable/doctor-details/add-review";
 import axios from "axios";
 import "./Appointment.css"
+import {  useSelector } from "react-redux";
+import { type RootState } from "@/redux/store"; 
+
 
 interface DoctorUser {
   name?: string;
@@ -81,7 +84,7 @@ const Appointments: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  const token = "z4cv8c2HFESX2sFsVZBOFJNhbOPx0seTHRu7oa3nc4f421f9";
+const token = useSelector((state: RootState) => state.auth.token);
 
 
   useEffect(() => {
@@ -125,7 +128,7 @@ const Appointments: React.FC = () => {
       }
     };
     fetchAppointments();
-  }, []);
+  }, [token]);
 
  
   const handleConfirmCancel = async () => {
