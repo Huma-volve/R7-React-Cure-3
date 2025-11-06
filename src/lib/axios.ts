@@ -13,7 +13,7 @@ api.interceptors.request.use((config) => {
   const token = store.getState().auth?.token; // read token from Redux
 
   // If a token exists and the request did not disable auth, add it
-  if (token && config.auth) {
+  if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 

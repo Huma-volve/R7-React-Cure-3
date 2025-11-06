@@ -7,12 +7,13 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useEffect, useState, useRef } from "react";
-import { useOTP } from "@/hooks/auth/useOTP";
+import { useVerifyForgetPassword } from "@/hooks/auth/useForgetPassword";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store"; 
+import { useDispatch } from "react-redux";
+import {setOtp} from "@/redux/auth/forgotPasswordSlice";
 
 const schema = z.object({
-  email: z.string(),
   otp: z
     .string()
     .length(4, { message: "OTP must be 4 digits" })
@@ -20,15 +21,17 @@ const schema = z.object({
 
 type OTPForm = z.infer<typeof schema>;
 
-export const OTP = () => {
-  const {register, control, handleSubmit, formState: { errors } } = useForm<OTPForm>({
-    resolver: zodResolver(schema),
+export const ForgetPasswordOTP = () => {
+
+  const email = useSelector((state: RootState) => state.forgetPassword.email);
+  const { control, handleSubmit, formState: { errors } } = useForm<OTPForm>({
+    resolver: zodResolver(schema)
   });
 
   const [secondsLeft, setSecondsLeft] = useState<number>(60);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const email = useSelector((state: RootState) => state.auth.user?.email);
+  
 
 
   const startTimer = () => {
@@ -57,9 +60,17 @@ export const OTP = () => {
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
 
-  const otpMutation = useOTP();
-
-  const onSubmit = (data: OTPForm) => otpMutation.mutate(data);
+  const otpMutation = useVerifyForgetPassword();
+  const dispatch = useDispatch();
+  const onSubmit = (data: OTPForm) => {
+    if (email) { 
+      otpMutation.mutate({
+        email: email, 
+        otp: data.otp, 
+      });
+      dispatch(setOtp(data.otp));}
+    
+  };
   const handleResend = () => {
     startTimer(); 
   };
@@ -74,14 +85,9 @@ export const OTP = () => {
         <h1 className="text-2xl font-semibold text-gray-800 text-center">
           OTP Code Verification
         </h1>
+        
         <p>Code has been sent to +02 010 *** **88</p>
-        <input
-  {...register("email")}
-  value={email || ""}
-  readOnly
-  className="w-full border border-gray-300 rounded-md p-2 bg-gray-100 text-gray-600 cursor-not-allowed"
-/>
-
+        
 
         <div className="flex justify-center">
         <Controller

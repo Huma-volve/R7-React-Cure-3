@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import doctorsReducer from "./doctorsSlice";
 import authReducer from "./auth/authSlice";
+import forgetPasswordReducer from "./auth/forgotPasswordSlice";
 
 import {
   persistStore,
@@ -29,6 +30,7 @@ export const store = configureStore({
   reducer: {
     doctors: doctorsReducer,
     auth: persistedAuthReducer,
+    forgetPassword:forgetPasswordReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

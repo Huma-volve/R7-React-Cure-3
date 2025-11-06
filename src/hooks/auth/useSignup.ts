@@ -3,6 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import api from "@/lib/axios";
 import type { User } from "@/redux/auth/authSlice";
 import { toast } from "sonner"
+import { useDispatch } from "react-redux";
+import { normalizeAuthResponse } from "@/lib/authNormalizer";
+import { loginSuccess } from "@/redux/auth/authSlice";
 
 interface SignupPayload {
   name: string;
@@ -41,10 +44,13 @@ const signupRequest = async (payload: SignupPayload): Promise<authResponse> => {
 
 export const useSignup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
   return useMutation({
     mutationFn: signupRequest,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      const normalizedData = normalizeAuthResponse(response);
+      dispatch(loginSuccess(normalizedData));
       navigate("/verify-account");
       toast.success("Signup successful! Please verify your email.");
     },
