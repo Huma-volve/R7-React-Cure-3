@@ -13,6 +13,7 @@ interface SignupPayload {
   mobile: string;
   birthdate: string;
   password: string;
+  gender?: 'male' | 'female'
 }
 
 interface RegistrationResponse {
