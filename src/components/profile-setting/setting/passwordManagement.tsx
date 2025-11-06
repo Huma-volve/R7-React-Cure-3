@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useChangePassword } from "@/hooks/auth/useChangePassword";
+import { useChangePassword } from "@/hooks/profile-setting/useChangePassword";
 
 
 const passwordSchema = z
