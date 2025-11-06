@@ -88,10 +88,16 @@ export const SignIn = () => {
             </Button>
           </form>
 
-          <Button className="w-full flex items-center justify-center gap-2 border mt-5 bg-white text-black">
-            <img src={googleIcon} alt="Google logo" className="w-5 h-5" />
-            Sign in with Google
-          </Button>
+          <a 
+  href="https://accounts.google.com/v3/signin/accountchooser?dsh=S2064670113%3A1762466372533891&elo=1&ifkv=ARESoU1kk6R-3OWzfij6pvamMf042bcBE0T330AKbfPOnuiw7RIr6Sy0kbR_GCwEro9z3BiMY2vLhQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <Button className="w-full flex items-center justify-center gap-2 border hover:cursor-pointer mt-5 bg-[#ffffff] hover:bg-[#ffffff] text-black">
+    <img src={googleIcon} alt="Google logo" className="w-5 h-5" />
+    Sign Up with Google
+  </Button>
+</a>
 
           <a
             className="block text-[#145DB8] mt-2 text-sm"
