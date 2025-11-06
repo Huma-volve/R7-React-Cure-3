@@ -11,6 +11,10 @@ import { ProfileMain } from '@/pages/profile-setting/ProfileMain';
 import { ForgetPassword } from '@/pages/ForgetPassword';
 import { ResetPassword } from '@/pages/auth/ResetPassword';
 import { ForgetPasswordOTPPage } from '@/pages/auth/ForgetPasswordOTP';
+import Chat from '@/pages/Chat/Chat';
+
+
+
 
 // Lazily loaded
 const DoctorsPage = lazy(() => import('@/pages/DoctorsPage'));
@@ -92,6 +96,10 @@ export const router = createBrowserRouter([
           <PaymentConfirmationPage />
         </Suspense>,
       },
+      {
+        path:"chat",
+        element:<Chat />
+      }
     ]
   }
 ]);
