@@ -1,5 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Georgian:wght@100..900&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -16,7 +21,9 @@
     scroll-behavior: smooth;
   }
 }
-
+h1{
+  font-family: "Noto Serif Georgian", serif;
+}
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.007 278.5);

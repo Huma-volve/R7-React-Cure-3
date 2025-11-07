@@ -1,87 +1,136 @@
-import React from "react";
-import { Heart, Star, Clock } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Heart } from "lucide-react";
 import { useNavigate } from "react-router";
+import DoctorCard from "@/components/reusable/DoctorCard";
 
 interface FavoriteItem {
   id: number;
-  name: string;
-  specialty: string;
-  hospital: string;
-  rating: number;
-  time: string;
+  user: { name: string; profile_photo: string | null };
+  specialty: { name: string };
+  clinic_address: string;
+  average_rating: number;
+  session_price: string;
 }
 
-const favorites: FavoriteItem[] = [
-  {
-    id: 1,
-    name: "Robert Johnson",
-    specialty: "Orthopedic",
-    hospital: "El-Nasr Hospital",
-    rating: 4.8,
-    time: "9:30am - 8:00pm",
-  },
-  {
-    id: 2,
-    name: "Sarah Miller",
-    specialty: "Cardiologist",
-    hospital: "Cairo Heart Center",
-    rating: 4.9,
-    time: "10:00am - 6:00pm",
-  },
-  {
-    id: 3,
-    name: "John Smith",
-    specialty: "Dentist",
-    hospital: "Smiles Clinic",
-    rating: 4.7,
-    time: "8:00am - 4:00pm",
-  },
-  {
-    id: 3,
-    name: "John Smith",
-    specialty: "Dentist",
-    hospital: "Smiles Clinic",
-    rating: 4.7,
-    time: "8:00am - 4:00pm",
-  }, 
-  {
-    id: 3,
-    name: "John Smith",
-    specialty: "Dentist",
-    hospital: "Smiles Clinic",
-    rating: 4.7,
-    time: "8:00am - 4:00pm",
-  },
-  {
-    id: 3,
-    name: "John Smith",
-    specialty: "Dentist",
-    hospital: "Smiles Clinic",
-    rating: 4.7,
-    time: "8:00am - 4:00pm",
-  },
-];
+interface FormattedFavorite {
+  id: number;
+  name: string;
+  specialty: string;
+  clinic: string;
+  rating: number;
+  time: string;
+  price: number;
+  image: string;
+  isFavorite: boolean;
+}
 
 const FavoritePage: React.FC = () => {
-  const navigate =useNavigate()
+  const navigate = useNavigate();
+  const [favorites, setFavorites] = useState<FormattedFavorite[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const token = "s9iLbmOm7YfR82m1Uw5m7y8RfXoEXXtrJVaV1ChCabb64743";
+
+  const fetchFavorites = async () => {
+    try {
+      const response = await axios.get(
+        "https://round7-cure.huma-volve.com/api/favorites",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const rawData = response.data?.data?.favorites || [];
+
+      const formattedData: FormattedFavorite[] = rawData.map(
+        (item: FavoriteItem) => ({
+          id: item.id,
+          name: item.user?.name || "Unknown Doctor",
+          specialty: item.specialty?.name || "Unknown Specialty",
+          clinic: item.clinic_address || "Not specified",
+          rating: item.average_rating || 0,
+          time: "Available",
+          price: Number(item.session_price) || 0,
+
+          // ✅ هنا التعديل — fallback للصورة
+          image:
+            item.user?.profile_photo && item.user.profile_photo !== "null"
+              ? item.user.profile_photo
+              : "avatar.PNG",
+
+          isFavorite: true,
+        })
+      );
+
+      setFavorites(formattedData);
+      setLoading(false);
+    } catch (error) {
+      console.error("❌ Error fetching favorites:", error);
+      setLoading(false);
+    }
+  };
+
+  const toggleFavorite = (doctorId: number) => {
+    setFavorites((prev) => prev.filter((item) => item.id !== doctorId));
+
+    axios
+      .post(
+        `https://round7-cure.huma-volve.com/api/favorites/toggle/${doctorId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      .catch(() => {
+        // ❌ لو حصل Error نرجع الداتا تاني من السيرفر
+        fetchFavorites();
+      });
+  };
+
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
+
   const hasFavorites = favorites.length > 0;
 
   return (
-    <div className="min-h-scree md:px-0 py-10">
-      {/* Header */}
-      <div className="max-w-6xl mx-auto flex items-center justify-between mb-10">
+    <div className="min-h-screen px-3 md:px-14 py-10">
+      <div className="w-full mx-auto flex items-center justify-between mb-10">
         <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
           Your Favorites
         </h1>
-        <button className="text-gray-600 hover:text-gray-900 transition"
-         onClick={() => navigate(-1)}>
+        <button
+          className="text-gray-600 hover:text-gray-900 transition"
+          onClick={() => navigate(-1)}
+        >
           ← Back
         </button>
       </div>
 
-      {/* Empty State */}
-      {!hasFavorites && (
-        <div className="flex flex-col items-center justify-center h-[70vh] text-center">
+       {/* 💨 Skeleton Loading */}
+      {loading && (
+        <div className="w-full mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="bg-gray-100 animate-pulse rounded-2xl p-6 h-64 flex flex-col justify-between shadow-sm"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg" />
+                <div className="flex-1 space-y-3">
+                  <div className="h-4 bg-gray-300 rounded w-3/4" />
+                  <div className="h-3 bg-gray-300 rounded w-1/2" />
+                  <div className="h-3 bg-gray-300 rounded w-2/3" />
+                </div>
+              </div>
+              <div className="h-4 bg-gray-300 rounded w-1/3 mt-6" />
+            </div>
+          ))}
+        </div>
+      )}
+
+       {/* 🩶 Empty */}
+      {!loading && !hasFavorites && (
+        <div className="flex flex-col items-center justify-center  h-[70vh] text-center">
           <div className="relative">
             <Heart className="w-24 h-24 text-red-400" />
             <div className="absolute w-6 h-6 bg-red-100 rounded-full top-6 left-10 animate-ping" />
@@ -96,38 +145,15 @@ const FavoritePage: React.FC = () => {
         </div>
       )}
 
-      {/* Favorites List */}
-      {hasFavorites && (
-        <div className="max-w-6xl mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {!loading && hasFavorites && (
+        <div className="w-full mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {favorites.map((item) => (
-            <div
+            <DoctorCard
               key={item.id}
-              className="bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300 p-6 flex flex-col justify-between"
-            >
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                  {item.name}
-                </h3>
-                <p className="text-sm text-gray-500 mb-3">
-                  {item.specialty} | {item.hospital}
-                </p>
-
-                <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <Star className="w-4 h-4 text-yellow-400" /> {item.rating}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" /> {item.time}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex justify-end mt-4">
-                <button className="text-red-500 hover:scale-110 transition-transform">
-                  <Heart fill="currentColor" className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
+              {...item}
+              onToggleFavorite={toggleFavorite}
+              showBookingButton={false}
+            />
           ))}
         </div>
       )}

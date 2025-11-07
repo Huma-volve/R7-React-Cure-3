@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import '@/styles/index.css';
 // Providers
@@ -8,9 +7,7 @@ import { store } from '@/redux/store.ts';
 import { router } from '@/routers/route.tsx';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
     <ReduxProvider store={store}>
       <RouterProvider router={router}/>
     </ReduxProvider>
-  </StrictMode>,
 )

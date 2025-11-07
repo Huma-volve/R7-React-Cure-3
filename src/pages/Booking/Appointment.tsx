@@ -192,9 +192,9 @@ const Appointments: React.FC = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                     <div>
-                      <h3 className="font-semibold mb-1 text-[#33384B] text-sm sm:text-base">
+                      <h1 className="font-semibold mb-1 text-[#33384B] text-sm sm:text-base">
                         {appt.doctor}
-                      </h3>
+                      </h1>
                       <p className="text-[#6D7379] text-sm">{appt.specialty}</p>
                     </div>
                   </div>

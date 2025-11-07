@@ -166,7 +166,7 @@ export default function DoctorDetails() {
 
         {/* Reviews section */}
         <div className="flex items-center justify-between mt-10">
-          <h3 className="text-xl font-semibold font-serif">Reviews & Ratings</h3>
+          <h1 className="text-xl font-semibold font-serif">Reviews & Ratings</h1>
 
           <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger>
@@ -227,7 +227,7 @@ export default function DoctorDetails() {
                         alt={`Review of ${rev.name}`}
                       />
                       <div className="flex flex-col gap-1">
-                        <h3>{rev.name}</h3>
+                        <h1>{rev.name}</h1>
                         <p className="text-muted-foreground text-sm">{rev.time}</p>
                       </div>
                     </div>
@@ -296,7 +296,7 @@ export default function DoctorDetails() {
 
         {/* About Section */}
         <CardDescription className="px-4">
-          <h3 className="text-xl font-semibold mb-3 text-foreground font-serif">About Me</h3>
+          <h1 className="text-xl font-semibold mb-3 text-foreground font-serif">About Me</h1>
           <p className="leading-relaxed text-muted-foreground max-w-3xl">
             {currentDoctor.about}
           </p>
