@@ -2,17 +2,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import doctorsReducer from "./doctorsSlice";
 import authReducer from "./auth/authSlice";
 import forgetPasswordReducer from "./auth/forgotPasswordSlice";
+import newMobileReducer from "./edit-profile/newPhone";
+import SignWithPhoneReducer from "./auth/signinPhoneSlice";
 
-import {
-  persistStore,
-  persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from "redux-persist";
+import {persistStore,persistReducer,FLUSH,REHYDRATE,PAUSE,PERSIST,PURGE,REGISTER,} from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 
 
@@ -31,6 +24,8 @@ export const store = configureStore({
     doctors: doctorsReducer,
     auth: persistedAuthReducer,
     forgetPassword:forgetPasswordReducer,
+    newMobile: newMobileReducer,
+    signWithPhone: SignWithPhoneReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

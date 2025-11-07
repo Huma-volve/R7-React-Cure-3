@@ -9,10 +9,10 @@ import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns"
-import { PhoneInput } from "../auth/phone-input";
-import { useSelector }  from "react-redux";
+import { useSelector, useDispatch }  from "react-redux";
 import type { RootState } from "@/redux/store";
-import { useEditProfile } from "@/hooks/profile-setting/useEditProfile";
+import { useEditProfile, useEditProfileVerify } from "@/hooks/profile-setting/useEditProfile";
+import { setNewMobile } from "@/redux/edit-profile/newPhone";
 
 const birthDate = z
 .date({})
@@ -50,8 +50,9 @@ export const ProfileInfo = () => {
   const [_, setAvatarFile] = useState<File | null>(null);
 
   const editProfile = useEditProfile();
+  const mobileVerifyProfile = useEditProfileVerify();
 
-
+      const dispatch = useDispatch();
   const email = useSelector((state: RootState) => state.auth.user?.email);
   const name = useSelector((state: RootState) => state.auth.user?.name);
   const birthDate = useSelector((state: RootState) => state.auth.user?.birthdate);
@@ -68,15 +69,19 @@ export const ProfileInfo = () => {
   });
 
   const onSubmit: SubmitHandler<FormField> = async (data) => {
-    // const isPhoneChanged = data.phone !== phone;
+    const isPhoneChanged = data.phone !== phone;
+    dispatch(setNewMobile(data.phone));
 
     await editProfile.mutateAsync({
       name: data.name,
       birthdate: data.dob.toISOString().split("T")[0],
       profile_photo: data.profile_photo ?? null,
-      mobile: data.phone.replace(/^\+20/, "0"),
       _method: "PUT",
     });
+
+    if (isPhoneChanged) {
+      mobileVerifyProfile.mutate({mobile:phone as string});
+    }
 
   }
 
@@ -137,30 +142,22 @@ export const ProfileInfo = () => {
         <CardContent >
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col">
-              <Input className="border-0 bg-gray-200" placeholder={name} {...register("name")} />
+              <Input className="border-0 bg-gray-200" {...register("name")} />
               {errors.name && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.name.message}</span>}
             </div>
 
             <div className="flex flex-col">
-              <Input disabled className="border-0 bg-gray-300" placeholder={email} type="email" {...register("email")} />
+              <Input disabled className="border-0 bg-gray-300"  type="email" {...register("email")} />
               {errors.email && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.email.message}</span>}
             </div>
 
-          
-           <Controller
-  control={control}
-  name="phone"
-  render={({ field }) => (
-    <PhoneInput
-      {...field}               
-      className="bg-white"
-      defaultCountry="EG"
-      countries={["EG"]}
-      placeholder={phone}
-    />
-  )}
-/>
 
+          
+         <div className="flex flex-col">
+              <Input className="border-0 bg-gray-200"  {...register("phone")} />
+              {  errors.phone && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.phone.message}</span>}
+            </div>
+        
            
 
             <div className="flex flex-col">

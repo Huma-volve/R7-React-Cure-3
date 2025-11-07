@@ -17,7 +17,7 @@ const passwordSchema = z
 const schema = z.object({
   email: z
     .string()
-    .min(1, "Email or phone number is required")
+    .min(1, "Email is required")
     .refine(
       (val) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,6 +44,7 @@ export const SignIn = () => {
     loginMutation.mutate(data);
   };
 
+
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md shadow-lg bg-white">
@@ -55,7 +56,7 @@ export const SignIn = () => {
             <div className="flex flex-col">
               <Input
                 className="border border-gray-300"
-                placeholder="Email or Phone"
+                placeholder="Email"
                 {...register("email")}
               />
               {errors.email && (
@@ -87,6 +88,10 @@ export const SignIn = () => {
               {loginMutation.isPending ? "Logging in..." : "Sign In"}
             </Button>
           </form>
+            <a href="signin-phone">
+          <Button className="text-white mt-2 w-full bg-[#145DB8]">
+    Sign in with phone number
+  </Button></a>
 
           <a 
   href="https://accounts.google.com/v3/signin/accountchooser?dsh=S2064670113%3A1762466372533891&elo=1&ifkv=ARESoU1kk6R-3OWzfij6pvamMf042bcBE0T330AKbfPOnuiw7RIr6Sy0kbR_GCwEro9z3BiMY2vLhQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin"
@@ -95,7 +100,7 @@ export const SignIn = () => {
 >
   <Button className="w-full flex items-center justify-center gap-2 border hover:cursor-pointer mt-5 bg-[#ffffff] hover:bg-[#ffffff] text-black">
     <img src={googleIcon} alt="Google logo" className="w-5 h-5" />
-    Sign Up with Google
+    Sign in with Google
   </Button>
 </a>
 

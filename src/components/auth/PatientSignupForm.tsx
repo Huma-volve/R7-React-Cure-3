@@ -117,6 +117,7 @@ export const PatientSignupForm = () => {
       {...field}               
       className="bg-white"
       defaultCountry="EG"
+      countries={["EG"]}
       placeholder="01**********"
     />
   )}

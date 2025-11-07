@@ -12,6 +12,9 @@ import { ForgetPassword } from '@/pages/ForgetPassword';
 import { ResetPassword } from '@/pages/auth/ResetPassword';
 import { ForgetPasswordOTPPage } from '@/pages/auth/ForgetPasswordOTP';
 import Chat from '@/pages/Chat/Chat';
+import { EditOTP } from '@/pages/profile-setting/EditOTP';
+import { SigninWithPhonePage } from '@/pages/auth/SigninWithPhonePage';
+import { SigninWithPhoneOTPpage } from '@/pages/auth/SigninWithPhoneOTP';
 
 
 
@@ -56,6 +59,18 @@ export const router = createBrowserRouter([
       {
         path: 'forget-password-otp',
         element: <ForgetPasswordOTPPage/>,
+      },
+      {
+        path: 'new-phone-otp',
+        element: <EditOTP/>,
+      },
+      {
+        path: 'signin-phone',
+        element: <SigninWithPhonePage/>,
+      },
+      {
+        path: 'phone-login-otp',
+        element: <SigninWithPhoneOTPpage/>,
       },
       {
         path: 'doctors',
