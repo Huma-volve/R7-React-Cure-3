@@ -39,6 +39,7 @@ const Home: React.FC = () => {
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
+  
   return (
     <div className="min-h-screen px-2 md:px-12 bg-white text-gray-800">
       <HeroSection />

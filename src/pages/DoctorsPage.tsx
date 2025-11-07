@@ -6,7 +6,7 @@ import { IoChevronDownSharp } from "react-icons/io5";
 import SpecialtiesSlider from "@/components/reusable/SpecialtiesSlider";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchFavoritesFromServer,
+  checkFavoriteStatus,
   toggleFavoriteOnServer,
 } from "@/redux/favoritesSlice";
 import {
@@ -17,19 +17,30 @@ import {
 } from "@/redux/searchSlice";
 import DoctorCard from "@/components/reusable/DoctorCard";
 import type { AppDispatch, RootState } from "@/redux/store";
+import { useNavigate } from "react-router-dom";
 
 const DoctorsPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-
+  const navigate = useNavigate();
   const favorites = useSelector((state: RootState) => state.favorites.list);
-  const { results, loading, query } = useSelector(
+  const [selectedGender, setSelectedGender] = useState<
+    "male" | "female" | null
+  >(null);
+
+  const { results, originalData, loading, query } = useSelector(
     (state: RootState) => state.search
   );
+  const doctorsToShow = query.trim() ? results : originalData;
+
+  useEffect(() => {
+    doctorsToShow.forEach((doc: any) => {
+      dispatch(checkFavoriteStatus(Number(doc.id)));
+    });
+  }, [doctorsToShow, dispatch]);
 
   useEffect(() => {
     dispatch(fetchAllDoctors());
-    dispatch(fetchFavoritesFromServer());
   }, [dispatch]);
 
   const handleSearch = () => {
@@ -49,7 +60,7 @@ const DoctorsPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen px-3 md:px-16 py-8 overflow-hidden">
+    <div className="bg-white min-h-screen px-3 md:px-12 py-8 overflow-hidden">
       {/* Header + Search + Filter */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
         <button
@@ -75,12 +86,27 @@ const DoctorsPage: React.FC = () => {
             {query && (
               <button
                 onClick={handleSearch}
-                className="ml-2 bg-[#145DB8] text-white px-4 rounded-lg hover:bg-blue-700 transition"
+                disabled={loading}
+                className={`ml-2 px-4 rounded-lg transition text-white 
+             ${
+               loading
+                 ? "bg-gray-400"
+                 : "bg-[#145DB8] hover:bg-blue-700"
+             }
+            `}
               >
-                Search
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Searching...
+                  </div>
+                ) : (
+                  "Search"
+                )}
               </button>
             )}
           </div>
+
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex md:hidden items-center justify-between text-[#6D7379] border-2 border-gray-300 bg-white px-4 rounded-lg w-[100px] h-14"
@@ -90,7 +116,11 @@ const DoctorsPage: React.FC = () => {
             </div>
           </button>
         </div>
-        <button className="hidden md:flex items-center gap-2 text-[#6D7379] border-2 border-gray-300 bg-white px-5 py-2 rounded-xl hover:bg-gray-100 transition h-14">
+
+        <button
+          onClick={() => navigate("/map")}
+          className="hidden md:flex items-center gap-2 text-[#6D7379] border-2 border-gray-300 bg-white px-5 py-2 rounded-xl hover:bg-gray-100 transition h-14"
+        >
           <MapPin size={18} /> Map
         </button>
       </div>
@@ -126,10 +156,27 @@ const DoctorsPage: React.FC = () => {
                 <div>
                   <h4 className="font-semibold mb-2">Gender</h4>
                   <div className="flex gap-3">
-                    <button className="px-4 py-1 rounded-lg border bg-blue-600 text-white font-medium">
+                    <button
+                      onClick={() => setSelectedGender("male")}
+                      className={`px-4 py-1 rounded-lg border font-medium transition 
+        ${
+          selectedGender === "male" ? "bg-blue-600 text-white" : "text-gray-700"
+        }
+      `}
+                    >
                       Male
                     </button>
-                    <button className="px-4 py-1 rounded-lg border text-gray-700">
+
+                    <button
+                      onClick={() => setSelectedGender("female")}
+                      className={`px-4 py-1 rounded-lg border font-medium transition 
+        ${
+          selectedGender === "female"
+            ? "bg-blue-600 text-white"
+            : "text-gray-700"
+        }
+      `}
+                    >
                       Female
                     </button>
                   </div>
@@ -178,7 +225,7 @@ const DoctorsPage: React.FC = () => {
                 animate={{ opacity: 0.5 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setShowFilters(false)}
-                className="fixed inset-0 bg-black z-40 lg:hidden"
+                className="fixed inset-0 bg-black z-50 lg:hidden"
               />
 
               {/* Slide Menu */}
@@ -217,10 +264,27 @@ const DoctorsPage: React.FC = () => {
                   <div>
                     <h4 className="font-semibold mb-2">Gender</h4>
                     <div className="flex gap-3">
-                      <button className="px-4 py-1 rounded-lg border bg-blue-600 text-white font-medium">
+                      <button
+                        onClick={() => setSelectedGender("male")}
+                        className={`px-4 py-1 rounded-lg border font-medium transition 
+        ${
+          selectedGender === "male" ? "bg-blue-600 text-white" : "text-gray-700"
+        }
+      `}
+                      >
                         Male
                       </button>
-                      <button className="px-4 py-1 rounded-lg border text-gray-700">
+
+                      <button
+                        onClick={() => setSelectedGender("female")}
+                        className={`px-4 py-1 rounded-lg border font-medium transition 
+        ${
+          selectedGender === "female"
+            ? "bg-blue-600 text-white"
+            : "text-gray-700"
+        }
+      `}
+                      >
                         Female
                       </button>
                     </div>
@@ -265,20 +329,40 @@ const DoctorsPage: React.FC = () => {
 
         {/* Main Content */}
         <motion.div className="flex-1 min-w-0 w-full px-2 md:px-0">
-          <h2 className="text-2xl font-semibold mb-6">Choose Specialties</h2>
+          <h1 className="text-2xl font-semibold mb-6">Choose Specialties</h1>
           <SpecialtiesSlider isSidebarOpen={showFilters} />
 
-          {loading && <p className="text-center py-8 text-lg">Loading...</p>}
+          {/* 💨 Skeleton Loading */}
+          {loading && (
+            <div className="w-full mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="bg-gray-100 animate-pulse rounded-2xl p-6 h-64 flex flex-col justify-between shadow-sm"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-20 h-20 bg-gray-300 rounded-lg" />
+                    <div className="flex-1 space-y-3">
+                      <div className="h-4 bg-gray-300 rounded w-3/4" />
+                      <div className="h-3 bg-gray-300 rounded w-1/2" />
+                      <div className="h-3 bg-gray-300 rounded w-2/3" />
+                    </div>
+                  </div>
+                  <div className="h-4 bg-gray-300 rounded w-1/3 mt-6" />
+                </div>
+              ))}
+            </div>
+          )}
 
-          {!loading && results.length === 0 && (
+          {!loading && doctorsToShow.length === 0 && (
             <p className="text-center py-8 text-lg text-gray-500">
               No doctors found.
             </p>
           )}
 
-          {!loading && results.length > 0 && (
+          {!loading && doctorsToShow.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {results.map((doc: any) => (
+              {doctorsToShow.map((doc: any) => (
                 <DoctorCard
                   key={doc.id}
                   id={doc.id}
@@ -289,7 +373,7 @@ const DoctorsPage: React.FC = () => {
                   time="متاح الآن"
                   price={doc.session_price}
                   image={doc.user?.profile_photo ?? "avatar.PNG"}
-                  isFavorite={favorites.includes(doc.id)}
+                  isFavorite={favorites.includes(Number(doc.id))}
                   onToggleFavorite={toggleFavorite}
                 />
               ))}

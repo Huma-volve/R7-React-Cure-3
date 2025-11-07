@@ -3,6 +3,8 @@ import axios from "axios";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router";
 import DoctorCard from "@/components/reusable/DoctorCard";
+import { useSelector } from "react-redux";
+import { type RootState } from "@/redux/store";
 
 interface FavoriteItem {
   id: number;
@@ -30,7 +32,7 @@ const FavoritePage: React.FC = () => {
   const [favorites, setFavorites] = useState<FormattedFavorite[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const token = "s9iLbmOm7YfR82m1Uw5m7y8RfXoEXXtrJVaV1ChCabb64743";
+  const token = useSelector((state: RootState) => state.auth.token);
 
   const fetchFavorites = async () => {
     try {
@@ -66,7 +68,7 @@ const FavoritePage: React.FC = () => {
       setFavorites(formattedData);
       setLoading(false);
     } catch (error) {
-      console.error("❌ Error fetching favorites:", error);
+      console.error("Error fetching favorites:", error);
       setLoading(false);
     }
   };
@@ -81,7 +83,6 @@ const FavoritePage: React.FC = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .catch(() => {
-        // ❌ لو حصل Error نرجع الداتا تاني من السيرفر
         fetchFavorites();
       });
   };

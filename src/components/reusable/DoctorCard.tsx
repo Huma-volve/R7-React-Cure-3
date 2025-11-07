@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosStar } from "react-icons/io";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -31,17 +31,26 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
   showBookingButton = true,
 }) => {
   const navigate = useNavigate();
+  const [localFavorite, setLocalFavorite] = useState(isFavorite);
+
+  // Sync لما Redux يتغير (لو الصفحة اتعملها Refresh)
+  useEffect(() => {
+    setLocalFavorite(isFavorite);
+  }, [isFavorite]);
 
   return (
-    <div className="relative border cursor-pointer border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between">
+    <div 
+      onClick={()=>navigate(`/doctor/${id}`)}
+      className="relative border cursor-pointer border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between">
       <button
         onClick={(e) => {
           e.stopPropagation();
-          onToggleFavorite(id); // dispatch toggleFavoriteOnServer
+          setLocalFavorite((prev) => !prev); // ✅ قلب القيمه محلياً فوراً
+          onToggleFavorite(id); // بعد كده ابعتيه للـ Redux والـ API
         }}
         className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition"
       >
-        {isFavorite ? (
+        {localFavorite ? (
           <AiFillHeart className="text-red-500 text-2xl" />
         ) : (
           <AiOutlineHeart className="text-2xl" />
@@ -80,7 +89,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
           className="bg-[#145DB8] text-white px-5 py-2 h-12 rounded-lg hover:bg-blue-700 mt-4"
           onClick={(e) => {
             e.stopPropagation();
-            navigate("booking");
+            navigate(`/doctor/${id}`);
           }}
         >
           Book appointment

@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+import type { RootState } from "./store";
 import axios from "axios";
 
-const token = "s9iLbmOm7YfR82m1Uw5m7y8RfXoEXXtrJVaV1ChCabb64743";
+
 
 interface DoctorState {
   query: string;
@@ -22,12 +24,14 @@ const initialState: DoctorState = {
 // ✅ 1) Fetch all doctors (مرة واحدة)
 export const fetchAllDoctors = createAsyncThunk(
   "search/fetchAllDoctors",
-  async () => {
+  async (_, { getState }) => {
+    const state = getState() as RootState;
+    const token = state.auth.token; 
     const res = await axios.get(
       `https://round7-cure.huma-volve.com/api/doctors`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    console.log(res.data.data.data)
+    console.log(res.data.data.data);
     return res.data.data.data;
   }
 );
@@ -35,22 +39,22 @@ export const fetchAllDoctors = createAsyncThunk(
 // ✅ 2) Search doctors (API منفصلة تماماً)
 export const searchDoctors = createAsyncThunk(
   "search/searchDoctors",
-  async (query: string) => {
-
+  async (query: string, { getState }) => {
+    const state = getState() as RootState;
+    const token = state.auth.token; 
     const res = await axios.post(
       `https://round7-cure.huma-volve.com/api/store-search-history?search_query=${query}`,
       {},
       {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
 
-    const results = res.data?.data?? []; // ✅ fallback array
+    const results = res.data?.data ?? []; // ✅ fallback array
 
     return { query, results };
   }
 );
-
 
 const searchSlice = createSlice({
   name: "search",
@@ -63,20 +67,38 @@ const searchSlice = createSlice({
       state.results = state.originalData; // نرجع الأصل
     },
   },
-  extraReducers: (builder) => {
-    builder
-      // ✅ Fetch Doctors
-      .addCase(fetchAllDoctors.fulfilled, (state, action) => {
-        state.originalData = action.payload;
-        state.results = action.payload;
-      })
+ extraReducers: (builder) => {
+  // Fetch All Doctors
+  builder
+    .addCase(fetchAllDoctors.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(fetchAllDoctors.fulfilled, (state, action) => {
+      state.originalData = action.payload;
+      state.results = action.payload;
+      state.loading = false;
+    })
+    .addCase(fetchAllDoctors.rejected, (state) => {
+      state.loading = false;
+      state.error = "Failed to fetch doctors";
+    });
 
-      // ✅ Search Results (من الـ API مباشرة بدون فلترة)
-      .addCase(searchDoctors.fulfilled, (state, action) => {
-        state.query = action.payload.query;
-        state.results = action.payload.results; // بدون فلترة
-      });
-  },
+  // Search Doctors
+  builder
+    .addCase(searchDoctors.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(searchDoctors.fulfilled, (state, action) => {
+      state.query = action.payload.query;
+      state.results = action.payload.results;
+      state.loading = false;
+    })
+    .addCase(searchDoctors.rejected, (state) => {
+      state.loading = false;
+      state.error = "Search failed";
+    });
+},
+
 });
 
 export const { setQuery, resetResults } = searchSlice.actions;

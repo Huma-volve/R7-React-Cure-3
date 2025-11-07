@@ -77,7 +77,7 @@ const HeroSection: React.FC = () => {
               Get started
             </button>
             <button
-              onClick={() => navigate("/booking")}
+              onClick={() => navigate(`/doctors`)}
               className="border border-primary-400 px-5 py-2 rounded-lg text-primary-400 hover:bg-[#145DB8] hover:text-white  transition flex items-center gap-2"
             >
               <FiSearch /> Book Appointment

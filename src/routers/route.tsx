@@ -1,14 +1,28 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 // Pages
 import App from '@/App.tsx'
-import DoctorDetails from '@/pages/DoctorDetails.tsx';
-import DoctorsPage from '@/pages/DoctorsPage';
 import Home from '@/pages/home';
-import FavoritePage from '@/pages/FavoritePage';
-import Appointments from '@/pages/Booking/Appointment';
-import { SignInPage } from '@/pages/SignInPage';
-import { SignupPage } from '@/pages/SignupPage';
-import { OTPpage } from '@/pages/OTPpage';
+import PageSkeleton from '@/components/reusable/PageSkeleton';
+import { SignupPage } from '@/pages/auth/SignupPage';
+import { SignInPage } from '@/pages/auth/SignInPage';
+import { OTPpage } from '@/pages/auth/OTPpage';
+import { ProfileMain } from '@/pages/profile-setting/ProfileMain';
+import { ForgetPassword } from '@/pages/ForgetPassword';
+import { ResetPassword } from '@/pages/auth/ResetPassword';
+import { ForgetPasswordOTPPage } from '@/pages/auth/ForgetPasswordOTP';
+import Chat from '@/pages/Chat/Chat';
+
+
+
+
+// Lazily loaded
+const DoctorsPage = lazy(() => import('@/pages/DoctorsPage'));
+const DoctorDetails = lazy(() => import('@/pages/DoctorDetails'));
+const FavoritePage = lazy(() => import('@/pages/FavoritePage'));
+const Appointments = lazy(() => import('@/pages/Booking/Appointment'));
+const Map = lazy(() => import('@/components/reusable/Map'));
+const PaymentConfirmationPage = lazy(() => import('@/components/reusable/payment/PayPageAndConfirmation'));
 
 export const router = createBrowserRouter([
   {
@@ -28,25 +42,64 @@ export const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: 'forget-password',
+        path: 'verify-account',
         element: <OTPpage />,
       },
       {
+        path: 'forget-password',
+        element: <ForgetPassword />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPassword/>,
+      },
+      {
+        path: 'forget-password-otp',
+        element: <ForgetPasswordOTPPage/>,
+      },
+      {
         path: 'doctors',
-        element: <DoctorsPage/>,
+        element: <Suspense fallback={<PageSkeleton />}>
+          <DoctorsPage />
+        </Suspense>,
       },
       {
         path: 'favorite',
-        element: <FavoritePage/>,
+        element: <Suspense fallback={<PageSkeleton />}>
+          <FavoritePage />
+        </Suspense>,
       },
       {
-        path: 'doctors/:id',
-        element: <DoctorDetails />,
+        path: 'doctor/:id',
+        element: <Suspense fallback={<PageSkeleton />}>
+          <DoctorDetails />
+        </Suspense>,
       },
       {
-        path: 'doctors/booking',
-        element: <Appointments />,
+        path: '/booking',
+        element: <Suspense fallback={<PageSkeleton />}>
+          <Appointments />
+        </Suspense>,
       },
+      {
+        path:"profile-setting", element:<ProfileMain/>
+      }, 
+      {
+        path: 'map',
+        element: <Suspense fallback={<PageSkeleton />}>
+          <Map />
+        </Suspense>,
+      },
+      {
+        path: 'checkout',
+        element: <Suspense fallback={<PageSkeleton />}>
+          <PaymentConfirmationPage />
+        </Suspense>,
+      },
+      {
+        path:"chat",
+        element:<Chat />
+      }
     ]
   }
 ]);

@@ -22,7 +22,7 @@ const SpecialtiesSlider: React.FC<SpecialtiesSliderProps> = ({ isSidebarOpen }) 
 
   const [api, setApi] = React.useState<any>()
   const [canScrollPrev, setCanScrollPrev] = React.useState(false)
-  const [canScrollNext, setCanScrollNext] = React.useState(false)
+  const [, setCanScrollNext] = React.useState(false)
 
   const dispatch = useDispatch<AppDispatch>()
   const token = "s9iLbmOm7YfR82m1Uw5m7y8RfXoEXXtrJVaV1ChCabb64743"

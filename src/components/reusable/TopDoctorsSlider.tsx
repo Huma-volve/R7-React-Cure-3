@@ -23,6 +23,7 @@ const TopDoctorsSlider: React.FC = () => {
     );
   };
 
+
   useEffect(() => {
     dispatch(fetchAllDoctors());
   }, [dispatch]);

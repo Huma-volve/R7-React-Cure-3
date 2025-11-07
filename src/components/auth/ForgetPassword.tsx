@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForgetPassword } from "@/hooks/auth/useForgetPassword";
+import { useDispatch } from "react-redux";
+import {setEmail} from "@/redux/auth/forgotPasswordSlice";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -15,8 +18,11 @@ export const ForgetPasswordComp = () => {
     formState: { errors },
   } = useForm<ForgotPasswordForm>({ resolver: zodResolver(forgotPasswordSchema),});
 
+  const otpMutation = useForgetPassword();
+  const dispatch = useDispatch();
   const onSubmit = (data: ForgotPasswordForm) => {
-    console.log(data);
+    otpMutation.mutate(data);
+    dispatch(setEmail(data.email));
   };
 
   return (
