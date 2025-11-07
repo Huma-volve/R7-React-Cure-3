@@ -97,7 +97,7 @@ export default function DoctorDetails() {
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
             <Link to='/doctors'>
-              <img alt="go back" src={GoBackArrow} />
+              <img src={GoBackArrow} />
             </Link>
             <span className="font-serif">Make an appointment</span>
           </div>
@@ -108,7 +108,7 @@ export default function DoctorDetails() {
               <div className="flex items-center gap-2.5">
                 <Popover>
                   <PopoverTrigger>
-                    <img src={BlackCalenderIcon} alt="calendar" className="cursor-pointer" />
+                    <img src={BlackCalenderIcon} className="cursor-pointer" />
                   </PopoverTrigger>
                   <PopoverContent
                     className="w-auto ml-3 sm:ml-0 p-0 shadow-md rounded-lg"
@@ -202,7 +202,7 @@ export default function DoctorDetails() {
             
             <CardFooter className="flex justify-between flex-col md:flex-row gap-3 md:gap-0">
               <div className="flex items-center gap-2">
-                <img alt="calendar" src={CalenderIcon} />
+                <img src={CalenderIcon} />
                   {selectedDate ? (
                     <div>
                       {selectedDate}, {selectedTimeSlot ? selectedTimeSlot : 'Choose a time.'}
@@ -219,7 +219,7 @@ export default function DoctorDetails() {
 
         {/* Reviews section */}
         <div className="flex items-center justify-between mt-10">
-          <h1 className="text-xl font-semibold font-serif">Reviews & Ratings</h1>
+          <h3 className="text-xl font-semibold font-serif">Reviews & Ratings</h3>
 
           <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger>
@@ -279,9 +279,9 @@ export default function DoctorDetails() {
                         className="h-[62px] w-[62px] rounded-full object-cover"
                         alt={`Review of ${rev.name}`}
                       />
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1 group-hover:text-white">
                         <h3>{rev.name}</h3>
-                        <p className="text-muted-foreground text-sm">{rev.time}</p>
+                        <p className="text-neutral-600 font-normal group-hover:text-white/60 text-sm">{rev.time}</p>
                       </div>
                     </div>
 
@@ -352,18 +352,29 @@ export default function DoctorDetails() {
         {/* About Section */}
         <CardDescription className="px-4">
           <h3 className="text-xl font-semibold mb-3 text-foreground font-serif">About Me</h3>
-          <p className="leading-relaxed text-muted-foreground max-w-3xl">
-            {currentDoctor.about}
-          </p>
+
+          <div
+            className={`leading-relaxed text-neutral-700 transition-all duration-500 ease-in-out ${
+              expandAboutSection ? 'max-h-[500px]' : 'max-h-[100px]'
+            }`}>{previewAboutText}</div>
+
+        {isLong && (
+          <div
+            onClick={() => setExpandAboutSection(!expandAboutSection)}
+            className="cursor-pointer hover:text-primary-600 text-primary-400 p-0 font-medium hover:underline mt-2 inline-block"
+          >
+            {expandAboutSection ? "Read Less" : "Read More"}
+          </div>
+        )}
         </CardDescription>
 
         {/* Location */}
         <CardFooter className="flex flex-col gap-3 px-4">
           <div className="self-start font-serif font-semibold text-xl">Location</div>
           <div className="relative">
-            <img src="/map.png" alt="map" className="cursor-pointer rounded-2xl w-[397px] h-[201px]" />
+            <img src="/map.png" className="cursor-pointer rounded-2xl w-[397px] h-[201px]" />
             <div className="absolute bg-background rounded-md shadow px-3 py-1 left-3 bottom-5 z-3 flex items-center gap-2">
-              <img src={LocationIcon} alt="location" className="h-5"/>
+              <img src={LocationIcon} className="h-5"/>
               {currentDoctor.location}
             </div>
           </div>

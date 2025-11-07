@@ -15,7 +15,7 @@ interface SpecialtiesSliderProps {
   isSidebarOpen?: boolean
 }
 
-const SpecialtiesSlider: React.FC<SpecialtiesSliderProps> = ({ isSidebarOpen }) => {
+const SpecialtiesSlider: React.FC<SpecialtiesSliderProps> = ({ }) => {
   const [specialties, setSpecialties] = React.useState<any[]>([])
   const [selectedId, setSelectedId] = React.useState<number | null>(null)
   const [loading, setLoading] = React.useState(true)
