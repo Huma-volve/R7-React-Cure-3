@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
     <nav className="fixed  top-0 left-0 z-50 bg-white w-full px-4 md:px-15 py-5 flex items-center justify-between overflow-hidden">
       {/* Logo */}
       <button
-        className="flex items-center gap-2 mb-3 md:mb-0"
+        className="flex items-center gap-2 mb-3 md:mb-0 cursor-pointer"
         onClick={() => navigate("/")}
       >
         <img src="/logo.svg" alt="logo" className="w-8 h-8 object-contain" />
@@ -80,7 +80,7 @@ const Navbar: React.FC = () => {
         {searchValue.trim() !== "" && (
           <button
             onClick={handleSearch}
-            className="absolute right-2 bg-[#145DB8] text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 transition"
+            className="absolute right-2 cursor-pointer bg-[#145DB8] text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 transition"
           >
             Search
           </button>
@@ -93,13 +93,13 @@ const Navbar: React.FC = () => {
           <>
             <button
               onClick={() => setIsOpen(true)}
-              className="text-black font-bold bg-[#F5F6F7] p-3 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              className="text-black font-bold cursor-pointer bg-[#F5F6F7] p-3 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
             >
               <RiMenu4Line />
             </button>
 
             {/* Notification */}
-            <button className="text-black bg-[#F5F6F7] px-3 py-2 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
+            <button className="text-black bg-[#F5F6F7] cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
               <Popover>
                 <PopoverTrigger>
                   <FiBell />
@@ -111,7 +111,7 @@ const Navbar: React.FC = () => {
             </button>
 
             <button
-              className="text-black bg-[#F5F6F7] p-3 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
               onClick={() => navigate("/favorite")}
             >
               <FaRegHeart />
@@ -124,12 +124,12 @@ const Navbar: React.FC = () => {
               <img
                 src="/profile.png"
                 alt="profile"
-                className="w-10 h-10 rounded-full object-cover hover:shadow-md hover:border border-primary-700 transition-transform duration-300 hover:scale-108"
+                className="w-10 h-10 cursor-pointer rounded-full object-cover hover:shadow-md hover:border border-primary-700 transition-transform duration-300 hover:scale-108"
               />
             </button>
           </>
         ) : (
-          <div className="flex flex-wrap items-center justify-center gap-3 animate-slide-in-right">
+          <div className="flex flex-wrap items-center cursor-pointer justify-center gap-3 animate-slide-in-right">
             <span
               className="text-sm text-black cursor-pointer hover:bg-gray-200 bg-[#F5F6F7] px-4 py-3 rounded-lg font-medium"
               onClick={() => navigate("/")}
@@ -145,13 +145,13 @@ const Navbar: React.FC = () => {
 
             <button
               onClick={() => setIsOpen(false)}
-              className="text-black bg-[#F5F6F7] p-3 hover:bg-gray-200 rounded-lg text-xl"
+              className="text-black bg-[#F5F6F7] cursor-pointer p-3 hover:bg-gray-200 rounded-lg text-xl"
             >
               <FiX />
             </button>
 
             {/* Notification */}
-            <button className="text-black bg-[#F5F6F7] px-3 py-2 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
+            <button className="text-black cursor-pointer bg-[#F5F6F7] px-3 py-2 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
               <Popover>
                 <PopoverTrigger>
                   <FiBell />
@@ -164,7 +164,7 @@ const Navbar: React.FC = () => {
 
             <button
               onClick={() => navigate("/favorite")}
-              className="text-black font-bold bg-[#F5F6F7] p-3 rounded-lg hover:bg-gray-200 transition-transform duration-300 hover:scale-105"
+              className="text-black font-bold cursor-pointer bg-[#F5F6F7] p-3 rounded-lg hover:bg-gray-200 transition-transform duration-300 hover:scale-105"
             >
               <FaRegHeart />
             </button>
@@ -176,7 +176,7 @@ const Navbar: React.FC = () => {
               <img
                 src="/profile.png"
                 alt="profile"
-                className="w-10 h-10 rounded-full object-cover hover:shadow-md hover:border border-primary-700 transition-transform duration-300 hover:scale-108"
+                className="w-10 h-10 rounded-full cursor-pointer object-cover hover:shadow-md hover:border border-primary-700 transition-transform duration-300 hover:scale-108"
               />
             </button>
           </div>

@@ -24,6 +24,9 @@
 h1{
   font-family: "Noto Serif Georgian", serif;
 }
+button{
+  cursor: pointer;
+}
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.007 278.5);
