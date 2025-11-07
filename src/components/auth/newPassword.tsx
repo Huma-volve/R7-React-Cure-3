@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import {  z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { useResetPassword } from "@/hooks/auth/useForgetPassword";
@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { resetForgotState } from "@/redux/auth/forgotPasswordSlice";
+import { toast } from "sonner";
 
 
 const passwordSchema = z
@@ -34,16 +35,25 @@ export const NewPassword = () => {
   
   const resetPasswordMutation = useResetPassword();
   const onSubmit = (data: FormField) => {
+    
+    // 1. Validation Check: Ensure email and OTP are present
+    if (!email || !otp) {
+        toast("Error: Missing email or OTP to reset password. Please restart the process.");
+        console.error("Missing required data for password reset:", { email, otp });
+        return; // Stop the function execution
+    }
     const payload = {
-      email,
-      otp,
-      password: data.password,
+        email: email, 
+        otp: otp,    
+        password: data.password,
     };
   
-    resetPasswordMutation.mutate(payload,{onSuccess: () => {
-      dispatch(resetForgotState())
-    }});
-  };
+    resetPasswordMutation.mutate(payload, {
+        onSuccess: () => {
+            dispatch(resetForgotState());
+        }
+    });
+};
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50  px-4">
     <form

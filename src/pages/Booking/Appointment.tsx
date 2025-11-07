@@ -269,15 +269,19 @@ const token = useSelector((state: RootState) => state.auth.token);
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 mb-3">
-                  <img
-                    src={appt.imageSrc ? appt.imageSrc : "/profile.jpg"}
-                    alt={appt.doctor}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-[#33384B]">{appt.doctor}</h3>
-                    <p className="text-[#6D7379] text-sm">{appt.specialty}</p>
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={appt.imageSrc}
+                      alt={appt.doctor}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <div>
+                      <h3 className="font-semibold mb-1 text-[#33384B] text-sm sm:text-base">
+                        {appt.doctor}
+                      </h3>
+                      <p className="text-[#6D7379] text-sm">{appt.specialty}</p>
+                    </div>
                   </div>
                 </div>
 

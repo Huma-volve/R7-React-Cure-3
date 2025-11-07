@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 interface ForgotPasswordState {
-  email: string;
-  otp: string;
+  email: string |null;
+  otp: string |null;
 }
 
 const initialState: ForgotPasswordState = {
-  email: "",
-  otp: "",
+  email: null,
+  otp: null,
 };
 
 const forgotPasswordSlice = createSlice({
