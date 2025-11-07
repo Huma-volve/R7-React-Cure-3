@@ -20,6 +20,8 @@ import  SavedCards  from "./payment/MainPayment";
 import FAQ from "./faq";
 import { PrivacyNpolicy } from "./privacyNpolicy";
 import { LogoutButton } from "./logoutButton";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
 
 export default function ProfileSettings() {
   const [activeSection, setActiveSection] = useState<string>("Profile");
@@ -67,7 +69,7 @@ export default function ProfileSettings() {
   const handleCardClick = (label: string) => {
     setActiveSection(label);
   };
-
+  const user = useSelector((state: RootState) => state.auth.user);
   
 
   return (
@@ -81,14 +83,14 @@ export default function ProfileSettings() {
           >
             <div className="flex items-center space-x-4">
               <img
-                src="../../public/profile.png"
+                src={user?.profile_photo||"../../public/profile.png"}
                 alt="User Avatar"
                 width={56}
                 height={56}
                 className="rounded-full object-cover"
               />
               <div>
-                <p className="text-base font-semibold text-foreground">John Doe</p>
+                <p className="text-base font-semibold text-foreground">{user?.name}</p>
                 <div className="flex items-center text-sm text-muted-foreground mt-0.5">
                   <MapPin className="w-4 h-4 mr-1" />
                   <span>San Francisco, CA</span>
