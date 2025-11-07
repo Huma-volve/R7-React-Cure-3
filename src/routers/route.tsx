@@ -91,7 +91,7 @@ export const router = createBrowserRouter([
         </Suspense>,
       },
       {
-        path: 'doctors/booking',
+        path: '/booking',
         element: <Suspense fallback={<PageSkeleton />}>
           <Appointments />
         </Suspense>,
