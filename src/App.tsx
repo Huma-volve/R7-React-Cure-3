@@ -10,6 +10,10 @@ export default function App() {
   const shouldHideNavbar = hideNavbarOn.some((path) =>
     location.pathname.startsWith(path)
   );
+  const hideFooter = ["/chat" , '/signin','signup','verify-account','forget-password','reset-password','forget-password-otp'];
+  const shouldHideFooter = hideFooter.some((path) =>
+    location.pathname.startsWith(path)
+  );
 
   return (
      <main>
@@ -21,7 +25,7 @@ export default function App() {
         </div>
       </div>
 
-      <Footer /> 
+     {!shouldHideFooter && <Footer /> }
     </main>
     
   )
