@@ -43,8 +43,9 @@ export const SigninPhone = () => {
    dispatch(setCurrentStep('otp'));
   };
 
-  const navigate = useNavigate();
+  
   const user = useSelector((state: RootState) => state.auth.token);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
