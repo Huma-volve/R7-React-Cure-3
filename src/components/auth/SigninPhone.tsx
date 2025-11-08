@@ -6,7 +6,14 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useVerifyPhoneLogin } from "@/hooks/auth/useSigninPhone";
 import { useDispatch } from "react-redux";
-import { setMobile } from "@/redux/auth/signinPhoneSlice";
+import { setCurrentStep, setMobile } from "@/redux/auth/signinPhoneSlice";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "@/redux/store";
+import { useEffect } from "react";
+
+ 
+
 
 
 const schema = z.object({
@@ -21,6 +28,8 @@ type FormField = z.infer<typeof schema>;
 
 export const SigninPhone = () => {
 
+
+
   const { register, handleSubmit, formState: { errors } } = useForm<FormField>({
     resolver: zodResolver(schema),
   });
@@ -31,7 +40,17 @@ export const SigninPhone = () => {
   const onSubmit: SubmitHandler<FormField> = (data) => {
    verifyPhone.mutate({mobile:data.phone});
    dispatch(setMobile(data.phone));
+   dispatch(setCurrentStep('otp'));
   };
+
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
 
  
 

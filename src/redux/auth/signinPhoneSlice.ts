@@ -4,8 +4,14 @@ export interface SignWithPhoneState {
   mobile: string |null;
 }
 
- const initialState: SignWithPhoneState = {
+export interface SignWithPhoneLocalState extends SignWithPhoneState {
+  currentStep: 'none' | 'otp';
+}
+
+
+const initialState: SignWithPhoneLocalState = {
   mobile: null,
+  currentStep: 'none',
 };
 
 const SignWithPhoneSlice = createSlice({
@@ -15,6 +21,7 @@ const SignWithPhoneSlice = createSlice({
     setMobile: (state, action) => {
       state.mobile = action.payload;
     },
+    setCurrentStep: (state, action) => {state.currentStep= action.payload;},
     resetMobileState: () => initialState,
 
 
@@ -22,5 +29,5 @@ const SignWithPhoneSlice = createSlice({
   },
 });
 
-export const { setMobile, resetMobileState } = SignWithPhoneSlice.actions;
+export const { setMobile, resetMobileState, setCurrentStep } = SignWithPhoneSlice.actions;
 export default SignWithPhoneSlice.reducer;

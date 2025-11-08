@@ -11,7 +11,10 @@ import { useVerifyForgetPassword } from "@/hooks/auth/useForgetPassword";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store"; 
 import { useDispatch } from "react-redux";
-import {setOtp} from "@/redux/auth/forgotPasswordSlice";
+import {SetPasswordCurrentStep, setOtp} from "@/redux/auth/forgotPasswordSlice";
+import { useNavigate } from "react-router-dom";
+
+
 
 const schema = z.object({
   otp: z
@@ -57,6 +60,16 @@ export const ForgetPasswordOTP = () => {
     };
   }, []);
 
+  const user = useSelector((state: RootState) => state.auth.token);
+  const navigate = useNavigate();
+  const currentStep= useSelector((state: RootState) => state.forgetPassword.currentStep);
+
+  useEffect(() => {
+    if (user||currentStep!=='otp') {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
+
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
 
@@ -68,7 +81,9 @@ export const ForgetPasswordOTP = () => {
         email: email, 
         otp: data.otp, 
       });
-      dispatch(setOtp(data.otp));}
+      dispatch(setOtp(data.otp));
+    }
+    dispatch(SetPasswordCurrentStep('resetPassword'));
     
   };
   const handleResend = () => {

@@ -6,6 +6,10 @@ import { Button } from "../ui/button";
 import googleIcon from "/google-icon.svg";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useLogin } from "@/hooks/auth/useLogin"; 
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "@/redux/store";
+import { useEffect } from "react";
 
 const passwordSchema = z
   .string()
@@ -43,6 +47,15 @@ export const SignIn = () => {
   const onSubmit: SubmitHandler<FormField> = (data) => {
     loginMutation.mutate(data);
   };
+
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
 
 
   return (

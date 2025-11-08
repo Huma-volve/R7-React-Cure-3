@@ -15,6 +15,10 @@ import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { PhoneInput } from "./phone-input";
 import { useSignup } from "@/hooks/auth/useSignup";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "@/redux/store";
+import { useEffect } from "react";
 
 
 const passwordSchema = z
@@ -87,6 +91,16 @@ export const PatientSignupForm = () => {
   
     signupMutation.mutate(formattedData);
   };
+
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
+
   
 
   return (
