@@ -261,47 +261,47 @@ const DoctorsPage: React.FC = () => {
                   </div>
 
                   {/* Gender */}
-                  <div>
-                    <h4 className="font-semibold mb-2">Gender</h4>
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => setSelectedGender("male")}
-                        className={`px-4 py-1 rounded-lg border font-medium transition 
+                <div>
+                  <h4 className="font-semibold mb-2">Gender</h4>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setSelectedGender("male")}
+                      className={`px-4 py-1 rounded-lg border font-medium transition 
         ${
           selectedGender === "male" ? "bg-blue-600 text-white" : "text-gray-700"
         }
       `}
-                      >
-                        Male
-                      </button>
+                    >
+                      Male
+                    </button>
 
-                      <button
-                        onClick={() => setSelectedGender("female")}
-                        className={`px-4 py-1 rounded-lg border font-medium transition 
+                    <button
+                      onClick={() => setSelectedGender("female")}
+                      className={`px-4 py-1 rounded-lg border font-medium transition 
         ${
           selectedGender === "female"
             ? "bg-blue-600 text-white"
             : "text-gray-700"
         }
       `}
-                      >
-                        Female
-                      </button>
-                    </div>
+                    >
+                      Female
+                    </button>
                   </div>
+                </div>
 
-                  {/* Consultation Type */}
-                  <div>
-                    <h4 className="font-semibold mb-2">Consultation Type</h4>
-                    <div className="flex flex-col gap-2">
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" /> In-clinic
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" /> Home Visit
-                      </label>
-                    </div>
+                 {/* Consultation Type */}
+                <div>
+                  <h4 className="font-semibold mb-2">Consultation Type</h4>
+                  <div className="flex flex-col gap-2">
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="consultation" /> In-clinic
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="consultation" /> Home Visit
+                    </label>
                   </div>
+                </div>
 
                   {/* Sort */}
                   <div>
