@@ -1,45 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import DoctorCard from "./DoctorCard";
 import type { RootState, AppDispatch } from "@/redux/store";
 import { fetchAllDoctors } from "@/redux/searchSlice";
+import {
+  checkFavoriteStatus,
+  toggleFavoriteOnServer,
+} from "@/redux/favoritesSlice";
 
 const TopDoctorsSlider: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const [favorites, setFavorites] = useState<number[]>([]);
   const doctors = useSelector((state: RootState) => state.search.originalData);
+  const favorites = useSelector((state: RootState) => state.favorites.list);
 
   const topDoctors = [...doctors]
     .sort((a, b) => b.average_rating - a.average_rating)
     .slice(0, 4);
 
-  const toggleFavorite = (id: number) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
-    );
-  };
-
-
   useEffect(() => {
     dispatch(fetchAllDoctors());
   }, [dispatch]);
+
+  useEffect(() => {
+    topDoctors.forEach((doc: any) => {
+      dispatch(checkFavoriteStatus(Number(doc.id)));
+    });
+  }, [topDoctors, dispatch]);
+
+  const toggleFavorite = (id: number) => {
+    dispatch(toggleFavoriteOnServer(id));
+  };
 
   return (
     <section className="py-10 bg-white">
       <div className="w-full mx-auto">
 
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-6">
           <div className="flex flex-col gap-3 text-center md:text-left">
             <h1 className="text-xl sm:text-2xl lg:text-4xl font-semibold leading-tight">
               Top-Rated Doctors Chosen by Patients
             </h1>
             <p className="text-gray-500 text-sm sm:text-base md:text-lg max-w-[550px] mx-auto md:mx-0">
-              Explore our highest-rated doctors, trusted by real patients for their expertise, care, and service. Book with confidence today.
+              Explore our highest-rated doctors, trusted by real patients.
             </p>
           </div>
 
@@ -51,7 +57,6 @@ const TopDoctorsSlider: React.FC = () => {
           </button>
         </div>
 
-        {/* Slider */}
         <Swiper
           spaceBetween={24}
           grabCursor={true}
@@ -76,7 +81,7 @@ const TopDoctorsSlider: React.FC = () => {
                 price={doc.session_price}
                 image={doc.user?.profile_photo ?? "avatar.PNG"}
                 isFavorite={favorites.includes(doc.id)}
-                onToggleFavorite={toggleFavorite}
+                onToggleFavorite={() => toggleFavorite(doc.id)}
               />
             </SwiperSlide>
           ))}
