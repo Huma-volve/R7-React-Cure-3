@@ -186,7 +186,7 @@ const Navbar: React.FC = () => {
               className="cursor-pointer"
             >
               <img
-                src={user?.profile_photo||"../../public/profile.png"}
+                src={user?.profile_photo||"profile.png"}
                 alt="profile"
                 className="w-10 h-10 rounded-full cursor-pointer object-cover hover:shadow-md hover:border border-primary-700 transition-transform duration-300 hover:scale-108"
               />
