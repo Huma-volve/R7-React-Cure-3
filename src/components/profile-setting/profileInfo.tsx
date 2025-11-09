@@ -46,7 +46,7 @@ export const ProfileInfo = () => {
   const [dropdown] =useState<React.ComponentProps<typeof Calendar>["captionLayout"]>(
       "dropdown")
 
-  const [avatar, setAvatar] = useState("../../public/avatar.jpg");
+  const [avatar, setAvatar] = useState("/avatar.jpg");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   const editProfile = useEditProfile();
