@@ -42,16 +42,19 @@ const Navbar: React.FC = () => {
   };
   const dispatch = useDispatch<AppDispatch>();
   const searchValue = useSelector((state: RootState) => state.search.query);
-
+  const user = useSelector((state: RootState) => state.auth.user);
+  const {loading } = useSelector(
+      (state: RootState) => state.search
+    );
   const handleSearch = async () => {
     if (searchValue.trim() !== "") {
       await dispatch(searchDoctors(searchValue));
-      navigate("doctors");
+      navigate("/doctors");
     }
   };
 
   return (
-    <nav className="fixed  top-0 left-0 z-50 bg-white w-full px-4 md:px-15 py-5 flex items-center justify-between overflow-hidden">
+    <nav className="fixed top-0 left-0 z-50 bg-white w-full px-4 md:px-15 py-5 flex items-center justify-between overflow-hidden">
       {/* Logo */}
       <button
         className="flex items-center gap-2 mb-3 md:mb-0 cursor-pointer"
@@ -80,10 +83,19 @@ const Navbar: React.FC = () => {
         {searchValue.trim() !== "" && (
           <button
             onClick={handleSearch}
-            className="absolute right-2 cursor-pointer bg-[#145DB8] text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 transition"
-          >
-            Search
-          </button>
+            disabled={loading}
+            className={`absolute right-2 cursor-pointer px-3 py-1 rounded-md text-sm transition text-white 
+                 ${loading ? "bg-gray-400" : "bg-[#145DB8] hover:bg-blue-700"}`}
+            > 
+            {loading ? (
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Searching...
+                  </div>
+                ) : (
+                  "Search"
+                )}
+              </button>
         )}
       </div>
 
@@ -122,7 +134,7 @@ const Navbar: React.FC = () => {
               className="cursor-pointer"
             >
               <img
-                src="/profile.png"
+                src={user?.profile_photo||"../../public/profile.png"}
                 alt="profile"
                 className="w-10 h-10 cursor-pointer rounded-full object-cover hover:shadow-md hover:border border-primary-700 transition-transform duration-300 hover:scale-108"
               />
@@ -174,7 +186,7 @@ const Navbar: React.FC = () => {
               className="cursor-pointer"
             >
               <img
-                src="/profile.png"
+                src={user?.profile_photo||"../../public/profile.png"}
                 alt="profile"
                 className="w-10 h-10 rounded-full cursor-pointer object-cover hover:shadow-md hover:border border-primary-700 transition-transform duration-300 hover:scale-108"
               />

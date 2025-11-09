@@ -11,6 +11,8 @@ interface DoctorState {
   originalData: any[];
   loading: boolean;
   error: string | null;
+  currentPage: Number,
+  lastPage: Number,
 }
 
 const initialState: DoctorState = {
@@ -19,22 +21,30 @@ const initialState: DoctorState = {
   originalData: [],
   loading: false,
   error: null,
+  currentPage: 1,
+  lastPage: 1,
 };
 
 // ✅ 1) Fetch all doctors (مرة واحدة)
 export const fetchAllDoctors = createAsyncThunk(
   "search/fetchAllDoctors",
-  async (_, { getState }) => {
+  async (page: number = 1, { getState }) => {
     const state = getState() as RootState;
     const token = state.auth.token; 
+
     const res = await axios.get(
-      `https://round7-cure.huma-volve.com/api/doctors`,
+      `https://round7-cure.huma-volve.com/api/doctors?page=${page}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    console.log(res.data.data.data);
-    return res.data.data.data;
+
+    return {
+      data: res.data.data,
+      current_page: res.data.meta.current_page, // ✅ من meta
+      last_page: res.data.meta.last_page        // ✅ من meta
+    };
   }
 );
+
 
 // ✅ 2) Search doctors (API منفصلة تماماً)
 export const searchDoctors = createAsyncThunk(
@@ -43,14 +53,14 @@ export const searchDoctors = createAsyncThunk(
     const state = getState() as RootState;
     const token = state.auth.token; 
     const res = await axios.post(
-      `https://round7-cure.huma-volve.com/api/store-search-history?search_query=${query}`,
+      `https://round7-cure.huma-volve.com/api/search/history?search_query=${query}`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
 
-    const results = res.data?.data ?? []; // ✅ fallback array
+    const results = res.data?.data ?? [];
 
     return { query, results };
   }
@@ -74,10 +84,13 @@ const searchSlice = createSlice({
       state.loading = true;
     })
     .addCase(fetchAllDoctors.fulfilled, (state, action) => {
-      state.originalData = action.payload;
-      state.results = action.payload;
-      state.loading = false;
-    })
+  state.originalData = action.payload.data;
+  state.results = action.payload.data;
+  state.currentPage = action.payload.current_page;
+  state.lastPage = action.payload.last_page;
+  state.loading = false;
+})
+
     .addCase(fetchAllDoctors.rejected, (state) => {
       state.loading = false;
       state.error = "Failed to fetch doctors";
@@ -96,7 +109,7 @@ const searchSlice = createSlice({
     .addCase(searchDoctors.rejected, (state) => {
       state.loading = false;
       state.error = "Search failed";
-    });
+    })
 },
 
 });

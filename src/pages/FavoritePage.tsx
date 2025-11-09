@@ -13,6 +13,7 @@ interface FavoriteItem {
   clinic_address: string;
   average_rating: number;
   session_price: string;
+  availability:string
 }
 
 interface FormattedFavorite {
@@ -21,7 +22,7 @@ interface FormattedFavorite {
   specialty: string;
   clinic: string;
   rating: number;
-  time: string;
+  availability: any;
   price: number;
   image: string;
   isFavorite: boolean;
@@ -52,7 +53,7 @@ const FavoritePage: React.FC = () => {
           specialty: item.specialty?.name || "Unknown Specialty",
           clinic: item.clinic_address || "Not specified",
           rating: item.average_rating || 0,
-          time: "Available",
+          availability: item.availability || {},
           price: Number(item.session_price) || 0,
 
           // ✅ هنا التعديل — fallback للصورة
@@ -86,11 +87,15 @@ const FavoritePage: React.FC = () => {
         fetchFavorites();
       });
   };
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
+   
+
 
   useEffect(() => {
     fetchFavorites();
   }, []);
-
   const hasFavorites = favorites.length > 0;
 
   return (
