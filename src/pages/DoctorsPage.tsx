@@ -82,33 +82,54 @@ const DoctorsPage: React.FC = () => {
     }
   };
 
-  if (availableDay.length > 0) {
-    const days = [
-      "sunday",
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-    ];
-    const todayIndex = new Date().getDay();
-    const todayName = days[todayIndex];
-    const tomorrowName = days[(todayIndex + 1) % 7];
+ if (availableDay.length > 0) {
+  const days = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
+  const todayIndex = new Date().getDay();
+  const todayName = days[todayIndex];
+  const tomorrowName = days[(todayIndex + 1) % 7];
 
-    doctorsToShow = doctorsToShow.filter((doc: any) => {
-      const availability = doc.availability;
-      if (!availability) return false;
+  doctorsToShow = doctorsToShow.filter((doc: any) => {
+    const availability = doc.availability;
+    if (!availability) return false;
 
-      const isToday = availability[todayName]?.length > 0;
-      const isTomorrow = availability[tomorrowName]?.length > 0;
-
-      return (
-        (availableDay.includes("today") && isToday) ||
-        (availableDay.includes("tomorrow") && isTomorrow)
-      );
-    });
+    const hasSlots = (dayName: string) => {
+  const normalizeKey = (key: string) => key.toLowerCase();
+  for (const key of Object.keys(availability)) {
+    if (normalizeKey(key) === normalizeKey(dayName)) {
+      const slots = availability[key];
+      // ✅ لو اليوم عبارة عن كائن فيه أوقات
+      if (typeof slots === "object" && slots !== null) {
+        return Object.keys(slots).length > 0;
+      }
+      // ✅ لو اليوم عبارة عن Array (احتمال آخر)
+      if (Array.isArray(slots)) {
+        return slots.length > 0;
+      }
+    }
   }
+  return false;
+};
+
+
+    const isToday = hasSlots(todayName);
+    const isTomorrow = hasSlots(tomorrowName);
+
+    return (
+      (availableDay.includes("today") && isToday) ||
+      (availableDay.includes("tomorrow") && isTomorrow)
+    );
+  });
+}
+
+
 
 useEffect(() => {
   doctorsToShow.forEach((doc: any) => {
