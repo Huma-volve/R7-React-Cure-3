@@ -32,6 +32,7 @@ interface ChatMeta {
 }
 
 interface Chat {
+  chat_id: number;
   id: number;
   receiver?: User;
   meta?: ChatMeta;

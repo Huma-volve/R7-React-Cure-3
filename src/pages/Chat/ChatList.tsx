@@ -662,6 +662,7 @@ interface User {
 
 interface Message {
   id: number;
+  chat_id: number;
   body?: string;
   type?: "text" | "file" | "image" | "audio";
   created_at?: string;
@@ -675,7 +676,7 @@ interface ChatMeta {
 
 export interface Chat {
   id: number;
-  chat_id?: number;
+  chat_id: number;
   receiver?: User;
   user_one?: User;
   user_two?: User;

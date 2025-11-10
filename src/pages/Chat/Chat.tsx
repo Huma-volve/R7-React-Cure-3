@@ -6,15 +6,16 @@ import ChatList from "./ChatList";
 import ChatWindow from "./ChatWindow";
 import MessageInput from "./MessageInput";
 import axios from "axios";
+import type { Chat } from "./ChatList";
 
 // ==== Define Types ====
 // ==== Shared Types ====
-interface User {
-  id: number;
-  name: string;
-  email?: string;
-  avatar?: string;
-}
+// interface User {
+//   id: number;
+//   name: string;
+//   email?: string;
+//   avatar?: string;
+// }
 
 interface Message {
   id: number;
@@ -27,17 +28,17 @@ interface Message {
   created_at: string;
 }
 
-interface ChatMeta {
-  favorite?: boolean;
-  archived?: boolean;
-}
+// interface ChatMeta {
+//   favorite?: boolean;
+//   archived?: boolean;
+// }
 
-interface Chat {
-  id: number; // ✅ Added for compatibility with ChatList
-  chat_id: number;
-  receiver: User;
-  meta?: ChatMeta;
-}
+// interface Chat {
+//   id: number; 
+//   chat_id: number;
+//   receiver: User;
+//   meta?: ChatMeta;
+// }
 
 // ✅ Fixed handleSelect to match expected (non-async)
 
