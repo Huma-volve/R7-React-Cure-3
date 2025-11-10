@@ -1,12 +1,12 @@
-import React from 'react'
-const chats = [
+// import React from 'react'
+// const chats = [
     
-export default function getAllChats() {
+// export default function getAllChats() {
   
 
-  return (
-    <div>
+//   return (
+//     <div>
       
-    </div>
-  )
-}
+//     </div>
+//   )
+// }
