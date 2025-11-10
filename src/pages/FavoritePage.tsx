@@ -6,33 +6,10 @@ import DoctorCard from "@/components/reusable/DoctorCard";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store";
 
-interface FavoriteItem {
-  id: number;
-  user: { name: string; profile_photo: string | null };
-  specialty: { name: string };
-  clinic_address: string;
-  average_rating: number;
-  session_price: string;
-  availability:string
-}
-
-interface FormattedFavorite {
-  id: number;
-  name: string;
-  specialty: string;
-  clinic: string;
-  rating: number;
-  availability: any;
-  price: number;
-  image: string;
-  isFavorite: boolean;
-}
-
 const FavoritePage: React.FC = () => {
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState<FormattedFavorite[]>([]);
+  const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   const token = useSelector((state: RootState) => state.auth.token);
 
   const fetchFavorites = async () => {
@@ -42,31 +19,11 @@ const FavoritePage: React.FC = () => {
         {
           headers: { Authorization: `Bearer ${token}` },
         }
-      );
-
+      )
       const rawData = response.data?.data?.favorites || [];
-
-      const formattedData: FormattedFavorite[] = rawData.map(
-        (item: FavoriteItem) => ({
-          id: item.id,
-          name: item.user?.name || "Unknown Doctor",
-          specialty: item.specialty?.name || "Unknown Specialty",
-          clinic: item.clinic_address || "Not specified",
-          rating: item.average_rating || 0,
-          availability: item.availability || {},
-          price: Number(item.session_price) || 0,
-
-          // ✅ هنا التعديل — fallback للصورة
-          image:
-            item.user?.profile_photo && item.user.profile_photo !== "null"
-              ? item.user.profile_photo
-              : "avatar.PNG",
-
-          isFavorite: true,
-        })
-      );
-
-      setFavorites(formattedData);
+      
+      setFavorites(rawData);
+      console.log(favorites)
       setLoading(false);
     } catch (error) {
       console.error("Error fetching favorites:", error);
@@ -87,15 +44,11 @@ const FavoritePage: React.FC = () => {
         fetchFavorites();
       });
   };
-  useEffect(() => {
-    fetchFavorites();
-  }, []);
-   
-
 
   useEffect(() => {
     fetchFavorites();
   }, []);
+
   const hasFavorites = favorites.length > 0;
 
   return (
@@ -112,7 +65,7 @@ const FavoritePage: React.FC = () => {
         </button>
       </div>
 
-       {/* 💨 Skeleton Loading */}
+      {/* 💨 Skeleton Loading */}
       {loading && (
         <div className="w-full mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((i) => (
@@ -134,9 +87,9 @@ const FavoritePage: React.FC = () => {
         </div>
       )}
 
-       {/* 🩶 Empty */}
+      {/* 🩶 Empty */}
       {!loading && !hasFavorites && (
-        <div className="flex flex-col items-center justify-center  h-[70vh] text-center">
+        <div className="flex flex-col items-center justify-center h-[70vh] text-center">
           <div className="relative">
             <Heart className="w-24 h-24 text-red-400" />
             <div className="absolute w-6 h-6 bg-red-100 rounded-full top-6 left-10 animate-ping" />
@@ -153,10 +106,22 @@ const FavoritePage: React.FC = () => {
 
       {!loading && hasFavorites && (
         <div className="w-full mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {favorites.map((item) => (
+          {favorites.map((doc) => (
             <DoctorCard
-              key={item.id}
-              {...item}
+              key={doc.id}
+              id={doc.id}
+              name={doc.user?.name || "Unknown Doctor"}
+              specialty={doc.specialty?.name || "Unknown Specialty"}
+              clinic={doc.clinic_address || "Not specified"}
+              rating={doc.average_rating || 0}
+              availability={doc.availability_json}
+              price={Number(doc.session_price) || 0}
+              image={
+                doc.user?.profile_photo && doc.user.profile_photo !== "null"
+                  ? doc.user.profile_photo
+                  : "avatar.PNG"
+              }
+              isFavorite={true}
               onToggleFavorite={toggleFavorite}
               showBookingButton={false}
             />
