@@ -9,11 +9,11 @@ interface DoctorCardProps {
   specialty: string;
   clinic: string;
   rating: number;
-  time: string;
   price: number;
   image: string;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
+  availability?: any; 
   showBookingButton?: boolean;
 }
 
@@ -23,30 +23,68 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
   specialty,
   clinic,
   rating,
-  time,
   price,
   image,
   isFavorite,
   onToggleFavorite,
+  availability,
   showBookingButton = true,
 }) => {
   const navigate = useNavigate();
   const [localFavorite, setLocalFavorite] = useState(isFavorite);
 
-  // Sync لما Redux يتغير (لو الصفحة اتعملها Refresh)
   useEffect(() => {
     setLocalFavorite(isFavorite);
+    console.log(localFavorite)
   }, [isFavorite]);
+
+  // ✅ دالة لحساب الوقت المتاح داخل الكارد
+ const getAvailableTime = (availability: any) => {
+  if (!availability || Object.keys(availability).length === 0) return "غير متاح هذا الاسبوع";
+
+  const days = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+  const todayIndex = new Date().getDay();
+  const todayName = days[todayIndex];
+  const tomorrowName = days[(todayIndex + 1) % 7];
+
+  const todaySlots = availability[todayName];
+  const tomorrowSlots = availability[tomorrowName];
+
+  // 1️⃣ اليوم
+  if (todaySlots && todaySlots.length > 0) {
+    return `${todayName.charAt(0).toUpperCase() + todayName.slice(1)} ${todaySlots[0]}-${todaySlots[todaySlots.length - 1]}`;
+  } 
+
+  // 2️⃣ بكرة
+  if (tomorrowSlots && tomorrowSlots.length > 0) {
+    return `${tomorrowName.charAt(0).toUpperCase() + tomorrowName.slice(1)} ${tomorrowSlots[0]}-${tomorrowSlots[tomorrowSlots.length - 1]}`;
+  }
+
+  // 3️⃣ لو اليوم وبكرة فاضيين → نلف على باقي الأسبوع
+  for (let i = 2; i < 7; i++) {
+    const dayName = days[(todayIndex + i) % 7];
+    const slots = availability[dayName];
+    if (slots && slots.length > 0) {
+      return `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${slots[0]}-${slots[slots.length - 1]}`;
+    }
+  }
+
+  return "غير متاح هذا الاسبوع";
+};
+
+
+  const availableTime = getAvailableTime(availability); // ✅ استخدام الدالة داخليًا
 
   return (
     <div 
       onClick={()=>navigate(`/doctor/${id}`)}
       className="relative border cursor-pointer border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between">
+      
       <button
         onClick={(e) => {
           e.stopPropagation();
-          setLocalFavorite((prev) => !prev); // ✅ قلب القيمه محلياً فوراً
-          onToggleFavorite(id); // بعد كده ابعتيه للـ Redux والـ API
+          setLocalFavorite((prev) => !prev);
+          onToggleFavorite(id);
         }}
         className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition"
       >
@@ -73,7 +111,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
           <div className="text-[15px] text-gray-700 flex gap-2 items-center">
             <IoIosStar className="text-[#f0f80b] text-xl" />
             <span>
-              {rating} • {time}
+              {rating} • {availableTime} {/* ✅ استخدم الوقت المحسوب داخليًا */}
             </span>
           </div>
         </div>

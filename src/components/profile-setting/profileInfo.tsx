@@ -31,10 +31,10 @@ const birthDate = z
 
 const schema= z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  phone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
+  mobile: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
   name: z.string().min(1, { message: "Name is required" }),
   dob:birthDate,
-  profile_photo: z.any().optional(),
+  profile_photo: z.file().optional(),
 })
 
 type FormField=z.infer<typeof schema>;
@@ -46,8 +46,8 @@ export const ProfileInfo = () => {
   const [dropdown] =useState<React.ComponentProps<typeof Calendar>["captionLayout"]>(
       "dropdown")
 
-  const [avatar, setAvatar] = useState("../../public/avatar.jpg");
-  const [_, setAvatarFile] = useState<File | null>(null);
+  const [avatar, setAvatar] = useState("/avatar.jpg");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   const editProfile = useEditProfile();
   const mobileVerifyProfile = useEditProfileVerify();
@@ -56,21 +56,23 @@ export const ProfileInfo = () => {
   const email = useSelector((state: RootState) => state.auth.user?.email);
   const name = useSelector((state: RootState) => state.auth.user?.name);
   const birthDate = useSelector((state: RootState) => state.auth.user?.birthdate);
-  const phone = useSelector((state: RootState) => state.auth.user?.mobile);
+  const mobile = useSelector((state: RootState) => state.auth.user?.mobile);
   const photo = useSelector((state: RootState) => state.auth.user?.profile_photo);
 
   const { register, handleSubmit,setValue, formState: { errors }, control } = useForm<FormField>({
     resolver: zodResolver(schema), defaultValues: {
       email: email ,
       name: name ,
-      phone: phone ,
+      mobile: mobile ,
       dob: birthDate ? new Date(birthDate) : undefined,
+      
+      
     }
   });
 
   const onSubmit: SubmitHandler<FormField> = async (data) => {
-    const isPhoneChanged = data.phone !== phone;
-    dispatch(setNewMobile(data.phone));
+    const isPhoneChanged = data.mobile !== mobile;
+    dispatch(setNewMobile(data.mobile));
 
     await editProfile.mutateAsync({
       name: data.name,
@@ -80,7 +82,7 @@ export const ProfileInfo = () => {
     });
 
     if (isPhoneChanged) {
-      mobileVerifyProfile.mutate({mobile:phone as string});
+      mobileVerifyProfile.mutate({mobile:mobile as string});
     }
 
   }
@@ -103,11 +105,13 @@ export const ProfileInfo = () => {
       <div className="flex flex-col justify-center items-center relative">
         {/* Avatar Image */}
         <img
-          src={photo || avatar}
+          src={avatarFile ? URL.createObjectURL(avatarFile) : photo || avatar}
           width={96}
           height={96}
           className="rounded-full object-cover  border"
         />
+
+       
 
       
         <div
@@ -126,6 +130,7 @@ export const ProfileInfo = () => {
           className="hidden"
           onChange={handleFileChange}
         />
+
 
       
         <div className="flex flex-col items-center mt-2">
@@ -154,8 +159,8 @@ export const ProfileInfo = () => {
 
           
          <div className="flex flex-col">
-              <Input className="border-0 bg-gray-200"  {...register("phone")} />
-              {  errors.phone && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.phone.message}</span>}
+              <Input className="border-0 bg-gray-200"  {...register("mobile")} />
+              {  errors.mobile && <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">{errors.mobile.message}</span>}
             </div>
         
            

@@ -11,9 +11,9 @@ import { useNavigate } from "react-router-dom";
 
 
 interface EditProfilePayload {
-  name?: string;
+  name: string;
   birthdate: string;
-  profile_photo?: string | null;
+  profile_photo?: File | null;
   _method: "PUT";
 }
 
@@ -29,8 +29,25 @@ interface RegistrationResponse {
 
 const editProfile = async (payload: EditProfilePayload, token:string):Promise<RegistrationResponse> => {
   console.log("🧾 edit profile payload:", payload);
-  const {data} = await api.post("/updateProfile", payload, {
-    headers: { Authorization: `Bearer ${token}` }});
+
+  const formData = new FormData();
+formData.append("name", payload.name);
+formData.append("birthdate", payload.birthdate);
+formData.append("_method", payload._method);
+
+
+
+if (payload.profile_photo instanceof File) {
+  formData.append("profile_photo", payload.profile_photo);
+}
+
+const { data } = await api.post("/updateProfile", formData, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "multipart/form-data",
+  },
+});
+
   return data;
 }
 

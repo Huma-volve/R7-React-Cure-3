@@ -11,7 +11,10 @@ import { useVerifyForgetPassword } from "@/hooks/auth/useForgetPassword";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store"; 
 import { useDispatch } from "react-redux";
-import {setOtp} from "@/redux/auth/forgotPasswordSlice";
+import {SetPasswordCurrentStep, setOtp} from "@/redux/auth/forgotPasswordSlice";
+import { useNavigate } from "react-router-dom";
+
+
 
 const schema = z.object({
   otp: z
@@ -57,6 +60,16 @@ export const ForgetPasswordOTP = () => {
     };
   }, []);
 
+  const user = useSelector((state: RootState) => state.auth.token);
+  const navigate = useNavigate();
+  const currentStep= useSelector((state: RootState) => state.forgetPassword.currentStep);
+
+  useEffect(() => {
+    if (user||currentStep!=='otp') {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
+
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
 
@@ -68,11 +81,10 @@ export const ForgetPasswordOTP = () => {
         email: email, 
         otp: data.otp, 
       });
-      dispatch(setOtp(data.otp));}
+      dispatch(setOtp(data.otp));
+    }
+    dispatch(SetPasswordCurrentStep('resetPassword'));
     
-  };
-  const handleResend = () => {
-    startTimer(); 
   };
 
   return (
@@ -113,15 +125,7 @@ export const ForgetPasswordOTP = () => {
           OTP expires in: {minutes}:{seconds.toString().padStart(2, "0")}
         </div>
 
-        {secondsLeft <= 0 ? (
-          <button
-            type="button"
-            onClick={handleResend}
-            className="w-full py-2 rounded-md text-sm font-medium bg-[#145DB8] text-white hover:bg-[#0F4A91] cursor-pointer"
-          >
-            Resend OTP
-          </button>
-        ) : (
+        
           <button
             disabled={secondsLeft <= 0}
             type="submit"
@@ -133,7 +137,7 @@ export const ForgetPasswordOTP = () => {
           >
             Verify
           </button>
-        )}
+      
 
         {errors.otp && (
           <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">

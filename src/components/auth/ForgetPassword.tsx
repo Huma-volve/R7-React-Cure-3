@@ -3,7 +3,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForgetPassword } from "@/hooks/auth/useForgetPassword";
 import { useDispatch } from "react-redux";
-import {setEmail} from "@/redux/auth/forgotPasswordSlice";
+import {SetPasswordCurrentStep, setEmail} from "@/redux/auth/forgotPasswordSlice";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "@/redux/store";
+import { useEffect } from "react";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -23,7 +27,18 @@ export const ForgetPasswordComp = () => {
   const onSubmit = (data: ForgotPasswordForm) => {
     otpMutation.mutate(data);
     dispatch(setEmail(data.email));
+    dispatch(SetPasswordCurrentStep('otp'));
   };
+
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">

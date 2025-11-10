@@ -11,6 +11,7 @@ import { usePhoneLogin } from "@/hooks/auth/useSigninPhone";
 import { useSelector, useDispatch } from "react-redux";
 import { type RootState } from "@/redux/store"; 
 import {resetMobileState} from "@/redux/auth/signinPhoneSlice";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -32,6 +33,7 @@ export const SignInWithPhoneOTP = () => {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const mobile = useSelector((state: RootState) => state.signWithPhone.mobile);
+  const currentStep= useSelector((state: RootState) => state.signWithPhone.currentStep);
   const dispatch = useDispatch();
 
 
@@ -58,6 +60,18 @@ export const SignInWithPhoneOTP = () => {
     };
   }, []);
 
+
+  const user = useSelector((state: RootState) => state.auth.token);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user||currentStep!=='otp') {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
+
+
+
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
 
@@ -69,9 +83,7 @@ export const SignInWithPhoneOTP = () => {
         }
     });
 };
-  const handleResend = () => {
-    startTimer(); 
-  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
@@ -117,15 +129,7 @@ export const SignInWithPhoneOTP = () => {
           OTP expires in: {minutes}:{seconds.toString().padStart(2, "0")}
         </div>
 
-        {secondsLeft <= 0 ? (
-          <button
-            type="button"
-            onClick={handleResend}
-            className="w-full py-2 rounded-md text-sm font-medium bg-[#145DB8] text-white hover:bg-[#0F4A91] cursor-pointer"
-          >
-            Resend OTP
-          </button>
-        ) : (
+       
           <button
             disabled={secondsLeft <= 0}
             type="submit"
@@ -135,9 +139,9 @@ export const SignInWithPhoneOTP = () => {
                 : "bg-[#145DB8] text-white hover:bg-[#0F4A91] cursor-pointer"
             }`}
           >
-            Verify
+           otpMutation.isPending ? "Verifying..." : "Verify OTP"
           </button>
-        )}
+
 
         {errors.otp && (
           <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">

@@ -4,9 +4,15 @@ interface ForgotPasswordState {
   otp: string |null;
 }
 
-const initialState: ForgotPasswordState = {
+export interface ForgetPasswordLocalState extends ForgotPasswordState {
+  currentStep: 'none' | 'otp' | 'resetPassword';
+}
+
+
+const initialState: ForgetPasswordLocalState = {
   email: null,
   otp: null,
+  currentStep: 'none',
 };
 
 const forgotPasswordSlice = createSlice({
@@ -19,9 +25,11 @@ const forgotPasswordSlice = createSlice({
     setOtp: (state, action) => {
       state.otp = action.payload;
     },
+    SetPasswordCurrentStep: (state, action) => {
+      state.otp = action.payload;},
     resetForgotState: () => initialState,
   },
 });
 
-export const { setEmail, setOtp, resetForgotState } = forgotPasswordSlice.actions;
+export const { setEmail, setOtp, resetForgotState, SetPasswordCurrentStep } = forgotPasswordSlice.actions;
 export default forgotPasswordSlice.reducer;

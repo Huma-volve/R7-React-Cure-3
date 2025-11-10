@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import doctorsReducer from './doctorsSlice'
 import searchReducer from "./searchSlice";
 import forgetPasswordReducer from "./auth/forgotPasswordSlice";
-
+import filtersReducer from "./filtersSlice";
 import newMobileReducer from "./edit-profile/newPhone";
 import SignWithPhoneReducer from "./auth/signinPhoneSlice";
 import favoritesReducer from "./favoritesSlice";
@@ -27,7 +27,7 @@ export const store = configureStore({
     doctors: doctorsReducer,
     search: searchReducer,
     favorites: favoritesReducer,
-
+    filters: filtersReducer,
     auth: persistedAuthReducer,
     forgetPassword:forgetPasswordReducer,
     newMobile: newMobileReducer,

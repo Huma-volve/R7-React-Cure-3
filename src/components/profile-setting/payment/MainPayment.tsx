@@ -21,7 +21,7 @@ export default function SavedCards() {
       {cards.length === 0 ? (
         <div className="flex flex-col items-center justify-center text-center border rounded-lg bg-white p-8">
           <img
-            src="../../../public/cardMockup.png"
+            src="/cardMockup.png"
             alt="No cards"
             className="w-32 h-32 mb-4 "
           />

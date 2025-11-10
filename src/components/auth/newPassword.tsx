@@ -8,6 +8,8 @@ import type { RootState } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { resetForgotState } from "@/redux/auth/forgotPasswordSlice";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 
 const passwordSchema = z
@@ -32,6 +34,16 @@ export const NewPassword = () => {
   const dispatch = useDispatch();
   const email = useSelector((state: RootState) => state.forgetPassword.email);
   const otp = useSelector((state: RootState) => state.forgetPassword.otp);
+
+  const user = useSelector((state: RootState) => state.auth.token);
+  const navigate = useNavigate();
+  const currentStep= useSelector((state: RootState) => state.forgetPassword.currentStep);
+
+  useEffect(() => {
+    if (user||currentStep!=='otp') {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
   
   const resetPasswordMutation = useResetPassword();
   const onSubmit = (data: FormField) => {

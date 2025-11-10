@@ -5,7 +5,6 @@ import {
   MapPin,
   Bell,
   CreditCard,
-  Heart,
   Settings,
   HelpCircle,
   Shield,
@@ -22,12 +21,13 @@ import { PrivacyNpolicy } from "./privacyNpolicy";
 import { LogoutButton } from "./logoutButton";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileSettings() {
   const [activeSection, setActiveSection] = useState<string>("Profile");
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detect mobile vs desktop
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     handleResize();
@@ -38,7 +38,6 @@ export default function ProfileSettings() {
   const menuItems = [
     { icon: Bell, label: "Notifications", type: "switch" },
     { icon: CreditCard, label: "Payment Method" },
-    { icon: Heart, label: "Favorites" },
     { icon: Settings, label: "Settings" },
     { icon: HelpCircle, label: "FAQs" },
     { icon: Shield, label: "Privacy Policy" },
@@ -48,8 +47,6 @@ export default function ProfileSettings() {
     switch (activeSection) {
       case "Payment Method":
         return <SavedCards/>;
-      case "Favorites":
-        return <p>Your favorite items or content here.</p>;
       case "Settings":
         return <MainSetting />;
       case "FAQs":
@@ -70,6 +67,15 @@ export default function ProfileSettings() {
     setActiveSection(label);
   };
   const user = useSelector((state: RootState) => state.auth.user);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/signin"); 
+    }
+  }, [user, navigate]);
+
+  
   
 
   return (
@@ -83,7 +89,7 @@ export default function ProfileSettings() {
           >
             <div className="flex items-center space-x-4">
               <img
-                src={user?.profile_photo||"../../public/profile.png"}
+                src={user?.profile_photo||"/profile.png"}
                 alt="User Avatar"
                 width={56}
                 height={56}

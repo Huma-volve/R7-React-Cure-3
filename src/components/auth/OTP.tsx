@@ -60,9 +60,7 @@ export const OTP = () => {
   const otpMutation = useOTP();
 
   const onSubmit = (data: OTPForm) => otpMutation.mutate(data);
-  const handleResend = () => {
-    startTimer(); 
-  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
@@ -107,15 +105,7 @@ export const OTP = () => {
           OTP expires in: {minutes}:{seconds.toString().padStart(2, "0")}
         </div>
 
-        {secondsLeft <= 0 ? (
-          <button
-            type="button"
-            onClick={handleResend}
-            className="w-full py-2 rounded-md text-sm font-medium bg-[#145DB8] text-white hover:bg-[#0F4A91] cursor-pointer"
-          >
-            Resend OTP
-          </button>
-        ) : (
+       
           <button
             disabled={secondsLeft <= 0}
             type="submit"
@@ -127,7 +117,7 @@ export const OTP = () => {
           >
             Verify
           </button>
-        )}
+     
 
         {errors.otp && (
           <span className="text-start text-[#fc4b4e] text-sm mt-1 ml-1">

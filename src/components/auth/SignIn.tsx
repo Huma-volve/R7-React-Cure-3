@@ -6,6 +6,10 @@ import { Button } from "../ui/button";
 import googleIcon from "/google-icon.svg";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useLogin } from "@/hooks/auth/useLogin"; 
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "@/redux/store";
+import { useEffect } from "react";
 
 const passwordSchema = z
   .string()
@@ -17,7 +21,7 @@ const passwordSchema = z
 const schema = z.object({
   email: z
     .string()
-    .min(1, "Email is required")
+    .min(1, "Email is required").trim()
     .refine(
       (val) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,6 +47,15 @@ export const SignIn = () => {
   const onSubmit: SubmitHandler<FormField> = (data) => {
     loginMutation.mutate(data);
   };
+
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
 
 
   return (
@@ -88,28 +101,44 @@ export const SignIn = () => {
               {loginMutation.isPending ? "Logging in..." : "Sign In"}
             </Button>
           </form>
-            <a href="signin-phone">
-          <Button className="text-white mt-2 w-full bg-[#145DB8]">
+          <a href="/signin-phone">
+  <Button className="text-black mt-2 w-full bg-white hover:bg-white border border-[#145DB8] hover:cursor-pointer">
     Sign in with phone number
-  </Button></a>
+  </Button>
+</a>
 
-          <a 
+  <div className="flex justify-center mt-3">
+  <p className="text-sm text-gray-600">
+    Don’t have an account?{" "}
+    <a
+      href="/signup"
+      className="text-[#145DB8] font-medium hover:underline"
+    >
+      Sign up
+    </a>
+  </p>
+</div>
+
+  <a
   href="https://accounts.google.com/v3/signin/accountchooser?dsh=S2064670113%3A1762466372533891&elo=1&ifkv=ARESoU1kk6R-3OWzfij6pvamMf042bcBE0T330AKbfPOnuiw7RIr6Sy0kbR_GCwEro9z3BiMY2vLhQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin"
   target="_blank"
   rel="noopener noreferrer"
 >
-  <Button className="w-full flex items-center justify-center gap-2 border hover:cursor-pointer mt-5 bg-[#ffffff] hover:bg-[#ffffff] text-black">
+<Button className="w-full flex items-center justify-center gap-3 border hover:cursor-pointer mt-5 bg-[#4285F4] text-white hover:bg-[#145DB8]">
+  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white">
     <img src={googleIcon} alt="Google logo" className="w-5 h-5" />
-    Sign in with Google
-  </Button>
+  </div>
+  Sign in with Google
+</Button>
+
 </a>
 
-          <a
-            className="block text-[#145DB8] mt-2 text-sm"
-            href="/forget-password"
-          >
-            Forget the password?
-          </a>
+<a
+  className="block text-[#145DB8] mt-3 text-sm  hover:underline"
+  href="/forget-password"
+>
+  Forgot your password?
+</a>
         </CardContent>
       </Card>
     </div>
