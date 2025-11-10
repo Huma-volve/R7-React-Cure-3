@@ -17,7 +17,7 @@ export default function App() {
 
   return (
      <main>
-      <div className="md:mx-5 my-5">
+      <div className="">
          {!shouldHideNavbar && <Navbar />}
          <ScrollToTop />
         <div className={!shouldHideNavbar ? "mt-20" : ""}>
