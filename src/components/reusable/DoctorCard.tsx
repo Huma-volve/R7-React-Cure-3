@@ -40,37 +40,46 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
 
   // ✅ دالة لحساب الوقت المتاح داخل الكارد
  const getAvailableTime = (availability: any) => {
-  if (!availability || Object.keys(availability).length === 0) return "غير متاح هذا الاسبوع";
+  if (!availability || Object.keys(availability).length === 0)
+    return "Not available this week";
 
-  const days = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+  const days = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
+
   const todayIndex = new Date().getDay();
-  const todayName = days[todayIndex];
-  const tomorrowName = days[(todayIndex + 1) % 7];
 
-  const todaySlots = availability[todayName];
-  const tomorrowSlots = availability[tomorrowName];
+  // Helper to format slots nicely (e.g. "Monday 09:00-17:00")
+  const formatSlots = (slotsObj: any, dayName: string) => {
+    const times = Object.keys(slotsObj);
+    if (times.length === 0) return null;
+    const start = times[0];
+    const end = slotsObj[start];
+    return `${capitalize(dayName)} ${start}-${end}`;
+  };
 
-  // 1️⃣ اليوم
-  if (todaySlots && todaySlots.length > 0) {
-    return `${todayName.charAt(0).toUpperCase() + todayName.slice(1)} ${todaySlots[0]}-${todaySlots[todaySlots.length - 1]}`;
-  } 
+  const capitalize = (str: string) =>
+    str.charAt(0).toUpperCase() + str.slice(1);
 
-  // 2️⃣ بكرة
-  if (tomorrowSlots && tomorrowSlots.length > 0) {
-    return `${tomorrowName.charAt(0).toUpperCase() + tomorrowName.slice(1)} ${tomorrowSlots[0]}-${tomorrowSlots[tomorrowSlots.length - 1]}`;
-  }
-
-  // 3️⃣ لو اليوم وبكرة فاضيين → نلف على باقي الأسبوع
-  for (let i = 2; i < 7; i++) {
+  // Loop from today up to 7 days ahead
+  for (let i = 0; i < 7; i++) {
     const dayName = days[(todayIndex + i) % 7];
     const slots = availability[dayName];
-    if (slots && slots.length > 0) {
-      return `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${slots[0]}-${slots[slots.length - 1]}`;
+    if (slots) {
+      const formatted = formatSlots(slots, dayName);
+      if (formatted) return formatted;
     }
   }
 
-  return "غير متاح هذا الاسبوع";
+  return "Not available this week";
 };
+
 
 
   const availableTime = getAvailableTime(availability); // ✅ استخدام الدالة داخليًا
