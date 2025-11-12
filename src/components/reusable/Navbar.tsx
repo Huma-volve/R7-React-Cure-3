@@ -1,6 +1,8 @@
 import { FiSearch, FiBell, FiX } from "react-icons/fi";
 import { RiMenu4Line } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
+import { BsChatText } from "react-icons/bs";
+import { TbBrandBooking } from "react-icons/tb";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuery, searchDoctors } from "@/redux/searchSlice";
@@ -135,7 +137,21 @@ const Navbar: React.FC = () => {
             >
               <FaRegHeart />
             </button>
+             
+             <button
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              onClick={() => navigate("/chat")}
+            >
+              <BsChatText />
+            </button>
 
+              <button
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              onClick={() => navigate("/booking")}
+            >
+              <img src="/booking_icon.png" className="w-5 h-5" />
+            </button>
+            
             <button
               onClick={() => navigate("/profile-setting")}
               className="cursor-pointer"
@@ -186,6 +202,20 @@ const Navbar: React.FC = () => {
               className="text-black font-bold cursor-pointer bg-[#F5F6F7] p-3 rounded-lg hover:bg-gray-200 transition-transform duration-300 hover:scale-105"
             >
               <FaRegHeart />
+            </button>
+
+             <button
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              onClick={() => navigate("/chat")}
+            >
+              <BsChatText />
+            </button>
+
+            <button
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              onClick={() => navigate("/booking")}
+            >
+              <img src="/booking_icon.png" className="w-5 h-5" />
             </button>
 
             <button
