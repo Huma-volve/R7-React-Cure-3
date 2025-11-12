@@ -10,12 +10,11 @@ import { FaCheckCircle, FaRegCircle, FaMoneyBillWave } from "react-icons/fa"
 import VerifiedIcon from '@/assets/icons/verified.png'
 import VisaIcon from '@/assets/icons/visa.svg'
 import PaypalIcon from '@/assets/icons/paypal.svg'
-import ApplePayIcon from '@/assets/icons/apple-pay.svg'
 import CalenderIcon from '@/assets/icons/calender.png'
 import LocationIcon from '@/assets/icons/location.png'
-import moment from "moment";
+import { useBookAppointment } from "@/hooks/useBookAppointment";
 
-type PaymentMethods = 'Paypal' | 'Credit card' | 'Apple pay' | 'Cash';
+type PaymentMethods = 'paypal' | 'stripe' | 'cash';
 
 interface PaymentProps {
     id: number,
@@ -26,22 +25,17 @@ interface PaymentProps {
 const paymentOptionsArray: PaymentProps[] = [
     {
         id: 0,
-        name: 'Credit card',
+        name: 'paypal',
         icon: VisaIcon
     },
     {
         id: 1,
-        name: 'Paypal',
+        name: 'stripe',
         icon: PaypalIcon
     },
     {
         id: 2,
-        name: 'Apple pay',
-        icon: ApplePayIcon
-    },
-    {
-        id: 3,
-        name: 'Cash',
+        name: 'cash',
         icon: <FaMoneyBillWave className="text-green-500" />
     },
 ]
@@ -49,30 +43,58 @@ const paymentOptionsArray: PaymentProps[] = [
 export default function PaymentConfirmation() {
     const navigate = useNavigate()
 
+    const { mutate: bookAppointment, error, isSuccess } = useBookAppointment({
+        onSuccess: () => {
+            setConfirmDialog(false);
+            setOpenDialog(true);
+            setLoading(false);
+        },
+        onError: () => {
+            setConfirmDialog(true);
+            setLoading(false);
+        },
+    });
+    
     const [openDialog, setOpenDialog] = useState(false)
     const [confirmDialog, setConfirmDialog] = useState(false);
     const [loading, setLoading] = useState(false);
-
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethods>('Credit card')
-
+    
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethods>('paypal')
+    
     // Taking the props that the path (doctors/id) gives
     const { state } = useLocation();
     const { day, timeSlot, month, doctor } = state || {};
 
+    const handleBook = () => {
+        bookAppointment({
+            doctor_id: doctor.doctor.id,
+            date_time: `${day} ${timeSlot}`,
+            payment_method: paymentMethod,
+            return_url: "https://app.example.com/paypal/return",
+            cancel_url: "https://app.example.com/paypal/cancel",
+        });
+    };
+
     const handleConfirm = () => {
         setLoading(true);
 
+        if(error) {
+            setConfirmDialog(false)
+            return
+        }
+        if(isSuccess) {
+            setConfirmDialog(true)
+        }
         const timeoutId = setTimeout(() => {
             setLoading(false);
-            setConfirmDialog(false);
-            setOpenDialog(true);
+
         }, 1500);
 
         // Cleanup
         return () => clearTimeout(timeoutId);
     };
 
-    return <Card className="bg-background md:w-[70%] lg:w-[50%] mx-auto border-none shadow-none">
+    return <Card className="bg-background md:w-[70%] lg:w-[50%] mx-3 md:mx-auto border-none shadow-none">
         <CardTitle className="flex relative items-center gap-3 justify-center">
             <div className="relative">
                 <img
@@ -92,7 +114,6 @@ export default function PaymentConfirmation() {
                 <div className="flex items-center gap-1">
                     <img src={LocationIcon} />
                     <p className="text-neutral-600">{doctor.doctor.clinic_address}</p>
-                    <span>{moment('9/11/2024').format('dddd')}</span>
                 </div>
             </div>
         </CardTitle>
@@ -100,7 +121,7 @@ export default function PaymentConfirmation() {
         <div className="flex items-center justify-around">
             <div className="flex items-center gap-2">
                 <img src={CalenderIcon} />
-                <p className="hover:text-primary-600 transition duration-300 ease-in-out font-medium capitalize">{day} - {month.getMonth()} - {timeSlot}</p>
+                <p className="hover:text-primary-600 transition duration-300 ease-in-out font-medium capitalize">{day} | {timeSlot}</p>
             </div>
             <Button variant='link' onClick={() => navigate(`/doctor/${doctor.doctor.id}`)}>Reschedule</Button>
         </div>
@@ -126,7 +147,7 @@ export default function PaymentConfirmation() {
                                 ) : (
                                     <FaRegCircle className={`${isSelected ? "text-green-500" : "text-gray-300"} text-lg`} />
                                 )}
-                                <p className={`${isSelected && "text-green-500"}`}>{option.name}</p>
+                                <p className={`${isSelected && "text-green-500"} capitalize`}>{option.name}</p>
                             </div>
 
                             {/* payment icon */}
@@ -161,10 +182,12 @@ export default function PaymentConfirmation() {
             {/* CTA */}
             <Dialog open={confirmDialog} onOpenChange={setConfirmDialog}>
                 <DialogTrigger className="w-full">
-                    <Button className="w-full">Pay</Button>
+                    <Button className="w-full" onClick={handleBook}>
+                        Pay
+                    </Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <p>Are you sure you want to confirm this payment?</p>
+                    <p>{error ? 'You already booked that' : 'Are you sure you want to confirm this payment?'}</p>
                     <div className="flex justify-end gap-2 mt-4">
                         <Button variant="destructive" onClick={() => setConfirmDialog(false)}>
                             Cancel

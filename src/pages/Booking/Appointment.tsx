@@ -32,7 +32,7 @@ interface ApiAppointment {
   booking_id?: number;
   date_time: string;
   date_time_formatted: string;
-  status_label: string;
+  status: string;
   doctor?: Doctor;
 }
 
@@ -102,16 +102,16 @@ const token = useSelector((state: RootState) => state.auth.token);
   return {
     id: item.id,
     date: format(parsedDate, "yyyy-MM-dd"),
-    time: format(parsedDate, "HH:mm  "),
+    time: format(parsedDate, "HH:mm"),  
     doctor: item.doctor?.user?.name || "Unknown Doctor",
     specialty: item.doctor?.specialty || "Unknown Specialty",
     address: item.doctor?.clinic_address || "No address available",
     status:
-      item.status_label === "معلق"
+      item.status === "pending"
         ? "Pending"
-        : item.status_label === "ملغي"
+        : item.status === "cancelled"
         ? "Canceled"
-        : item.status_label === "مكتملة"
+        : item.status === "completed"
         ? "Completed"
         : "Upcoming",
     imageSrc: item.doctor?.user?.profile_photo || "/doctor.jpg",
