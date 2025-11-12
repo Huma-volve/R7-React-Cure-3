@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiMapPin } from "react-icons/fi";
 import { IoIosStar } from "react-icons/io";
@@ -9,6 +9,8 @@ import TopDoctorsSlider from "@/components/reusable/TopDoctorsSlider";
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSelector } from "react-redux";
+
 const faqs = [
   {
     q: "What is this app used for?",
@@ -39,6 +41,13 @@ const Home: React.FC = () => {
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
+
+  const user= useSelector((state: any) => state.auth.user);
+  useEffect(() => {
+    if (!user) {
+      navigate("/signin"); 
+    }
+  }, [user, navigate]);
   
   return (
     <div className="min-h-screen px-2 md:px-12 bg-white text-gray-800">

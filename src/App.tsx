@@ -4,13 +4,14 @@ import Footer from "./components/reusable/Footer";
 import ScrollToTop from "./components/reusable/ScrollToTop";
 
 
+
 export default function App() {
   const location = useLocation();
-  const hideNavbarOn = ["/chat" , '/signin','signup','verify-account','forget-password','reset-password','forget-password-otp'];
+  const hideNavbarOn = ["/chat" , '/signin','signup','verify-account','forget-password','reset-password','forget-password-otp', 'new-phone-otp', 'signin-phone', 'phone-login-otp'];
   const shouldHideNavbar = hideNavbarOn.some((path) =>
     location.pathname.startsWith(path)
   );
-  const hideFooter = ["/chat" , '/signin','signup','verify-account','forget-password','reset-password','forget-password-otp'];
+  const hideFooter = ["/chat" , '/signin','signup','verify-account','forget-password','reset-password','forget-password-otp' , 'new-phone-otp', 'signin-phone', 'phone-login-otp'];
   const shouldHideFooter = hideFooter.some((path) =>
     location.pathname.startsWith(path)
   );
@@ -18,7 +19,7 @@ export default function App() {
   return (
      <main>
       <div className="">
-         {!shouldHideNavbar && <Navbar />}
+         {!shouldHideNavbar &&  <Navbar />}
          <ScrollToTop />
         <div className={!shouldHideNavbar ? "mt-20" : ""}>
           <Outlet />
