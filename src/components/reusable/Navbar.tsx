@@ -1,6 +1,7 @@
 import { FiSearch, FiBell, FiX } from "react-icons/fi";
 import { RiMenu4Line } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
+import { BsChatText } from "react-icons/bs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuery, searchDoctors } from "@/redux/searchSlice";
@@ -10,6 +11,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverPortal,
 } from "@radix-ui/react-popover";
 import NotificationsPopup from "./NotificationsPopup";
 
@@ -128,13 +130,27 @@ const Navbar: React.FC = () => {
             >
               <FaRegHeart />
             </button>
+             
+             <button
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              onClick={() => navigate("/chat")}
+            >
+              <BsChatText />
+            </button>
 
+              <button
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              onClick={() => navigate("/booking")}
+            >
+              <img src="/booking_icon.png" className="w-5 h-5" />
+            </button>
+            
             <button
               onClick={() => navigate("/profile-setting")}
               className="cursor-pointer"
             >
               <img
-                src={user?.profile_photo||"/avatar.jpg"}
+                src={user?.profile_photo||"/profile.png"}
                 alt="profile"
                 className="w-10 h-10 cursor-pointer rounded-full object-cover hover:shadow-md hover:border border-primary-700 transition-transform duration-300 hover:scale-108"
               />
@@ -168,9 +184,11 @@ const Navbar: React.FC = () => {
                 <PopoverTrigger>
                   <FiBell />
                 </PopoverTrigger>
-                <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
-                  <NotificationsPopup />
-                </PopoverContent>
+                <PopoverPortal>
+                  <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
+                      <NotificationsPopup />
+                  </PopoverContent>
+                </PopoverPortal>
               </Popover>
             </button>
 
@@ -179,6 +197,20 @@ const Navbar: React.FC = () => {
               className="text-black font-bold cursor-pointer bg-[#F5F6F7] p-3 rounded-lg hover:bg-gray-200 transition-transform duration-300 hover:scale-105"
             >
               <FaRegHeart />
+            </button>
+
+             <button
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              onClick={() => navigate("/chat")}
+            >
+              <BsChatText />
+            </button>
+
+            <button
+              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
+              onClick={() => navigate("/booking")}
+            >
+              <img src="/booking_icon.png" className="w-5 h-5" />
             </button>
 
             <button
