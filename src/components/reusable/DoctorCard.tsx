@@ -9,11 +9,11 @@ interface DoctorCardProps {
   specialty: string;
   clinic: string;
   rating: number;
-  time: string;
   price: number;
   image: string;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
+  availability?: any; 
   showBookingButton?: boolean;
 }
 
@@ -23,30 +23,77 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
   specialty,
   clinic,
   rating,
-  time,
   price,
   image,
   isFavorite,
   onToggleFavorite,
+  availability,
   showBookingButton = true,
 }) => {
   const navigate = useNavigate();
   const [localFavorite, setLocalFavorite] = useState(isFavorite);
 
-  // Sync لما Redux يتغير (لو الصفحة اتعملها Refresh)
   useEffect(() => {
     setLocalFavorite(isFavorite);
+    console.log(localFavorite)
   }, [isFavorite]);
+
+  // ✅ دالة لحساب الوقت المتاح داخل الكارد
+ const getAvailableTime = (availability: any) => {
+  if (!availability || Object.keys(availability).length === 0)
+    return "Not available this week";
+
+  const days = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
+
+  const todayIndex = new Date().getDay();
+
+  // Helper to format slots nicely (e.g. "Monday 09:00-17:00")
+  const formatSlots = (slotsObj: any, dayName: string) => {
+    const times = Object.keys(slotsObj);
+    if (times.length === 0) return null;
+    const start = times[0];
+    const end = slotsObj[start];
+    return `${capitalize(dayName)} ${start}-${end}`;
+  };
+
+  const capitalize = (str: string) =>
+    str.charAt(0).toUpperCase() + str.slice(1);
+
+  // Loop from today up to 7 days ahead
+  for (let i = 0; i < 7; i++) {
+    const dayName = days[(todayIndex + i) % 7];
+    const slots = availability[dayName];
+    if (slots) {
+      const formatted = formatSlots(slots, dayName);
+      if (formatted) return formatted;
+    }
+  }
+
+  return "Not available this week";
+};
+
+
+
+  const availableTime = getAvailableTime(availability); // ✅ استخدام الدالة داخليًا
 
   return (
     <div 
       onClick={()=>navigate(`/doctor/${id}`)}
       className="relative border cursor-pointer border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between">
+      
       <button
         onClick={(e) => {
           e.stopPropagation();
-          setLocalFavorite((prev) => !prev); // ✅ قلب القيمه محلياً فوراً
-          onToggleFavorite(id); // بعد كده ابعتيه للـ Redux والـ API
+          setLocalFavorite((prev) => !prev);
+          onToggleFavorite(id);
         }}
         className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition"
       >
@@ -73,7 +120,7 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
           <div className="text-[15px] text-gray-700 flex gap-2 items-center">
             <IoIosStar className="text-[#f0f80b] text-xl" />
             <span>
-              {rating} • {time}
+              {rating} • {availableTime} {/* ✅ استخدم الوقت المحسوب داخليًا */}
             </span>
           </div>
         </div>

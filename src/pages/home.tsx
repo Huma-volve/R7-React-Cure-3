@@ -112,12 +112,12 @@ const Home: React.FC = () => {
             />
             <img
               src="https://randomuser.me/api/portraits/women/22.jpg"
-              className="md:w-28 md:h-28 relative md:top-3 md:left-5 rounded-full border-2 border-white"
+              className="hidden md:flex md:w-28 md:h-28 relative md:top-2 md:left-5 rounded-full border-2 border-white"
               alt="u4"
             />
             <img
               src="https://randomuser.me/api/portraits/men/12.jpg"
-              className="relative left-2 md:top-8 md:w-24 md:h-24 rounded-full border-2 border-white"
+              className="hidden md:flex relative left-2 md:top-8 md:w-24 md:h-24 rounded-full border-2 border-white"
               alt="u5"
             />
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin } from "lucide-react";
 import { VscSettings } from "react-icons/vsc";
@@ -15,6 +15,12 @@ import {
   resetResults,
   fetchAllDoctors,
 } from "@/redux/searchSlice";
+import {
+  setGender,
+  setConsultation,
+  setSort,
+  setAvailableDay,
+} from "@/redux/filtersSlice";
 import DoctorCard from "@/components/reusable/DoctorCard";
 import type { AppDispatch, RootState } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
@@ -24,24 +30,102 @@ const DoctorsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const favorites = useSelector((state: RootState) => state.favorites.list);
-  const [selectedGender, setSelectedGender] = useState<
-    "male" | "female" | null
-  >(null);
 
-  const { results, originalData, loading, query } = useSelector(
-    (state: RootState) => state.search
+  const { results, originalData, loading, query, currentPage, lastPage } =
+    useSelector((state: RootState) => state.search);
+  const { gender, consultation, sort, availableDay } = useSelector(
+    (state: RootState) => state.filters
   );
-  const doctorsToShow = query.trim() ? results : originalData;
+
+  let doctorsToShow = query.trim() ? results ?? [] : originalData ?? [];
+
+  if (gender) {
+    doctorsToShow = doctorsToShow.filter(
+      (doc: any) => doc.user?.gender === gender
+    );
+  }
+
+  if (consultation) {
+    doctorsToShow = doctorsToShow.filter(
+      (doc: any) => doc.consultation === consultation
+    );
+  }
+
+  // Sort
+  if (sort === "recommend") {
+    doctorsToShow = [...doctorsToShow].sort(
+      (a: any, b: any) => Number(b.average_rating) - Number(a.average_rating)
+    );
+  }
+
+  if (sort === "low-high") {
+    doctorsToShow = [...doctorsToShow].sort(
+      (a: any, b: any) => Number(a.session_price) - Number(b.session_price)
+    );
+  }
+
+  if (sort === "high-low") {
+    doctorsToShow = [...doctorsToShow].sort(
+      (a: any, b: any) => Number(b.session_price) - Number(a.session_price)
+    );
+  }
+  const goNext = () => {
+    if (currentPage < lastPage) {
+      dispatch(fetchAllDoctors(+currentPage + 1));
+    }
+  };
+
+  const goPrev = () => {
+    if (+currentPage > 1) {
+      dispatch(fetchAllDoctors(+currentPage - 1));
+    }
+  };
+
+  if (availableDay.length > 0) {
+    const days = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ];
+    const todayIndex = new Date().getDay();
+    const todayName = days[todayIndex];
+    const tomorrowName = days[(todayIndex + 1) % 7];
+
+    doctorsToShow = doctorsToShow.filter((doc: any) => {
+      const availability = doc.availability;
+      if (!availability) return false;
+
+      const isToday =
+        availability[todayName] &&
+        Object.keys(availability[todayName]).length > 0;
+      const isTomorrow =
+        availability[tomorrowName] &&
+        Object.keys(availability[tomorrowName]).length > 0;
+
+      return (
+        (availableDay.includes("today") && isToday) ||
+        (availableDay.includes("tomorrow") && isTomorrow)
+      );
+    });
+  }
 
   useEffect(() => {
     doctorsToShow.forEach((doc: any) => {
-      dispatch(checkFavoriteStatus(Number(doc.id)));
+      if (!favorites.includes(doc.id)) {
+        dispatch(checkFavoriteStatus(Number(doc.id)));
+      }
     });
-  }, [doctorsToShow, dispatch]);
+  }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchAllDoctors());
-  }, [dispatch]);
+    if (!query.trim()) {
+      dispatch(fetchAllDoctors(1));
+    }
+  }, [dispatch, query]);
 
   const handleSearch = () => {
     if (!query.trim()) {
@@ -61,7 +145,7 @@ const DoctorsPage: React.FC = () => {
 
   return (
     <div className="bg-white min-h-screen px-3 md:px-12 py-8 overflow-hidden">
-      {/* Header + Search + Filter */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
         <button
           onClick={() => setShowFilters(!showFilters)}
@@ -88,12 +172,7 @@ const DoctorsPage: React.FC = () => {
                 onClick={handleSearch}
                 disabled={loading}
                 className={`ml-2 px-4 rounded-lg transition text-white 
-             ${
-               loading
-                 ? "bg-gray-400"
-                 : "bg-[#145DB8] hover:bg-blue-700"
-             }
-            `}
+                 ${loading ? "bg-gray-400" : "bg-[#145DB8] hover:bg-blue-700"}`}
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
@@ -126,14 +205,14 @@ const DoctorsPage: React.FC = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row items-start gap-8">
-        {/* ===== Desktop Sidebar ===== */}
+        {/* ===== Filter Sidebar Desktop ===== */}
         <AnimatePresence>
           {showFilters && (
             <motion.aside
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.35, ease: "easeInOut" }}
+              transition={{ duration: 0.35 }}
               className="hidden lg:block w-67 bg-white shadow-md border border-gray-200 p-5 rounded-xl"
             >
               <h1 className="text-lg font-semibold mb-5">Filter Options</h1>
@@ -144,54 +223,103 @@ const DoctorsPage: React.FC = () => {
                   <h4 className="font-semibold mb-2">Available Date</h4>
                   <div className="flex flex-col gap-2">
                     <label className="flex items-center gap-2">
-                      <input type="checkbox" /> Today
+                      <input
+                        type="checkbox"
+                        checked={availableDay.includes("today")}
+                        onChange={() => dispatch(setAvailableDay("today"))}
+                      />
+                      Today
                     </label>
+
                     <label className="flex items-center gap-2">
-                      <input type="checkbox" /> Tomorrow
+                      <input
+                        type="checkbox"
+                        checked={availableDay.includes("tomorrow")}
+                        onChange={() => dispatch(setAvailableDay("tomorrow"))}
+                      />
+                      Tomorrow
                     </label>
                   </div>
                 </div>
-
                 {/* Gender */}
                 <div>
                   <h4 className="font-semibold mb-2">Gender</h4>
                   <div className="flex gap-3">
                     <button
-                      onClick={() => setSelectedGender("male")}
-                      className={`px-4 py-1 rounded-lg border font-medium transition 
-        ${
-          selectedGender === "male" ? "bg-blue-600 text-white" : "text-gray-700"
-        }
-      `}
+                      onClick={() => dispatch(setGender("male"))}
+                      className={`px-4 py-1 rounded-lg border font-medium transition ${
+                        gender === "male"
+                          ? "bg-blue-600 text-white"
+                          : "text-gray-700"
+                      }`}
                     >
                       Male
                     </button>
 
                     <button
-                      onClick={() => setSelectedGender("female")}
-                      className={`px-4 py-1 rounded-lg border font-medium transition 
-        ${
-          selectedGender === "female"
-            ? "bg-blue-600 text-white"
-            : "text-gray-700"
-        }
-      `}
+                      onClick={() => dispatch(setGender("female"))}
+                      className={`px-4 py-1 rounded-lg border font-medium transition ${
+                        gender === "female"
+                          ? "bg-blue-600 text-white"
+                          : "text-gray-700"
+                      }`}
                     >
                       Female
                     </button>
                   </div>
                 </div>
 
-                {/* Consultation Type */}
+                {/* Consultation */}
                 <div>
                   <h4 className="font-semibold mb-2">Consultation Type</h4>
-                  <div className="flex flex-col gap-2">
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="consultation" /> In-clinic
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="consultation" /> Home Visit
-                    </label>
+                  <div className="flex flex-col gap-3">
+                    <button
+                      onClick={() =>
+                        dispatch(
+                          setConsultation(
+                            consultation === "clinic" ? null : "clinic"
+                          )
+                        )
+                      }
+                      className="flex items-center gap-2"
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          consultation === "clinic"
+                            ? "border-blue-600"
+                            : "border-gray-400"
+                        }`}
+                      >
+                        {consultation === "clinic" && (
+                          <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                        )}
+                      </span>
+                      In-clinic
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        dispatch(
+                          setConsultation(
+                            consultation === "home" ? null : "home"
+                          )
+                        )
+                      }
+                      className="flex items-center gap-2"
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          consultation === "home"
+                            ? "border-blue-600"
+                            : "border-gray-400"
+                        }`}
+                      >
+                        {consultation === "home" && (
+                          <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                        )}
+                      </span>
+                      Home Visit
+                    </button>
                   </div>
                 </div>
 
@@ -199,22 +327,77 @@ const DoctorsPage: React.FC = () => {
                 <div>
                   <h4 className="font-semibold mb-2">Sort</h4>
                   <div className="flex flex-col gap-2">
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="sort" /> Most recommended
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="sort" /> Price Low to High
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="sort" /> Price High to Low
-                    </label>
+                    <button
+                      onClick={() =>
+                        dispatch(
+                          setSort(sort === "recommend" ? null : "recommend")
+                        )
+                      }
+                      className="flex items-center gap-2"
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          sort === "recommend"
+                            ? "border-blue-600"
+                            : "border-gray-400"
+                        }`}
+                      >
+                        {sort === "recommend" && (
+                          <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                        )}
+                      </span>
+                      Most recommended
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        dispatch(
+                          setSort(sort === "low-high" ? null : "low-high")
+                        )
+                      }
+                      className="flex items-center gap-2"
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          sort === "low-high"
+                            ? "border-blue-600"
+                            : "border-gray-400"
+                        }`}
+                      >
+                        {sort === "low-high" && (
+                          <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                        )}
+                      </span>
+                      Price Low to High
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        dispatch(
+                          setSort(sort === "high-low" ? null : "high-low")
+                        )
+                      }
+                      className="flex items-center gap-2"
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          sort === "high-low"
+                            ? "border-blue-600"
+                            : "border-gray-400"
+                        }`}
+                      >
+                        {sort === "high-low" && (
+                          <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                        )}
+                      </span>
+                      Price High to Low
+                    </button>
                   </div>
                 </div>
               </div>
             </motion.aside>
           )}
         </AnimatePresence>
-
         {/* ===== Mobile Sidebar (Slide + Overlay) ===== */}
         <AnimatePresence>
           {showFilters && (
@@ -252,73 +435,176 @@ const DoctorsPage: React.FC = () => {
                     <h4 className="font-semibold mb-2">Available Date</h4>
                     <div className="flex flex-col gap-2">
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" /> Today
+                        <input
+                          type="checkbox"
+                          checked={availableDay.includes("today")}
+                          onChange={() => dispatch(setAvailableDay("today"))}
+                        />
+                        Today
                       </label>
+
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" /> Tomorrow
+                        <input
+                          type="checkbox"
+                          checked={availableDay.includes("tomorrow")}
+                          onChange={() => dispatch(setAvailableDay("tomorrow"))}
+                        />
+                        Tomorrow
                       </label>
                     </div>
                   </div>
 
                   {/* Gender */}
-                <div>
-                  <h4 className="font-semibold mb-2">Gender</h4>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setSelectedGender("male")}
-                      className={`px-4 py-1 rounded-lg border font-medium transition 
-        ${
-          selectedGender === "male" ? "bg-blue-600 text-white" : "text-gray-700"
-        }
-      `}
-                    >
-                      Male
-                    </button>
+                  <div>
+                    <h4 className="font-semibold mb-2">Gender</h4>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => dispatch(setGender("male"))}
+                        className={`px-4 py-1 rounded-lg border font-medium transition ${
+                          gender === "male"
+                            ? "bg-blue-600 text-white"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        Male
+                      </button>
 
-                    <button
-                      onClick={() => setSelectedGender("female")}
-                      className={`px-4 py-1 rounded-lg border font-medium transition 
-        ${
-          selectedGender === "female"
-            ? "bg-blue-600 text-white"
-            : "text-gray-700"
-        }
-      `}
-                    >
-                      Female
-                    </button>
+                      <button
+                        onClick={() => dispatch(setGender("female"))}
+                        className={`px-4 py-1 rounded-lg border font-medium transition ${
+                          gender === "female"
+                            ? "bg-blue-600 text-white"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        Female
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                 {/* Consultation Type */}
-                <div>
-                  <h4 className="font-semibold mb-2">Consultation Type</h4>
-                  <div className="flex flex-col gap-2">
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="consultation" /> In-clinic
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="consultation" /> Home Visit
-                    </label>
+                  {/* Consultation */}
+                  <div>
+                    <h4 className="font-semibold mb-2">Consultation Type</h4>
+                    <div className="flex flex-col gap-3">
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            setConsultation(
+                              consultation === "clinic" ? null : "clinic"
+                            )
+                          )
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <span
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            consultation === "clinic"
+                              ? "border-blue-600"
+                              : "border-gray-400"
+                          }`}
+                        >
+                          {consultation === "clinic" && (
+                            <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                          )}
+                        </span>
+                        In-clinic
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            setConsultation(
+                              consultation === "home" ? null : "home"
+                            )
+                          )
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <span
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            consultation === "home"
+                              ? "border-blue-600"
+                              : "border-gray-400"
+                          }`}
+                        >
+                          {consultation === "home" && (
+                            <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                          )}
+                        </span>
+                        Home Visit
+                      </button>
+                    </div>
                   </div>
-                </div>
 
                   {/* Sort */}
                   <div>
                     <h4 className="font-semibold mb-2">Sort</h4>
                     <div className="flex flex-col gap-2">
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="sort-mobile" /> Most
-                        recommended
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="sort-mobile" /> Price Low to
-                        High
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="sort-mobile" /> Price High to
-                        Low
-                      </label>
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            setSort(sort === "recommend" ? null : "recommend")
+                          )
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <span
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            sort === "recommend"
+                              ? "border-blue-600"
+                              : "border-gray-400"
+                          }`}
+                        >
+                          {sort === "recommend" && (
+                            <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                          )}
+                        </span>
+                        Most recommended
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            setSort(sort === "low-high" ? null : "low-high")
+                          )
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <span
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            sort === "low-high"
+                              ? "border-blue-600"
+                              : "border-gray-400"
+                          }`}
+                        >
+                          {sort === "low-high" && (
+                            <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                          )}
+                        </span>
+                        Price Low to High
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            setSort(sort === "high-low" ? null : "high-low")
+                          )
+                        }
+                        className="flex items-center gap-2"
+                      >
+                        <span
+                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                            sort === "high-low"
+                              ? "border-blue-600"
+                              : "border-gray-400"
+                          }`}
+                        >
+                          {sort === "high-low" && (
+                            <span className="w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
+                          )}
+                        </span>
+                        Price High to Low
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -327,31 +613,14 @@ const DoctorsPage: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Main Content */}
+        {/* ===== Doctors List ===== */}
         <motion.div className="flex-1 min-w-0 w-full px-2 md:px-0">
           <h1 className="text-2xl font-semibold mb-6">Choose Specialties</h1>
+
           <SpecialtiesSlider isSidebarOpen={showFilters} />
 
-          {/* 💨 Skeleton Loading */}
           {loading && (
-            <div className="w-full mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="bg-gray-100 animate-pulse rounded-2xl p-6 h-64 flex flex-col justify-between shadow-sm"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-20 h-20 bg-gray-300 rounded-lg" />
-                    <div className="flex-1 space-y-3">
-                      <div className="h-4 bg-gray-300 rounded w-3/4" />
-                      <div className="h-3 bg-gray-300 rounded w-1/2" />
-                      <div className="h-3 bg-gray-300 rounded w-2/3" />
-                    </div>
-                  </div>
-                  <div className="h-4 bg-gray-300 rounded w-1/3 mt-6" />
-                </div>
-              ))}
-            </div>
+            <p className="text-center py-6 text-gray-500">Loading...</p>
           )}
 
           {!loading && doctorsToShow.length === 0 && (
@@ -370,13 +639,43 @@ const DoctorsPage: React.FC = () => {
                   specialty={doc.specialty?.name}
                   clinic={doc.clinic_address}
                   rating={doc.average_rating}
-                  time="متاح الآن"
+                  availability={doc.availability}
                   price={doc.session_price}
                   image={doc.user?.profile_photo ?? "avatar.PNG"}
                   isFavorite={favorites.includes(Number(doc.id))}
                   onToggleFavorite={toggleFavorite}
                 />
               ))}
+            </div>
+          )}
+          {/* ✅ Pagination */}
+          {!loading && doctorsToShow.length > 4 && (
+            <div className="flex items-center mt-8 w-full">
+              {/* زر Previous */}
+              {+currentPage > 1 && (
+                <button
+                  onClick={goPrev}
+                  className={`
+        border border-gray-300 text-[#145DB8] px-6 py-2 rounded-lg hover:bg-gray-100
+        ${currentPage === lastPage ? "mx-auto" : ""}
+      `}
+                >
+                  Previous page
+                </button>
+              )}
+
+              {/* زر Next */}
+              {currentPage < lastPage && (
+                <button
+                  onClick={goNext}
+                  className={`
+        border border-gray-300 text-[#145DB8] px-10 py-2 rounded-lg hover:bg-gray-100
+        ${currentPage === 1 ? "mx-auto" : "ml-auto"}
+      `}
+                >
+                  Next Page
+                </button>
+              )}
             </div>
           )}
         </motion.div>

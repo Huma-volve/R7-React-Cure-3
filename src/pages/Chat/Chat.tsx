@@ -1,534 +1,289 @@
-import React, { useState, useEffect, useMemo, useRef, type JSX } from "react";
-import {
-  Plus,
-  Send,
-  Mic,
-  ArrowLeft,
-  Image as ImageIcon,
-  Paperclip,
-  Mic as MicIcon,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
+import { chatApis } from "./chatApis";
+import ChatList from "./ChatList";
+import ChatWindow from "./ChatWindow";
+import MessageInput from "./MessageInput";
+import axios from "axios";
+import type { Chat } from "./ChatList";
 
+// ==== Define Types ====
+// ==== Shared Types ====
 // interface User {
-//   id: string;
+//   id: number;
 //   name: string;
-//   avatar: string;
+//   email?: string;
+//   avatar?: string;
 // }
-interface MessageFile {
-  name: string;
-  type: string;
-  url: string;
-}
+
 interface Message {
-  id: string;
-  conversationId: string;
-  from: string;
-  to: string;
-  text?: string;
-  file?: MessageFile;
-  createdAt: string;
-}
-interface Conversation {
-  id: string;
-  participants: string[];
-  unread: number;
-  lastMessage: string;
-  name: string;
-  user_id: string;
-}
-interface FakeDB {
-  users: {
-    [key: string]: {
-      id: string;
-      name: string;
-      avatar: string;
-    };
-  };
-  conversations: Conversation[];
-  messages: {
-    [conversationId: string]: Message[];
-  };
+  id: number;
+  body: string;
+  sender_id: number;
+  receiver_id: number;
+  attachment_path?: string;
+  attachment_mime?: string;
+  type: string;
+  created_at: string;
 }
 
-const initialFakeDB: FakeDB = {
-  users: {
-    me: { id: "me", name: "You", avatar: "public/Ellipse 1538 (1).png" },
-    doctor: {
-      id: "doctor",
-      name: "Dr. Smith",
-      avatar: "public/Ellipse 1538 (1).png",
-    },
-    nurse: {
-      id: "nurse",
-      name: "Dr. Emily",
-      avatar: "public/Ellipse 1538 (1).png",
-    },
-  },
-  conversations: [
-    {
-      id: "1",
-      name: "Dr. Smith",
-      user_id: "doctor",
-      participants: ["me", "doctor"],
-      unread: 2,
-      lastMessage: "Don’t forget to take your meds.",
-    },
-    {
-      id: "2",
-      name: "Nurse Emily",
-      user_id: "nurse",
-      participants: ["me", "nurse"],
-      unread: 0,
-      lastMessage: "Glad to hear you’re feeling better!",
-    },
-  ],
-  messages: {
-    "1": [
-      {
-        id: "m1",
-        conversationId: "1",
-        from: "doctor",
-        to: "me",
-        text: "Hello! How are you feeling today?",
-        createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
-      },
-      {
-        id: "m2",
-        conversationId: "1",
-        from: "me",
-        to: "doctor",
-        text: "A bit tired, doctor.",
-        createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-      },
-      {
-        id: "m3",
-        conversationId: "1",
-        from: "doctor",
-        to: "me",
-        text: "Don’t forget to take your meds.",
-        createdAt: new Date().toISOString(),
-      },
-    ],
-    "2": [
-      {
-        id: "m4",
-        conversationId: "2",
-        from: "nurse",
-        to: "me",
-        text: "Glad to hear you’re feeling better!",
-        createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-      },
-    ],
-  },
-};
+// interface ChatMeta {
+//   favorite?: boolean;
+//   archived?: boolean;
+// }
 
-function loadFakeDB() {
-  try {
-    const saved = localStorage.getItem("chatAppDB");
-    if (saved) return JSON.parse(saved);
-  } catch (err) {
-    console.warn("Error loading DB:", err);
-  }
-  return initialFakeDB;
-}
-function saveFakeDB(db: FakeDB) {
-  try {
-    localStorage.setItem("chatAppDB", JSON.stringify(db));
-  } catch (err) {
-    console.warn("Error saving DB:", err);
-  }
-}
+// interface Chat {
+//   id: number; 
+//   chat_id: number;
+//   receiver: User;
+//   meta?: ChatMeta;
+// }
 
-const fakeAPI = {
-  fetchConversations: async (db: FakeDB) => db.conversations,
-  fetchMessages: async (db: FakeDB, id: string) => db.messages[id] || [],
-  sendMessage: async (db: FakeDB, msg: Message) => {
-    await new Promise((r) => setTimeout(r, 200));
-    const newMsg = {
-      ...msg,
-      id: `m-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-    };
-    if (!db.messages[msg.conversationId]) db.messages[msg.conversationId] = [];
-    db.messages[msg.conversationId].push(newMsg);
+// ✅ Fixed handleSelect to match expected (non-async)
 
-    const conv = db.conversations.find(
-      (c: Conversation) => c.id === msg.conversationId
-    );
-    if (conv) {
-      if (msg.file) {
-        if (msg.file.type.startsWith("image/"))
-          conv.lastMessage = "🖼️ Image";
-        else if (msg.file.type.startsWith("audio/"))
-          conv.lastMessage = "🎤 Voice message";
-        else conv.lastMessage = "📎 File";
-      } else {
-        conv.lastMessage = msg.text || "";
-      }
-    }
 
-    saveFakeDB(db);
-    return newMsg;
-  },
-};
+export default function ChatPage() {
+  const token = useSelector((state: RootState) => state.auth.token);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
 
-export default function Chat(): JSX.Element {
-  const [fakeDB, setFakeDB] = useState(loadFakeDB());
-  const currentUser = fakeDB.users.me;
-
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [recording, setRecording] = useState(false);
-  const [mobileView, setMobileView] = useState<"list" | "chat">("list");
+  const [loadingMessages, setLoadingMessages] = useState(false);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
+  // Mobile layout state
+  const [isMobile, setIsMobile] = useState(false);
+  const [showChatList, setShowChatList] = useState(true);
+  // ✅ handle adding new chat and selecting it
+  const handleCreateChat = (chat: Chat) => {
+    setChats(prev => [chat, ...prev]); // add new chat at the top
+    setSelectedChat(chat);             // immediately open it
+  };
+  // Detect window size (for mobile vs desktop)
   useEffect(() => {
-    (async () => {
-      const convs = await fakeAPI.fetchConversations(fakeDB);
-      setConversations(convs);
-    })();
-  }, [fakeDB]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  async function selectConversation(conv: Conversation) {
-    setSelectedConv(conv);
-    const msgs = await fakeAPI.fetchMessages(fakeDB, conv.id);
-    setMessages(msgs.slice());
-    conv.unread = 0;
-    setConversations((prev) => [...prev]);
-    if (window.innerWidth < 768) setMobileView("chat");
-  }
-
-  async function handleSend(text?: string, file?: MessageFile) {
-    if (!selectedConv || (!text && !file)) return;
-    const recipient = selectedConv.participants.find(
-      (p) => p !== currentUser.id
-    )!;
-    const optimistic: Message = {
-      id: `temp-${Date.now()}`,
-      conversationId: selectedConv.id,
-      from: currentUser.id,
-      to: recipient,
-      text,
-      file,
-      createdAt: new Date().toISOString(),
+    const onResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) setShowChatList(true);
     };
-    setMessages((prev) => [...prev, optimistic]);
-    setInput("");
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
-    const serverMsg = await fakeAPI.sendMessage(fakeDB, optimistic);
-    setFakeDB({ ...fakeDB });
-    setMessages((prev) =>
-      prev.map((m) => (m.id === optimistic.id ? serverMsg : m))
-    );
-    setConversations((prev) => [...prev]);
-  }
-
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = e.target.files;
-    if (!files || files.length === 0 || !selectedConv) return;
-    const file = files[0];
-    const url = URL.createObjectURL(file);
-    await handleSend(undefined, { name: file.name, type: file.type, url });
-    e.target.value = "";
-  }
-
-  async function startRecording() {
-    try {
-      if (recording && mediaRecorderRef.current) {
-        mediaRecorderRef.current.stop();
-        return;
+  // Fetch chats (poll every 5s)
+  useEffect(() => {
+    if (!token) return;
+    let mounted = true;
+    const fetchChats = async () => {
+      try {
+        const data = await chatApis.getAllChats(token);
+        if (mounted) setChats(data || []);
+      } catch (err) {
+        console.error("❌ Failed to fetch chats:", err);
       }
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      const chunks: Blob[] = [];
-      setRecording(true);
+    };
+    fetchChats();
+    const interval = setInterval(fetchChats, 5000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [token]);
 
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data && e.data.size > 0) chunks.push(e.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        if (chunks.length === 0) return;
-        const blob = new Blob(chunks, { type: "audio/webm" });
-
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64 = reader.result as string;
-          await handleSend(undefined, {
-            name: `audio-${Date.now()}.webm`,
-            type: blob.type,
-            url: base64,
-          });
-          stream.getTracks().forEach((t) => t.stop());
-          setRecording(false);
-          mediaRecorderRef.current = null;
-        };
-        reader.readAsDataURL(blob);
-      };
-
-      mediaRecorder.start();
+  // Fetch messages for selected chat
+  const fetchMessages = async (chatId: number) => {
+    if (!token) return;
+    setLoadingMessages(true);
+    try {
+      const msgs = await chatApis.getChatMessages(token, chatId);
+      setMessages(msgs || []);
     } catch (err) {
-      console.error("Recording error:", err);
-      setRecording(false);
+      console.error("❌ Failed to load messages:", err);
+    } finally {
+      setLoadingMessages(false);
     }
-  }
+  };
 
-  const { otherUser } = useMemo(() => {
-    if (!selectedConv) return { otherUser: null };
-    const otherId = selectedConv.participants.find(
-      (p) => p !== currentUser.id
-    )!;
-    return { otherUser: fakeDB.users[otherId] };
-  }, [selectedConv, currentUser.id, fakeDB]);
+const handleSelect = (chat: Chat) => {
+  setSelectedChat(chat);
+  (async () => {
+    await fetchMessages(chat.chat_id);
+  })();
+  if (isMobile) setShowChatList(false);
+};
+
+
+  const handleChatDelete = async () => {
+    if (!selectedChat || !token) return;
+    try {
+      await chatApis.deleteChat(token, selectedChat.chat_id);
+      setChats((prev: Chat[]) =>
+        prev.filter((c) => c.chat_id !== selectedChat.chat_id)
+      );
+      setSelectedChat(null);
+      setMessages([]);
+      if (isMobile) setShowChatList(true);
+    } catch (err) {
+      console.error("❌ Failed to delete chat:", err);
+    }
+  };
+
+  const handleEdit = async (id: number, newText: string) => {
+    if (!token) return;
+    try {
+      await chatApis.updateMessage(token, id, newText);
+      setMessages((prev: Message[]) =>
+        prev.map((m) => (m.id === id ? { ...m, body: newText } : m))
+      );
+    } catch (err) {
+      console.error("❌ Edit failed:", err);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!token) return;
+    try {
+      await chatApis.deleteMessage(token, id);
+      setMessages((prev: Message[]) => prev.filter((m) => m.id !== id));
+    } catch (err) {
+      console.error("❌ Delete failed:", err);
+    }
+  };
+
+  const handleToggleFavorite = async (chatId: number) => {
+    if (!token) return;
+    try {
+      const updatedMeta = await chatApis.toggleFavorite(token, chatId);
+      setChats((prev: Chat[]) =>
+        prev.map((c) =>
+          c.chat_id === chatId
+            ? { ...c, meta: { ...c.meta, ...updatedMeta } }
+            : c
+        )
+      );
+      if (selectedChat?.chat_id === chatId)
+        setSelectedChat((prev) =>
+          prev ? { ...prev, meta: { ...prev.meta, ...updatedMeta } } : null
+        );
+    } catch (err) {
+      console.error("❌ Failed to toggle favorite:", err);
+    }
+  };
+
+  const handleToggleArchive = async (chatId: number) => {
+    if (!token) return;
+    try {
+      const updatedMeta = await chatApis.toggleArchive(token, chatId);
+      setChats((prev: Chat[]) =>
+        prev.map((c) =>
+          c.chat_id === chatId
+            ? { ...c, meta: { ...c.meta, ...updatedMeta } }
+            : c
+        )
+      );
+      if (selectedChat?.chat_id === chatId)
+        setSelectedChat((prev) =>
+          prev ? { ...prev, meta: { ...prev.meta, ...updatedMeta } } : null
+        );
+    } catch (err) {
+      console.error("❌ Failed to toggle archive:", err);
+    }
+  };
+
+const handleSend = async (text: string, file?: File) => {
+  if (!selectedChat || !token) return;
+  const receiverId = selectedChat.receiver?.id;
+  if (!receiverId) return;
+
+  try {
+    const message = await chatApis.sendMessage(
+      token,
+      selectedChat.chat_id,
+      receiverId,
+      text,
+      file
+    );
+
+    if (message) {
+      setMessages((prev) => [...prev, message]);
+    }
+} catch (err: unknown) {
+  if (axios.isAxiosError(err)) {
+    console.error("❌ Failed to send message:", err.response?.data || err.message);
+  } else if (err instanceof Error) {
+    console.error("❌ Failed to send message:", err.message);
+  } else {
+    console.error("❌ Failed to send message:", err);
+  }
+}
+
+};
+
 
   return (
-    <div className="w-screen h-screen bg-white text-gray-800 overflow-hidden">
-      <div className="grid grid-cols-1 md:grid-cols-3 h-full">
-      
-        <aside
-          className={`border-r border-gray-300 flex flex-col bg-white md:col-span-1 ${
-            mobileView === "chat" ? "hidden md:flex" : "flex"
-          }`}
-        >
-          <div className="p-4 border-b border-gray-300 flex justify-between items-center bg-gray-50">
-            <div className="flex gap-3 items-center">
-              <img
-                src={currentUser.avatar}
-                alt="me"
-                className="w-10 h-10 rounded-full"
-              />
-              <h2 className="text-lg font-semibold">{currentUser.name}</h2>
-            </div>
-          </div>
+    <div className="h-screen flex bg-gray-50 overflow-hidden">
+      {/* Chat List Sidebar */}
+      <div
+        className={`${
+          isMobile
+            ? showChatList
+              ? "w-full flex"
+              : "hidden"
+            : "w-[380px] border-r flex"
+        } shrink-0 flex-col`}
+      >
+        <ChatList
+          chats={chats}
+          onSelect={handleSelect}
+          selectedId={selectedChat?.chat_id}
+          onCreateChat={handleCreateChat}
+        />
+      </div>
 
-          <div className="flex-1 overflow-y-auto">
-            {conversations.map((c) => {
-              const msgs = fakeDB.messages[c.id] || [];
-              const lastMsg = msgs[msgs.length - 1];
-              const lastTime = lastMsg
-                ? new Date(lastMsg.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "";
-              const otherId = c.participants.find(
-                (p) => p !== currentUser.id
-              )!;
-              const user = fakeDB.users[otherId];
-
-              let previewIcon = null;
-              if (c.lastMessage.startsWith("🖼️"))
-                previewIcon = (
-                  <ImageIcon className="w-3 h-3 inline mr-1 text-gray-500" />
-                );
-              else if (c.lastMessage.startsWith("🎤"))
-                previewIcon = (
-                  <MicIcon className="w-3 h-3 inline mr-1 text-gray-500" />
-                );
-              else if (c.lastMessage.startsWith("📎"))
-                previewIcon = (
-                  <Paperclip className="w-3 h-3 inline mr-1 text-gray-500" />
-                );
-
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => selectConversation(c)}
-                  className={`w-full flex items-center p-3 gap-3 text-left transition ${
-                    selectedConv?.id === c.id
-                      ? "bg-gray-100"
-                      : "hover:bg-gray-50"
-                  }`}
-                >
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div className="flex-1 text-left">
-                    <div className="flex justify-between items-center">
-                      <div className="font-medium">{user.name}</div>
-                      <div className="text-xs text-gray-400">{lastTime}</div>
-                    </div>
-                    <div className="text-sm text-gray-500 truncate flex items-center">
-                      {previewIcon}
-                      {c.lastMessage.replace(
-                        /^(\p{Emoji_Presentation}|\p{Emoji}\ufe0f)\s*/u,
-                        ""
-                      )}
-                    </div>
-                  </div>
-                  {c.unread > 0 && (
-                    <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full">
-                      {c.unread}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </aside>
-
-        {/* Chat */}
-        <main
-          className={`md:col-span-2 flex flex-col bg-white ${
-            mobileView === "chat" ? "flex" : "hidden md:flex"
-          }`}
-        >
-          <div className="p-4 border-b border-gray-300 flex items-center gap-4 bg-gray-50">
-            <button
-              onClick={() => setMobileView("list")}
-              className="md:hidden mr-2 text-gray-700 hover:text-gray-900"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            {otherUser ? (
-              <>
-                <img
-                  src={otherUser.avatar}
-                  alt={otherUser.name}
-                  className="w-11 h-11 rounded-full"
-                />
-                <div>
-                  <div className="font-semibold">{otherUser.name}</div>
-                  <div className="text-xs text-green-600">online</div>
-                </div>
-              </>
-            ) : (
-              <div className="text-gray-400">Select a conversation</div>
-            )}
-          </div>
-
-          {/* Messages */}
-          <div className="p-4 overflow-y-auto h-[75vh] bg-gray-50">
-            {!selectedConv ? (
-              <div className="text-center text-gray-400 mt-20">
-                No conversation selected
-              </div>
-            ) : (
-              messages.map((m) => (
-                <div
-                  key={m.id}
-                  className={`flex ${
-                    m.from === currentUser.id
-                      ? "justify-end"
-                      : "justify-start"
-                  } mb-3`}
-                >
-                  <div
-                    className={`p-3 rounded-2xl max-w-[70%] md:max-w-[75%] ${
-                      m.from === currentUser.id
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-200 text-gray-800"
-                    } mx-3 md:mx-0`}
-                  >
-                    {m.text && (
-                      <div className="text-sm whitespace-pre-wrap">
-                        {m.text}
-                      </div>
-                    )}
-                    {m.file && (
-                      <div className="mt-2">
-                        {m.file.type.startsWith("image/") ? (
-                          <img
-                            src={m.file.url}
-                            alt={m.file.name}
-                            className="rounded-lg max-w-[200px]"
-                          />
-                        ) : m.file.type.startsWith("audio/") ? (
-                          <audio src={m.file.url} controls />
-                        ) : (
-                          <a
-                            href={m.file.url}
-                            download={m.file.name}
-                            onClick={(e) => {
-                              if (
-                                m.file?.url.startsWith("blob:") ||
-                                m.file?.url.startsWith("data:")
-                              ) {
-                                e.preventDefault();
-                                const link = document.createElement("a");
-                                link.href = m.file.url;
-                                link.download = m.file.name || "file";
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                              }
-                            }}
-                            className="text-sm underline"
-                          >
-                            {m.file.name}
-                          </a>
-                        )}
-                      </div>
-                    )}
-                    <div className="text-[10px] text-gray-400 mt-1 text-right">
-                      {new Date(m.createdAt).toLocaleTimeString()}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-            <div ref={messagesEndRef}></div>
-          </div>
-
-          {/* Input */}
-          <div className="p-3 border-t border-gray-300 flex items-center gap-3 bg-gray-50">
-            <label className="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full cursor-pointer hover:bg-gray-300">
-              <Plus className="w-5 h-5 text-gray-700" />
-              <input
-                title="Upload file"
-                type="file"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </label>
-
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend(input);
+      {/* Chat Window */}
+      <div
+        className={`flex flex-col h-full ${
+          isMobile
+            ? showChatList
+              ? "hidden"
+              : "flex w-full"
+            : "flex flex-1"
+        }`}
+      >
+        {selectedChat ? (
+          <>
+            <div className="flex-1 overflow-y-auto">
+              <ChatWindow
+                messages={messages}
+                currentUserId={currentUser?.id ?? 0}
+                loading={loadingMessages}
+                selectedChat={selectedChat}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onChatDelete={handleChatDelete}
+                onChatFavorite={() =>
+                  handleToggleFavorite(selectedChat.chat_id)
                 }
-              }}
-              placeholder={selectedConv ? "Type a message..." : "Select a chat"}
-              className="flex-1 p-3 rounded-full border border-gray-300 focus:outline-none"
-              disabled={!selectedConv}
-            />
+                onChatArchive={() =>
+                  handleToggleArchive(selectedChat.chat_id)
+                }
+                onBack={() => setShowChatList(true)} // back on mobile
+              />
+            </div>
 
-            <button
-              onClick={startRecording}
-              disabled={!selectedConv}
-              className={`w-10 h-10 flex items-center justify-center rounded-full transition ${
-                recording
-                  ? "bg-red-500 text-white animate-pulse"
-                  : "bg-gray-200 hover:bg-gray-300 text-gray-700"
-              }`}
-            >
-              {recording ? "●" : <Mic className="w-5 h-5" />}
-            </button>
-
-            <button
-              title="Send Message"
-              onClick={() => handleSend(input)}
-              disabled={!selectedConv}
-              className="w-10 h-10 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700"
-            >
-              <Send className="w-4 h-4" />
-            </button>
-          </div>
-        </main>
+            <div className="sticky bottom-0 bg-white border-t">
+              <MessageInput onSend={handleSend} />
+            </div>
+          </>
+        ) : (
+          !isMobile && (
+            <div className="flex-1 flex items-center justify-center text-gray-400">
+              Select a chat
+            </div>
+          )
+        )}
       </div>
     </div>
   );

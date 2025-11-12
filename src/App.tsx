@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom"
 import Navbar from "./components/reusable/Navbar"
 import Footer from "./components/reusable/Footer";
 import ScrollToTop from "./components/reusable/ScrollToTop";
+import { TopNavbar } from "./components/auth/authNavbar";
 
 
 export default function App() {
@@ -17,8 +18,8 @@ export default function App() {
 
   return (
      <main>
-      <div className="md:mx-5 my-5">
-         {!shouldHideNavbar && <Navbar />}
+      <div className="">
+         {shouldHideNavbar ? <TopNavbar /> : <Navbar />}
          <ScrollToTop />
         <div className={!shouldHideNavbar ? "mt-20" : ""}>
           <Outlet />

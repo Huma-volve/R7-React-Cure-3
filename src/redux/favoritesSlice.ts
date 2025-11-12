@@ -44,7 +44,7 @@ export const checkFavoriteStatus = createAsyncThunk(
       `https://round7-cure.huma-volve.com/api/favorites/check/${doctorId}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    return { doctorId, isFavorite: res.data?.data?.is_favorite ?? false };
+    return { doctorId, isFavorite: res.data?.data?.is_favorite};
   }
 );
 
