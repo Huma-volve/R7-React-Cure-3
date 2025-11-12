@@ -1,10 +1,12 @@
 import { useState, type ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useBookAppointment } from "@/hooks/useBookAppointment";
 // Components
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PaymentSuccessModel from "./PaymentSuccessModel";
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { toast } from "sonner";
 // icons
 import { FaCheckCircle, FaRegCircle, FaMoneyBillWave } from "react-icons/fa"
 import VerifiedIcon from '@/assets/icons/verified.png'
@@ -12,7 +14,6 @@ import VisaIcon from '@/assets/icons/visa.svg'
 import PaypalIcon from '@/assets/icons/paypal.svg'
 import CalenderIcon from '@/assets/icons/calender.png'
 import LocationIcon from '@/assets/icons/location.png'
-import { useBookAppointment } from "@/hooks/useBookAppointment";
 
 type PaymentMethods = 'paypal' | 'stripe' | 'cash';
 
@@ -52,6 +53,7 @@ export default function PaymentConfirmation() {
         onError: () => {
             setConfirmDialog(true);
             setLoading(false);
+            toast.error('Booking failed, You already have a booking at this day!');
         },
     });
     
@@ -79,7 +81,8 @@ export default function PaymentConfirmation() {
         setLoading(true);
 
         if(error) {
-            setConfirmDialog(false)
+            setLoading(false)
+            setConfirmDialog(false);
             return
         }
         if(isSuccess) {
@@ -187,7 +190,7 @@ export default function PaymentConfirmation() {
                     </Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <p>{error ? 'You already booked that' : 'Are you sure you want to confirm this payment?'}</p>
+                    <p>Are you sure you want to confirm this payment?</p>
                     <div className="flex justify-end gap-2 mt-4">
                         <Button variant="destructive" onClick={() => setConfirmDialog(false)}>
                             Cancel

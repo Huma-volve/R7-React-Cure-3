@@ -179,18 +179,16 @@ const Navbar: React.FC = () => {
             </button>
 
             {/* Notification */}
-            <button className="text-black cursor-pointer bg-[#F5F6F7] px-3 py-2 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
-              <Popover>
-                <PopoverTrigger>
-                  <FiBell />
-                </PopoverTrigger>
+            <Popover>
+              <PopoverTrigger className="z-100 text-black cursor-pointer bg-[#F5F6F7] px-3 py-2 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105" asChild>
+                <FiBell />
+              </PopoverTrigger>
+              <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
                 <PopoverPortal>
-                  <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
-                      <NotificationsPopup />
-                  </PopoverContent>
+                  <NotificationsPopup />
                 </PopoverPortal>
-              </Popover>
-            </button>
+              </PopoverContent>
+            </Popover>
 
             <button
               onClick={() => navigate("/favorite")}

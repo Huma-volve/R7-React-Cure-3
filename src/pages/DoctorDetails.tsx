@@ -100,7 +100,7 @@ export default function DoctorDetails() {
   document.title = `Dr. ${docDetails.doctor.user.name}`;
 
   return (
-    <main className="grid grid-cols-1 lg:grid-cols-3 gap-8 *:mt-15 px-6 overflow-x-hidden">
+    <main className="grid mb-10 grid-cols-1 lg:grid-cols-3 gap-8 *:mt-15 px-8 overflow-x-hidden">
       
       {/* Left side */}
       <section className="flex flex-col gap-10 lg:col-span-2">
@@ -135,6 +135,11 @@ export default function DoctorDetails() {
                           setSelectedTimeSlot("");
                         }
                       }}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0); // Reset time to start of day
+                          return date < today; // Disable all dates before today
+                        }}
                       className="bg-white w-[320px] sm:w-[374px] rounded-md"
                       initialFocus
                       required={false}
