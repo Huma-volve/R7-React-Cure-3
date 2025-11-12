@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 // Components
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import PaypalIcon from '@/assets/icons/paypal.svg'
 import ApplePayIcon from '@/assets/icons/apple-pay.svg'
 import CalenderIcon from '@/assets/icons/calender.png'
 import LocationIcon from '@/assets/icons/location.png'
-import { useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
 
 type PaymentMethods = 'Paypal' | 'Credit card' | 'Apple pay' | 'Cash';
 
@@ -56,7 +57,7 @@ export default function PaymentConfirmation() {
 
     // Taking the props that the path (doctors/id) gives
     const { state } = useLocation();
-    const { selectedDate, timeSlot, doctor } = state || {};
+    const { day, timeSlot, month, doctor } = state || {};
 
     const handleConfirm = () => {
         setLoading(true);
@@ -75,7 +76,7 @@ export default function PaymentConfirmation() {
         <CardTitle className="flex relative items-center gap-3 justify-center">
             <div className="relative">
                 <img
-                    src={doctor.imgSrc}
+                    src={doctor.doctor.user.profile_photo ?? '/avatar.PNG'}
                     className="h-28 w-28 rounded-full object-cover"
                     alt="Doctor Picture"
                 />
@@ -86,11 +87,12 @@ export default function PaymentConfirmation() {
                 />
           </div>
             <div className="flex flex-col font-normal gap-3">
-                <h2 className="font-medium">Dr. {doctor.name}</h2>
-                <p className="text-neutral-600">{doctor.specialization}</p>
+                <h2 className="font-medium">{doctor.doctor.user.name}</h2>
+                <p className="text-neutral-600">{doctor.doctor.specialty}</p>
                 <div className="flex items-center gap-1">
                     <img src={LocationIcon} />
-                    <p className="text-neutral-600">{doctor.location}</p>
+                    <p className="text-neutral-600">{doctor.doctor.clinic_address}</p>
+                    <span>{moment('9/11/2024').format('dddd')}</span>
                 </div>
             </div>
         </CardTitle>
@@ -98,9 +100,9 @@ export default function PaymentConfirmation() {
         <div className="flex items-center justify-around">
             <div className="flex items-center gap-2">
                 <img src={CalenderIcon} />
-                <p className="hover:text-primary-600 transition duration-300 ease-in-out font-medium">{selectedDate}-{timeSlot}</p>
+                <p className="hover:text-primary-600 transition duration-300 ease-in-out font-medium capitalize">{day} - {month.getMonth()} - {timeSlot}</p>
             </div>
-            <Button variant='link' onClick={() => navigate(`/doctors/${doctor.id}`)}>Reschedule</Button>
+            <Button variant='link' onClick={() => navigate(`/doctor/${doctor.doctor.id}`)}>Reschedule</Button>
         </div>
 
       {/* Payment Methods */}
@@ -150,7 +152,7 @@ export default function PaymentConfirmation() {
                 </p>
                 <p className="text-red-500">
                     <span className=" text-xl font-semibold">
-                        {doctor.price}
+                        {doctor.doctor.session_price}
                     </span>
                     <span className="text-green-500">$</span>
                 </p>
@@ -211,10 +213,11 @@ export default function PaymentConfirmation() {
                     onEscapeKeyDown={(e) => e.preventDefault()}
                 >
                     <PaymentSuccessModel
-                        date={selectedDate!}
+                        day={day!}
+                        month={month}
                         time={timeSlot!}
-                        doctorId={doctor.id}
-                        doctorName={doctor.name!}
+                        doctorId={doctor.doctor.id}
+                        doctorName={doctor.doctor.user.name}
                         closeDialog={() => setOpenDialog(false)}
                     />
                 </DialogContent>

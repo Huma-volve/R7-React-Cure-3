@@ -9,6 +9,7 @@ import { useState } from "react";
 import {
   Popover,
   PopoverContent,
+  PopoverPortal,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 import NotificationsPopup from "./NotificationsPopup";
@@ -116,9 +117,15 @@ const Navbar: React.FC = () => {
                 <PopoverTrigger>
                   <FiBell />
                 </PopoverTrigger>
-                <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
-                  <NotificationsPopup />
-                </PopoverContent>
+                <PopoverPortal>
+                  <PopoverContent 
+                    className="p-0 border border-neutral-100 bg-background shadow-lg rounded-lg z-60 w-xs md:w-xl mt-2 ml-10 md:ml-20 lg:max-w-md"
+                    align="end"
+                    sideOffset={8}
+                  >
+                    <NotificationsPopup />
+                  </PopoverContent>
+                </PopoverPortal>
               </Popover>
             </button>
 
