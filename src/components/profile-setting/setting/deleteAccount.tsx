@@ -13,9 +13,9 @@ export const DeleteAccount = () => {
       <button
         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:cursor-pointer"
         onClick={() => deleteAccount.mutate()}
-
+        disabled={deleteAccount.isPending}
       >
-        Delete Account
+        {deleteAccount.isPending ? "Deleting..." : "Delete Account"}
       </button>
     </div>
   )

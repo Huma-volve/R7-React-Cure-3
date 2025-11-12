@@ -82,8 +82,9 @@ export const ForgetPasswordOTP = () => {
         otp: data.otp, 
       });
       dispatch(setOtp(data.otp));
+      dispatch(SetPasswordCurrentStep('resetPassword'));
     }
-    dispatch(SetPasswordCurrentStep('resetPassword'));
+  
     
   };
 
@@ -127,7 +128,7 @@ export const ForgetPasswordOTP = () => {
 
         
           <button
-            disabled={secondsLeft <= 0}
+            disabled={secondsLeft <= 0 ||otpMutation.isPending}
             type="submit"
             className={`w-full py-2 rounded-md text-sm font-medium ${
               secondsLeft <= 0
@@ -135,7 +136,7 @@ export const ForgetPasswordOTP = () => {
                 : "bg-[#145DB8] text-white hover:bg-[#0F4A91] cursor-pointer"
             }`}
           >
-            Verify
+            {otpMutation.isPending ? "Verifying..." : "Verify"}
           </button>
       
 

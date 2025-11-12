@@ -40,7 +40,7 @@ export const NewPassword = () => {
   const currentStep= useSelector((state: RootState) => state.forgetPassword.currentStep);
 
   useEffect(() => {
-    if (user||currentStep!=='otp') {
+    if (user||currentStep!=='resetPassword') {
       navigate("/"); 
     }
   }, [user, navigate]);
@@ -83,10 +83,11 @@ export const NewPassword = () => {
      
 
       <button
+      disabled={resetPasswordMutation.isPending}
         type="submit"
         className="w-full  bg-[#145DB8] text-white py-2 rounded-md text-sm font-medium hover:bg-[#145DB8] hover:cursor-pointer"
       >
-        Reset Password
+        {resetPasswordMutation.isPending ? "Reseting Password..." : "Reset Password"}
       </button>
 
     </form>
