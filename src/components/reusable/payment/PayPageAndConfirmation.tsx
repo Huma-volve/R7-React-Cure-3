@@ -48,11 +48,9 @@ export default function PaymentConfirmation() {
         onSuccess: () => {
             setConfirmDialog(false);
             setOpenDialog(true);
-            setLoading(false);
         },
         onError: () => {
             setConfirmDialog(true);
-            setLoading(false);
             toast.error('Booking failed, You already have a booking at this day!');
         },
     });
@@ -75,11 +73,8 @@ export default function PaymentConfirmation() {
             return_url: "https://app.example.com/paypal/return",
             cancel_url: "https://app.example.com/paypal/cancel",
         });
-    };
-
-    const handleConfirm = () => {
         setLoading(true);
-
+    
         if(error) {
             setLoading(false)
             setConfirmDialog(false);
@@ -90,9 +85,9 @@ export default function PaymentConfirmation() {
         }
         const timeoutId = setTimeout(() => {
             setLoading(false);
-
+    
         }, 1500);
-
+    
         // Cleanup
         return () => clearTimeout(timeoutId);
     };
@@ -185,7 +180,7 @@ export default function PaymentConfirmation() {
             {/* CTA */}
             <Dialog open={confirmDialog} onOpenChange={setConfirmDialog}>
                 <DialogTrigger className="w-full">
-                    <Button className="w-full" onClick={handleBook}>
+                    <Button className="w-full">
                         Pay
                     </Button>
                 </DialogTrigger>
@@ -198,7 +193,7 @@ export default function PaymentConfirmation() {
                         <Button
                             variant='outline'
                             className="text-primary-600 border-primary-600"
-                            onClick={handleConfirm}
+                            onClick={handleBook}
                             disabled={loading}
                         >
                             {loading ? (
