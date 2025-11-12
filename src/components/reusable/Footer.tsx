@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import { TiSocialFacebook } from "react-icons/ti";
 import { FaYoutube } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TfiLinkedin } from "react-icons/tfi";
 import { FaWhatsapp } from "react-icons/fa";
 const Footer: React.FC = () => {
@@ -12,20 +12,20 @@ const Footer: React.FC = () => {
   const toggle = (i: number) => {
     setOpen(open === i ? null : i);
   };
+  const navigate = useNavigate();
 
   return (
     <footer className="relative z-10 bg-[#021024] text-white pt-30 lg:pt-40 pb-10">
-
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-12">
-
-         {/* Column 1 */}
+        {/* Column 1 */}
         <div className="col-span-2 flex flex-col">
           <div className="flex items-center gap-2 mb-4">
             <img src="logo_footer.png" />
           </div>
 
           <h1 className="text-white text-lg leading-relaxed max-w-xs md:max-w-sm">
-            Cure helps you find trusted doctors, book appointments, and manage your health—quickly and easily.
+            Cure helps you find trusted doctors, book appointments, and manage
+            your health—quickly and easily.
           </h1>
 
           <div className="flex gap-3 mt-4 justify-end md:justify-start">
@@ -55,127 +55,133 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-{/* --- الأقسام التي ستصبح DropDown في الموبايل --- */}
-<div className="col-span-3 flex flex-col md:flex-row md:justify-center gap-3 md:text-left text-left">
+        {/* --- الأقسام التي ستصبح DropDown في الموبايل --- */}
+        <div className="col-span-3 flex flex-col md:flex-row md:justify-center gap-3 md:text-left text-left">
+          {/* Company */}
+          <div className="w-full">
+            {/* موبايل - العنوان + علامة */}
+            <button
+              onClick={() => toggle(1)}
+              className="md:hidden w-full flex justify-between hover:text-gray-400 items-center py-3 text-lg font-medium"
+            >
+              <span>Company</span>
+              {open === 1 ? <Minus size={20} /> : <Plus size={20} />}
+            </button>
 
-  {/* Company */}
-  <div className="w-full">
+            {/* ديسكتوب - عنوان ثابت */}
+            <h1 className="hidden md:block text-2xl mb-4">Company</h1>
 
-    {/* موبايل - العنوان + علامة */}
-    <button
-      onClick={() => toggle(1)}
-      className="md:hidden w-full flex justify-between hover:text-gray-400 items-center py-3 text-lg font-medium"
-    >
-      <span>Company</span>
-      {open === 1 ? <Minus size={20} /> : <Plus size={20} />}
-    </button>
+            {/* موبايل - يظهر فقط لما يضغط */}
+            <AnimatePresence initial={false}>
+              {open === 1 && (
+                <motion.ul
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-2 text-gray-300 pl-4 md:hidden"
+                >
+                  <li onClick={() => navigate("/")}>Home</li>
+                  <li onClick={() => navigate("/doctors")}>Doctors</li>
+                  <li onClick={() => navigate("/profile-setting")}>FAQs</li>
+                  <li onClick={() => navigate("/chat")}>Contact Us</li>
+                </motion.ul>
+              )}
+            </AnimatePresence>
 
-    {/* ديسكتوب - عنوان ثابت */}
-    <h1 className="hidden md:block text-2xl mb-4">Company</h1>
+            {/* ديسكتوب - ثابت */}
+            <ul className="hidden md:block space-y-2 text-gray-300">
+              <li onClick={() => navigate("/")}>Home</li>
+              <li onClick={() => navigate("/doctors")}>Doctors</li>
+              <li onClick={() => navigate("/profile-setting")}>FAQs</li>
+              <li onClick={() => navigate("/chat")}>Contact Us</li>
+            </ul>
+          </div>
 
-    {/* موبايل - يظهر فقط لما يضغط */}
-    <AnimatePresence initial={false}>
-      {open === 1 && (
-        <motion.ul
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          className="space-y-2 text-gray-300 pl-4 md:hidden"
-        >
-          <li>Home</li>
-          <li>Doctors</li>
-          <li>FAQs</li>
-          <li>Contact Us</li>
-        </motion.ul>
-      )}
-    </AnimatePresence>
+          {/* Support */}
+          <div className="w-full">
+            <button
+              onClick={() => toggle(2)}
+              className="md:hidden w-full flex justify-between hover:text-gray-400 items-center py-3 text-lg font-medium"
+            >
+              <span>Support</span>
+              {open === 2 ? <Minus size={20} /> : <Plus size={20} />}
+            </button>
 
-    {/* ديسكتوب - ثابت */}
-    <ul className="hidden md:block space-y-2 text-gray-300">
-      <li>Home</li>
-      <li>Doctors</li>
-      <li>FAQs</li>
-      <li>Contact Us</li>
-    </ul>
-  </div>
+            <h1 className="hidden md:block text-2xl mb-4">Support</h1>
 
-  {/* Support */}
-  <div className="w-full">
-    <button
-      onClick={() => toggle(2)}
-      className="md:hidden w-full flex justify-between hover:text-gray-400 items-center py-3 text-lg font-medium"
-    >
-      <span>Support</span>
-      {open === 2 ? <Minus size={20} /> : <Plus size={20} />}
-    </button>
+            <AnimatePresence initial={false}>
+              {open === 2 && (
+                <motion.ul
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-2 text-gray-300 pl-4 md:hidden"
+                >
+                  <li onClick={() => navigate("/chat")}>Help Center</li>
+                  <li onClick={() => navigate("/")}>How it works</li>
+                  <li onClick={() => navigate("/profile-setting")}>
+                    Privacy Policy
+                  </li>
+                  <li onClick={() => navigate("/profile-setting")}>
+                    Terms & Conditions
+                  </li>
+                </motion.ul>
+              )}
+            </AnimatePresence>
 
-    <h1 className="hidden md:block text-2xl mb-4">Support</h1>
+            <ul className="hidden md:block space-y-2 text-gray-300">
+              <li onClick={() => navigate("/chat")}>Help Center</li>
+              <li onClick={() => navigate("/")}>How it works</li>
+              <li onClick={() => navigate("/profile-setting")}>
+                Privacy Policy
+              </li>
+              <li onClick={() => navigate("/profile-setting")}>
+                Terms & Conditions
+              </li>
+            </ul>
+          </div>
 
-    <AnimatePresence initial={false}>
-      {open === 2 && (
-        <motion.ul
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          className="space-y-2 text-gray-300 pl-4 md:hidden"
-        >
-          <li>Help Center</li>
-          <li>How it works</li>
-          <li>Privacy Policy</li>
-          <li>Terms & Conditions</li>
-        </motion.ul>
-      )}
-    </AnimatePresence>
+          {/* Contact Info */}
+          <div className="w-full">
+            <button
+              onClick={() => toggle(3)}
+              className="md:hidden w-full flex justify-between hover:text-gray-400 items-center py-3 text-lg font-medium"
+            >
+              <span>Contact Info</span>
+              {open === 3 ? <Minus size={20} /> : <Plus size={20} />}
+            </button>
 
-    <ul className="hidden md:block space-y-2 text-gray-300">
-      <li>Help Center</li>
-      <li>How it works</li>
-      <li>Privacy Policy</li>
-      <li>Terms & Conditions</li>
-    </ul>
-  </div>
+            <h1 className="hidden md:block text-2xl mb-4">Contact Info</h1>
 
-  {/* Contact Info */}
-  <div className="w-full">
-    <button
-      onClick={() => toggle(3)}
-      className="md:hidden w-full flex justify-between hover:text-gray-400 items-center py-3 text-lg font-medium"
-    >
-      <span>Contact Info</span>
-      {open === 3 ? <Minus size={20} /> : <Plus size={20} />}
-    </button>
+            <AnimatePresence initial={false}>
+              {open === 3 && (
+                <motion.ul
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-2 text-gray-300 pl-4 md:hidden"
+                >
+                  <li>📞 080 707 555-321</li>
+                  <li>📧 demo@example.com</li>
+                  <li>📍 526 Melrose Street, Water Mill, 11976, NY</li>
+                </motion.ul>
+              )}
+            </AnimatePresence>
 
-    <h1 className="hidden md:block text-2xl mb-4">Contact Info</h1>
-
-    <AnimatePresence initial={false}>
-      {open === 3 && (
-        <motion.ul
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          className="space-y-2 text-gray-300 pl-4 md:hidden"
-        >
-          <li>📞 080 707 555-321</li>
-          <li>📧 demo@example.com</li>
-          <li>📍 526 Melrose Street, Water Mill, 11976, NY</li>
-        </motion.ul>
-      )}
-    </AnimatePresence>
-
-    <ul className="hidden md:block space-y-2 text-gray-300">
-      <li>📞 080 707 555-321</li>
-      <li>📧 demo@example.com</li>
-      <li>📍 526 Melrose Street, Water Mill, 11976, NY</li>
-    </ul>
-  </div>
-
-</div>
-</div>
-       <div className="text-center text-gray-400 text-sm mt-10 border-t border-white/10 pt-5">
-        ©2024 Techvio - All Rights Reserved | Terms & Conditions | Privacy Policy
+            <ul className="hidden md:block space-y-2 text-gray-300">
+              <li>📞 080 707 555-321</li>
+              <li>📧 demo@example.com</li>
+              <li>📍 526 Melrose Street, Water Mill, 11976, NY</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="text-center text-gray-400 text-sm mt-10 border-t border-white/10 pt-5">
+        ©2024 Techvio - All Rights Reserved | Terms & Conditions | Privacy
+        Policy
       </div>
     </footer>
   );

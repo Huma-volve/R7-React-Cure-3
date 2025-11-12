@@ -24,7 +24,7 @@
 h1{
   font-family: "Noto Serif Georgian", serif;
 }
-button{
+button,li{
   cursor: pointer;
 }
 :root {
