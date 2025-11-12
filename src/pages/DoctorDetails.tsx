@@ -54,6 +54,18 @@ function renderStars(rating: number) {
   return stars
 }
 
+interface ReviewProps {
+  id: number,
+  rating: number
+  comment: string
+  created_at: string
+  user: {
+    name: string
+    profile_photo: string | null
+    id: number
+  }
+}
+
 export default function DoctorDetails() {
   const { id } = useParams();
   const doctorId = id ? parseInt(id) : -1;
@@ -86,22 +98,6 @@ export default function DoctorDetails() {
       </div>
   );
   document.title = `Dr. ${docDetails.doctor.user.name}`;
-
-  let availabilityArray = [];
-  
-  if (Array.isArray(docDetails.doctor.availability)) {
-    availabilityArray = docDetails.doctor.availability;
-  } else if (docDetails.doctor.availability && typeof docDetails.doctor.availability === 'object') {
-    // If it's an object, convert to array
-    availabilityArray = Object.entries(docDetails.doctor.availability).map(([day, timeSlots]) => ({
-      day,
-      timeSlots: Array.isArray(timeSlots) ? timeSlots : []
-    }));
-  }
-  
-  const selectedDaySlots = availabilityArray.find(
-    (item) => item.day === selectedDay
-  )?.timeSlots || [];
 
   return (
     <main className="grid grid-cols-1 lg:grid-cols-3 gap-8 *:mt-15 px-6 overflow-x-hidden">
@@ -170,59 +166,7 @@ export default function DoctorDetails() {
                 selectedTimeSlot={selectedTimeSlot}
                 onSelectTimeSlot={(time) => setSelectedTimeSlot(time)}
               />
-              {/* Available days */}
-              {/* <div className="grid place-items-center mb-8 gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                {availabilityArray.map((item, index: number) => {
-                  const isSelected = selectedDay === item.day
 
-                  return (
-                    <div
-                      key={index}
-                      onClick={() => {
-                        setSelectedDay(item.day);
-                        setSelectedTimeSlot(''); // Reset time slot when day changes
-                      }}
-                      className={`${isSelected ? 'bg-primary-600 text-white' : 'bg-neutral-50 hover:bg-primary-50'}
-                        cursor-pointer hover:bg-primary-400 hover:text-white transition-colors flex flex-col items-center justify-center p-4 rounded-xl
-                        text-center gap-1 min-w-20`
-                      }
-                    >
-                      <span className="text-sm font-medium capitalize">{item.day}</span>
-                    </div>
-                  )
-                })}
-              </div> */}
-              
-              {/* Time slots - Only show if a day is selected */}
-              {selectedDay && (
-                <div className="w-full">
-                  {selectedDaySlots.length > 0 && (
-                    <>
-                      <h4 className="text-sm font-medium mb-3 text-neutral-700">Available Time Slots:</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                        {selectedDaySlots.map((slot, index: number) => {
-                          const isSlotSelected = selectedTimeSlot === slot;
-
-                          return (
-                            <div
-                              key={index}
-                              onClick={() => setSelectedTimeSlot(slot)}
-                              className={`${
-                                isSlotSelected
-                                  ? 'bg-primary-600 text-white hover:bg-primary-400'
-                                  : 'bg-neutral-50 hover:bg-primary-400 hover:text-white'
-                              } cursor-pointer flex flex-col p-3 text-center rounded-lg items-center gap-2 transition-colors`}
-                            >
-                              <span>{slot}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
-              
             </CardContent>
             
             <CardFooter className="flex justify-between flex-col md:flex-row gap-3 md:gap-0">
@@ -299,7 +243,7 @@ export default function DoctorDetails() {
                 (showAllReviews ?
                   docDetails.reviews :
                   docDetails.reviews.slice(0, 2)
-                ).map((rev, index: number) => {
+                ).map((rev: ReviewProps, index: number) => {
                     return <Card key={index} className={`selection:bg-white selection:text-primary-800 group bg-background hover:bg-primary-600 p-4 h-full hover:scale-102 ${onCardHoverStyle}`}>
                       <CardTitle className="flex items-center justify-between">
                         <div className="flex items-center gap-2">

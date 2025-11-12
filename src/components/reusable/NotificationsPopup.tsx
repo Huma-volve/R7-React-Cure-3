@@ -35,10 +35,10 @@ export default function NotificationsPopup() {
 
     // Pagination logic
     const itemsPerPage = 5;
-    const totalPages = Math.ceil(notifications.length / itemsPerPage);
+    const totalPages = Math.ceil(notifications!.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentNotifications = notifications.slice(startIndex, endIndex);
+    const currentNotifications = notifications!.slice(startIndex, endIndex);
 
     const handlePrevious = () => {
         setCurrentPage(prev => Math.max(prev - 1, 1));

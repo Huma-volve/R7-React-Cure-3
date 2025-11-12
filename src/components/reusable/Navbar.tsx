@@ -11,6 +11,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverPortal,
 } from "@radix-ui/react-popover";
 import NotificationsPopup from "./NotificationsPopup";
 
@@ -183,9 +184,11 @@ const Navbar: React.FC = () => {
                 <PopoverTrigger>
                   <FiBell />
                 </PopoverTrigger>
-                <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
-                  <NotificationsPopup />
-                </PopoverContent>
+                <PopoverPortal>
+                  <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
+                      <NotificationsPopup />
+                  </PopoverContent>
+                </PopoverPortal>
               </Popover>
             </button>
 
