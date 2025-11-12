@@ -10,6 +10,7 @@ import { useEffect, useState, useRef } from "react";
 import { useOTP } from "@/hooks/auth/useOTP";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store"; 
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   email: z.string(),
@@ -29,6 +30,16 @@ export const OTP = () => {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const email = useSelector((state: RootState) => state.auth.user?.email);
+
+  const currentStep= useSelector((state: RootState) => state.auth.currentStep);
+  const user = useSelector((state: RootState) => state.auth.token);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user||currentStep!=='otp') {
+      navigate("/"); 
+    }
+  }, [user, navigate]);
 
 
   const startTimer = () => {
