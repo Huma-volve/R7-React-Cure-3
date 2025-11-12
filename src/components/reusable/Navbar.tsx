@@ -42,7 +42,6 @@ const Navbar: React.FC = () => {
   };
   const dispatch = useDispatch<AppDispatch>();
   const searchValue = useSelector((state: RootState) => state.search.query);
-
   const handleSearch = async () => {
     if (searchValue.trim() !== "") {
       await dispatch(searchDoctors(searchValue));
