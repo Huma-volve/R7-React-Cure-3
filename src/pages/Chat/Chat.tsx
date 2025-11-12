@@ -55,7 +55,11 @@ export default function ChatPage() {
   // Mobile layout state
   const [isMobile, setIsMobile] = useState(false);
   const [showChatList, setShowChatList] = useState(true);
-
+  // ✅ handle adding new chat and selecting it
+  const handleCreateChat = (chat: Chat) => {
+    setChats(prev => [chat, ...prev]); // add new chat at the top
+    setSelectedChat(chat);             // immediately open it
+  };
   // Detect window size (for mobile vs desktop)
   useEffect(() => {
     const onResize = () => {
@@ -234,7 +238,7 @@ const handleSend = async (text: string, file?: File) => {
           chats={chats}
           onSelect={handleSelect}
           selectedId={selectedChat?.chat_id}
-          onCreateChat={() => {}}
+          onCreateChat={handleCreateChat}
         />
       </div>
 

@@ -7,6 +7,10 @@ import {
   MoreVertical,
   ArrowLeft,
 } from "lucide-react";
+import { getRealMessageType } from "./messageType";
+import {chatApis} from "./chatApis"
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
 
 interface User {
   id: number;
@@ -65,11 +69,70 @@ export default function ChatWindow({
   onChatFavorite,
   onBack,
 }: ChatWindowProps) {
+    const token = useSelector((state: RootState) => state.auth.token);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const dropdownRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const [localMessages, setLocalMessages] = useState<Message[]>(messages);
+  useEffect(() => {
+  setLocalMessages(messages);
+}, [messages]);
+
+
+//  const fetchMessages = async () => {
+//   if (!selectedChat) return;
+//   try {
+//     const updatedMessages: Message[] = await chatApis.getChatMessages(token, selectedChat.chat_id);
+
+//     const processedMessages = updatedMessages.map((m) => {
+//       if (!m.body && (m.attachment_path || m.attachment_path)) {
+//         return {
+//           ...m,
+//           body: m.attachment_path || m.attachment_path || "",
+//         };
+//       }
+//       return m;
+//     });
+
+//     setLocalMessages(processedMessages);
+//   } catch (err) {
+//     console.error("Failed to fetch messages:", err);
+//   }
+// };
+useEffect(() => {
+  if (!selectedChat) return;
+  const fetchMessages = async () => {
+    if (!selectedChat) return;
+
+    try {
+      const updatedMessages: Message[] = await chatApis.getChatMessages(token, selectedChat.chat_id);
+
+      const processedMessages = updatedMessages.map((m) => {
+        if (!m.body && (m.attachment_path || m.attachment_path)) {
+          return {
+            ...m,
+            body: m.attachment_path || m.attachment_path || "",
+          };
+        }
+        return m;
+      });
+
+      setLocalMessages(processedMessages);
+    } catch (err) {
+      console.error("Failed to fetch messages:", err);
+    }
+  };
+
+  fetchMessages(); // initial fetch
+
+  const interval = setInterval(fetchMessages, 5000);
+  return () => clearInterval(interval);
+}, [ token, selectedChat]);
+
+
+
 
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -78,6 +141,7 @@ export default function ChatWindow({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+ 
 
   useEffect(() => {
     setIsFavorite(
@@ -113,20 +177,19 @@ export default function ChatWindow({
   }, [openDropdownId]);
 
   if (loading)
-    return <div className="flex-1 flex items-center justify-center">Loading...</div>;
+    return <div className="flex-1 flex items-center pt-70 justify-center">Loading...</div>;
 
-  if (!messages.length)
-    return (
-      <div className="flex-1 flex items-center justify-center text-gray-400">
-        No messages yet
-      </div>
-    );
+  // if (!messages.length)
+  //   return (
+  //     <div className="flex-1 flex items-center justify-center text-gray-400">
+  //       No messages yet
+  //     </div>
+  //   );
 
   const receiver = selectedChat?.receiver;
 
   return (
     <div className="flex flex-col flex-1 bg-gray-50 h-full w-full">
-      {/* ===== Header ===== */}
       {receiver && (
         <div className="flex items-center justify-between p-4 border-b bg-white shadow-sm sticky top-0 z-10">
           <div className="flex items-center gap-3">
@@ -172,7 +235,7 @@ export default function ChatWindow({
               <Archive
                 className={`w-5 h-5 ${
                   selectedChat?.meta?.archived
-                    ? "text-gray-500 fill-gray-500"
+                    ? "text-gray-500 fill-[#99A1AF]"
                     : "text-gray-400"
                 }`}
               />
@@ -190,7 +253,7 @@ export default function ChatWindow({
 
       {/* ===== Messages ===== */}
       <div className="flex-1 overflow-y-auto p-4 w-full">
-        {messages.map((m) => {
+        {localMessages.map((m) => {
           const isMine = m.sender_id === currentUserId;
           const time = new Date(m.created_at).toLocaleTimeString([], {
             hour: "2-digit",
@@ -226,7 +289,7 @@ export default function ChatWindow({
                       onClick={() =>
                         setOpenDropdownId(openDropdownId === m.id ? null : m.id)
                       }
-                      className="p-1 rounded-full hover:bg-white/20"
+                      className="p-1 py-1.5 rounded-full hover:bg-white/20"
                     >
                       <MoreVertical className="w-4 h-4" />
                     </button>
@@ -260,7 +323,7 @@ export default function ChatWindow({
                 {editingId === m.id ? (
                   <div className="flex flex-col gap-2">
                     <textarea
-                      className="w-full p-2 rounded-md text-gray-800 text-sm"
+                      className="w-full p-2 rounded-md text-white text-sm"
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
                       title="Edit message"
@@ -284,28 +347,61 @@ export default function ChatWindow({
                       </button>
                     </div>
                   </div>
-                ) : url ? (
-                  m.attachment_mime?.startsWith("image/") ? (
-                    <img src={url} alt="img" className="max-h-60 rounded-lg" />
-                  ) : m.attachment_mime?.startsWith("video/") ? (
-                    <video controls className="w-full rounded-lg">
-                      <source src={url} type={m.attachment_mime} />
-                    </video>
-                  ) : m.attachment_mime?.startsWith("audio/") ? (
-                    <audio controls src={url} className="w-full" />
-                  ) : (
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline text-sm"
-                    >
-                      📎 Download File
-                    </a>
-                  )
-                ) : (
-                  <p>{m.body}</p>
-                )}
+               ) : url ? (
+  (() => {
+    const realType = getRealMessageType(
+      undefined,
+      url,
+      m.body
+    );
+
+    switch (realType) {
+      case "image":
+        return <img src={url} alt="img" className="max-h-60 rounded-lg" />;
+
+      case "video":
+        return (
+          <video controls className="w-full rounded-lg">
+            <source src={url} type={m.attachment_mime || "video/mp4"} />
+          </video>
+        );
+
+      case "audio":
+        return <audio controls src={url} className="w-full" />;
+
+      case "pdf":
+        return (
+          <object
+            data={url}
+            type="application/pdf"
+            width="100%"
+            height="400px"
+            className="rounded-lg"
+          >
+            <a href={url} target="_blank" rel="noopener noreferrer">
+              📎 Open PDF
+            </a>
+          </object>
+        );
+
+      case "file":
+      default:
+        return (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-sm"
+          >
+            📎 Download File
+          </a>
+        );
+    }
+  })()
+) : (
+  <p className="px-4 pt-2 pb-1 text-left">{m.body}</p>
+)}
+
 
                 <div className="text-xs mt-1 opacity-70 text-right">{time}</div>
               </div>
