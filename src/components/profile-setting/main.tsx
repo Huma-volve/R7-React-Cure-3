@@ -89,7 +89,7 @@ export default function ProfileSettings() {
           >
             <div className="flex items-center space-x-4">
               <img
-                src={user?.profile_photo||"/profile.png"}
+                src={user?.profile_photo||"/avatar.jpg"}
                 alt="User Avatar"
                 width={56}
                 height={56}
