@@ -137,13 +137,6 @@ const Navbar: React.FC = () => {
             >
               <BsChatText />
             </button>
-
-              <button
-              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
-              onClick={() => navigate("/booking")}
-            >
-              <img src="/booking_icon.png" className="w-5 h-5" />
-            </button>
             
             <button
               onClick={() => navigate("/profile-setting")}
@@ -202,13 +195,6 @@ const Navbar: React.FC = () => {
               onClick={() => navigate("/chat")}
             >
               <BsChatText />
-            </button>
-
-            <button
-              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
-              onClick={() => navigate("/booking")}
-            >
-              <img src="/booking_icon.png" className="w-5 h-5" />
             </button>
 
             <button
