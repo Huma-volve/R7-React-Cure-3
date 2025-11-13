@@ -1,37 +1,65 @@
 import { useState } from "react";
-// redux stuff
-import { useDispatch } from "react-redux";
-import { addReview } from "@/redux/doctorsSlice";
 // shadcn components
 import { Rating, RatingButton } from "@/components/ui/shadcn-io/rating";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useAddReview } from "@/hooks/useAddReviews";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
 
 export default function AddReviewDialog({doctorId, closeDialog}: { doctorId: number, closeDialog: () => void}) {
   const [rating, setRating] = useState(0);
   const [inputValue, setInputValue] = useState("");
-  const dispatch = useDispatch();
-
-  const mockUser = {
-    id: 1,
-    name: "Abdallah",
-    imgSrc: "/patients/patient2.png",
-  };
+  const { mutate: addReview, isPending } = useAddReview();
+  const patientId = useSelector((state: RootState) => state.auth.user?.id);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!inputValue.trim()) return;
-    document.body.focus()
-    dispatch(
-      addReview({
-        doctorId,
-        userId: mockUser.id,
-        name: mockUser.name,
-        imgSrc: mockUser.imgSrc,
-        rating,
-        text: inputValue,
+    if (!inputValue.trim()) {
+      toast.error('Empty review', {
+        icon: "👎",
+        description: "Please write something before submitting.",
       })
+      return;
+    }
+    
+    if (rating === 0) {
+      toast.error('No rating selected', {
+        icon: "⭐",
+        description: "Please select a rating before submitting.",
+      })
+      return;
+    }
+    
+    addReview(
+      {
+        doctor_id: doctorId,
+        rating,
+        comment: inputValue,
+        booking_id: 56,
+        patient_id: patientId
+      },
+      {
+        onSuccess: () => {
+          toast.success('Review added successfully!!', {
+            icon: "🥙",
+            description: "Your review has been submitted.",
+          })
+
+          setInputValue("");
+          setRating(0);
+          closeDialog();
+        },
+
+        onError: (err) => {
+          toast.error('Failed to add review', {
+            icon: "⭐",
+            description: err?.message || "Something went wrong. Please try again.",
+          })
+        },
+      }
     );
 
     setInputValue("");
@@ -64,9 +92,8 @@ export default function AddReviewDialog({doctorId, closeDialog}: { doctorId: num
           value={inputValue}
           className="outline-none h-40 text-start"
           placeholder="Write your review..."
-          required
         />
-        <Button type="submit" variant='outline' className="text-[#145DB8] border-[#145DB8]">Send your review</Button>
+        <Button type="submit" variant='outline' className="text-[#145DB8] border-[#145DB8]">{isPending ? 'Submitting' : 'Send your review'}</Button>
       </form>
     </main>
   );

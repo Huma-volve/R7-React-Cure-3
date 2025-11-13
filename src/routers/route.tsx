@@ -16,15 +16,12 @@ import { EditOTP } from '@/pages/profile-setting/EditOTP';
 import { SigninWithPhonePage } from '@/pages/auth/SigninWithPhonePage';
 import { SigninWithPhoneOTPpage } from '@/pages/auth/SigninWithPhoneOTP';
 
-
-
-
 // Lazily loaded
 const DoctorsPage = lazy(() => import('@/pages/DoctorsPage'));
 const DoctorDetails = lazy(() => import('@/pages/DoctorDetails'));
 const FavoritePage = lazy(() => import('@/pages/FavoritePage'));
 const Appointments = lazy(() => import('@/pages/Booking/Appointment'));
-const Map = lazy(() => import('@/components/reusable/Map'));
+const MapPage = lazy(() => import('@/pages/MapPage'));
 const PaymentConfirmationPage = lazy(() => import('@/components/reusable/payment/PayPageAndConfirmation'));
 
 export const router = createBrowserRouter([
@@ -102,7 +99,7 @@ export const router = createBrowserRouter([
       {
         path: 'map',
         element: <Suspense fallback={<PageSkeleton />}>
-          <Map />
+          <MapPage />
         </Suspense>,
       },
       {

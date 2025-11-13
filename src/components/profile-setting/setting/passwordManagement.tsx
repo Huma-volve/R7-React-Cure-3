@@ -66,7 +66,7 @@ const onSubmit = (data: FormField) => {
         
 
 
-          <Button type="submit" className="text-white mt-2 w-full bg-[#145DB8] hover:bg-[#145DB8] hover:cursor-pointer">Sign In</Button>
+          <Button disabled={ changePasswordMutation.isPending} type="submit" className="text-white mt-2 w-full bg-[#145DB8] hover:bg-[#145DB8] hover:cursor-pointer">{changePasswordMutation.isPending? "Change Password...":"Change Password"}</Button>
         </form>
       
       </CardContent>

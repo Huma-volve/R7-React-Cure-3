@@ -1,6 +1,5 @@
 
 import { configureStore } from '@reduxjs/toolkit'
-import doctorsReducer from './doctorsSlice'
 import searchReducer from "./searchSlice";
 import forgetPasswordReducer from "./auth/forgotPasswordSlice";
 import filtersReducer from "./filtersSlice";
@@ -24,7 +23,6 @@ const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
 export const store = configureStore({
   reducer: {
-    doctors: doctorsReducer,
     search: searchReducer,
     favorites: favoritesReducer,
     filters: filtersReducer,

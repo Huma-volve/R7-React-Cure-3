@@ -4,7 +4,7 @@ export function DoctorStats({
     label,
 }: {
     icon: string;
-    amount: number;
+    amount: number | string;
     label: string;
 }) {
 
