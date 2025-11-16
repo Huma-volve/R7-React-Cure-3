@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import UpcomingNotificationIcon from '@/assets/icons/upcoming-notification.png';
 import CompletedNotificationIcon from '@/assets/icons/completed-notification.png';
 import CancelledNotificationIcon from '@/assets/icons/cancelled-notification.png';
-import ChatNotificationIcon from '@/assets/icons/chat-notification.svg';
+import ChatNotificationIcon from '@/assets/icons/chat-notification.png';
 import SystemNotificationIcon from '@/assets/icons/system-notification.svg';
 import moment from 'moment';
 import { Button } from '../ui/button';
@@ -69,6 +69,7 @@ export default function NotificationsPopup() {
                                 'bg-red-50'
                             }`}>
                                 <img
+                                    className='h-10 object-contain'
                                     src={
                                         notif.type === 'booking' ? UpcomingNotificationIcon :
                                         notif.type === 'chat' ? ChatNotificationIcon :
