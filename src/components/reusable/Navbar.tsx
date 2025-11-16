@@ -69,7 +69,7 @@ const Navbar: React.FC = () => {
       <div
         className="
     relative items-center text-2xl bg-gray-100 rounded-lg px-3 py-2 
-    w-full sm:w-[568px]  h-10 mb-3 md:mb-0
+    w-full md:w-[330px] lg:w-[568px] h-10 mb-3 md:mb-0
     hidden md:flex
   "
       >
