@@ -81,7 +81,6 @@ export default function PaymentConfirmation() {
         onSuccess: (data) => {
             console.log("Payment confirmed:", data);
             toast.success(data.message);
-            toast.success('Payment Confirmed Successfully!');
             setLoading(false);
             setConfirmDialog(false);  // close the confirm modal
             setOpenDialog(true);      // open the success modal
