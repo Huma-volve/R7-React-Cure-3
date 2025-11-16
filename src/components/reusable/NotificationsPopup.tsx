@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useNotifications } from "@/hooks/useNotifications";
+import { useNotifications } from "@/hooks/doctor-details/useNotifications";
 import type { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 // Icons
 import UpcomingNotificationIcon from '@/assets/icons/upcoming-notification.png';
 import CompletedNotificationIcon from '@/assets/icons/completed-notification.png';
 import CancelledNotificationIcon from '@/assets/icons/cancelled-notification.png';
+import ChatNotificationIcon from '@/assets/icons/chat-notification.svg';
+import SystemNotificationIcon from '@/assets/icons/system-notification.svg';
 import moment from 'moment';
 import { Button } from '../ui/button';
 
@@ -34,7 +36,7 @@ export default function NotificationsPopup() {
     );
 
     // Pagination logic
-    const itemsPerPage = 5;
+    const itemsPerPage = 4;
     const totalPages = Math.ceil(notifications!.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -53,7 +55,7 @@ export default function NotificationsPopup() {
     };
 
     return (
-        <>
+        <div className='max-w-[280px] sm:max-w-md lg:max-w-lg bg-background'>
             <h3 className="text-lg font-semibold text-center bg-neutral-50 py-3">Your Notifications</h3>
             <ul>
                 {currentNotifications.map((notif) => {
@@ -62,23 +64,27 @@ export default function NotificationsPopup() {
                             <div className={`p-3 rounded-full ${
                                 notif.type === 'booking' ? 'bg-blue-50' :
                                 notif.type === 'payment' ? 'bg-green-50' :
+                                notif.type === 'system' ? 'bg-yellow-50' :
+                                notif.type === 'chat' ? 'bg-purple-50' :
                                 'bg-red-50'
                             }`}>
                                 <img
                                     src={
                                         notif.type === 'booking' ? UpcomingNotificationIcon :
-                                        notif.type === 'payment' ? CompletedNotificationIcon :
+                                        notif.type === 'chat' ? ChatNotificationIcon :
+                                        notif.type === 'system' ? SystemNotificationIcon :
+                                        notif.type === 'payment' || notif.type === 'review' ? CompletedNotificationIcon :
                                         CancelledNotificationIcon
                                     }
                                 />
                             </div>
                             <div>
-                                <strong className="font-medium">{notif.title}</strong>
+                                <strong className="font-medium text-base">{notif.title}</strong>
                                 <p className="text-sm text-neutral-700">
                                     {notif.body}
                                 </p>
                             </div>
-                            <span className="text-sm">{moment(notif.created_at).startOf('day').fromNow()}</span>
+                            <span className="text-xs">{moment(notif.created_at).startOf('day').fromNow()}</span>
                         </li>
                     );
                 })}
@@ -123,6 +129,6 @@ export default function NotificationsPopup() {
                     </Button>
                 </div>
             )}
-        </>
+        </div>
     );
 }
