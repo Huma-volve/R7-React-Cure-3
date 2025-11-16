@@ -3,7 +3,7 @@ import api from "@/lib/axios";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store";
 
-type Notification = {
+export type Notification = {
   id: number;
   user_id: number;
   title: string;
@@ -31,6 +31,6 @@ export const useNotifications = (userId: number | undefined) => {
 
       return notifications.filter((noti) => noti.user_id === userId);
     },
-    enabled: !!userId,
+    enabled: !!userId && !!token,
   });
 };

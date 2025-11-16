@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNotifications } from "@/hooks/doctor-details/useNotifications";
+import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import type { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 // Icons
@@ -58,7 +58,7 @@ export default function NotificationsPopup() {
         <div className='max-w-[280px] sm:max-w-md lg:max-w-lg bg-background'>
             <h3 className="text-lg font-semibold text-center bg-neutral-50 py-3">Your Notifications</h3>
             <ul>
-                {currentNotifications.map((notif) => {
+                {currentNotifications.map((notif: Notification) => {
                     return (
                         <li key={notif.id} className={`flex items-center p-3 hover:bg-neutral-50 justify-between gap-4`}>
                             <div className={`p-3 rounded-full ${
