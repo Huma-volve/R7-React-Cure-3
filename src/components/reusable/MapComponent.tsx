@@ -2,7 +2,7 @@ import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
 import { useEffect, useRef } from 'react'
 import { Button } from '../ui/button';
 import { AiOutlineMinus, AiOutlinePlus, AiOutlineFullscreen } from 'react-icons/ai';
-import { Input } from '../ui/input';
+// import { Input } from '../ui/input';
 
 export interface LocationProps {
     lat: number,
@@ -164,14 +164,14 @@ export default function MapComponent({
             )}
 
             {/* Search bar - only show on map page */}
-            {!addReturnButton && (
+            {/* {!addReturnButton && (
                 <Input
                     ref={inputRef}
                     type="text"
                     placeholder="Search location"
                     className="absolute top-2 bg-white left-1/2 transform -translate-x-1/2 z-20 p-2 rounded-md shadow-md w-64"
                 />
-            )}
+            )} */}
 
             {/* myCustomButtons for the map */}
             <div className={`absolute ${addReturnButton ? 'flex' : 'hidden md:flex'} top-2 right-2 *:text-xl gap-2`}>
