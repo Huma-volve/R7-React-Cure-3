@@ -57,7 +57,7 @@ export default function PaymentConfirmation() {
     
     // Taking the props that the path (doctors/id) gives
     const { state } = useLocation();
-    const { day, timeSlot, month, doctor } = state || {};
+    const { day, timeSlot, doctor } = state || {};
 
     const { mutate: bookAppointment, error, isSuccess } = useBookAppointment();
 
@@ -294,7 +294,6 @@ export default function PaymentConfirmation() {
                 >
                     <PaymentSuccessModel
                         day={day!}
-                        month={month}
                         time={timeSlot!}
                         doctorId={doctor.doctor.id}
                         doctorName={doctor.doctor.user.name}
