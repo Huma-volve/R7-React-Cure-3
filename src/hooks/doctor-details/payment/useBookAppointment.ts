@@ -23,9 +23,8 @@ export const useBookAppointment = (
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("BOOKED");
       return response.data;
     },
-    ...options, // ✅ this allows onSuccess, onError, etc.
+    ...options,
   });
 };

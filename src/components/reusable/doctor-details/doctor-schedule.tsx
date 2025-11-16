@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useGetAvailableSlots } from "@/hooks/useGetAvailableSlots";
+import { useGetAvailableSlots } from "@/hooks/doctor-details/useGetAvailableSlots";
 import PageSkeleton from "../PageSkeleton";
 import moment from "moment";
 

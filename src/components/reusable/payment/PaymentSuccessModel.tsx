@@ -2,8 +2,8 @@ import SuccessIcon from '@/assets/icons/appointment-success.svg'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 
-export default function PaymentSuccessModel({closeDialog, doctorName, doctorId, day, month, time}:
-    {closeDialog: () => void, doctorName: string, doctorId: number, day: string | null, month: Date, time: string}) {
+export default function PaymentSuccessModel({closeDialog, doctorName, doctorId, day, time}:
+    {closeDialog: () => void, doctorName: string, doctorId: number, day: string | null, time: string}) {
     const navigate = useNavigate()
 
     return <div className='flex flex-col text-center items-center justify-center'>
@@ -12,7 +12,7 @@ export default function PaymentSuccessModel({closeDialog, doctorName, doctorId, 
         {/* Text */}
         <div className='flex flex-col gap-2 my-7'>
             <p className='font-medium'>Congratulations</p>
-            <p className='text-neutral-700'>Your appointment with Dr. {doctorName} is confirmed for {month.getMonth()} {day}, at {time}.</p>
+            <p className='text-neutral-700'>Your appointment with Dr. {doctorName} is confirmed for {day}, at {time}.</p>
         </div>
         
         <Button onClick={() => {

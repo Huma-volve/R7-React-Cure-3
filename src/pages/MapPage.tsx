@@ -1,26 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // icons
-import { MapPin, StarIcon } from "lucide-react";
-import ClockIcon from "@/assets/icons/clock.png";
-import LocationIcon from '@/assets/icons/location.png'
 import { FaSearch, FaSearchMinus } from "react-icons/fa";
+import ClockIcon from "@/assets/icons/clock.png";
+import { MapPin, StarIcon } from "lucide-react";
 // Components
-import { Card, CardContent } from "@/components/ui/card";
-import MapComponent, { type LocationProps } from "@/components/reusable/MapComponent";
-import { useGetNearestDoctors } from "@/hooks/useGetNearestDoctors";
-import { Button } from "@/components/ui/button";
+import AutocompleteLocationInput from "@/components/reusable/Map/AutocompleteLocationInput";
+import MapLeaflet, { type LocationProps } from "@/components/reusable/Map/MapLeaflet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useGetNearestDoctors } from "@/hooks/useGetNearestDoctors";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface Doctor {
     id: number;
     specialty: string;
     license_number: string;
     clinic_address: string;
-    location: {
-        lat: number;
-        lng: number;
-    };
+    location: LocationProps
     session_price: number;
     average_rating: number;
     reviews_count: number;
@@ -39,7 +36,6 @@ interface Doctor {
 export default function Map() {
     const navigate = useNavigate()
     const [location, setLocation] = useState<LocationProps>({lat: 30.01511, lng: 31.17477});
-    const [address, setAddress] = useState('');
     const [specialty, setSpecialty] = useState<string>('Dermatology');
     const [hasSearched, setHasSearched] = useState(false);
 
@@ -63,17 +59,8 @@ export default function Map() {
 
     const doctors: Doctor[] = data?.data || [];
     
-    const handleLocationChange = async (newLocation: LocationProps) => {
+    const handleLocationChange = (newLocation: LocationProps) => {
         setLocation(newLocation);
-        
-        const geocoder = new google.maps.Geocoder();
-        const response = await geocoder.geocode({ location: newLocation });
-        
-        if (response.results[0]) {
-            setAddress(response.results[0].formatted_address);
-        } else {
-            setAddress('Address not found');
-        }
     }
 
     const handleSearch = () => {
@@ -99,7 +86,7 @@ export default function Map() {
     };
 
     return (
-        <main className="grid grid-cols-1 lg:grid-cols-4 gap-4 px-3 xl:-mb-30 *:mt-10 overflow-x-hidden">
+        <main className="grid grid-cols-1 lg:grid-cols-4 gap-4 px-4 xl:-mb-30 *:mt-10 overflow-x-hidden">
             <section className="order-2 lg:order-1 flex flex-col gap-5 mb-10 lg:mb-0">
                 <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-semibold text-center lg:text-left">
@@ -134,7 +121,7 @@ export default function Map() {
                 {!isPending && !isError && doctors.length === 0 && (
                     <div
                         className={`flex items-center justify-center p-12 rounded-lg border ${
-                        hasSearched
+                            hasSearched
                             ? 'bg-neutral-50 border-neutral-200'
                             : 'bg-gradient-to-br from-primary-50 to-blue-50 border-2 border-dashed border-primary-200'
                         }`}
@@ -236,28 +223,14 @@ export default function Map() {
                                     <img src={ClockIcon} alt="Clock Icon" className="w-4 h-4" />
                                     <span>{getAvailabilityText(doctor.availability)}</span>
                                 </div>
-
-                                {/* <div className="flex items-center gap-1">
-                                    <span className="font-medium text-primary-600">
-                                        ${doctor.session_price.toFixed(2)}
-                                    </span>
-                                </div> */}
                             </div>
-
-                            {/* {doctor.consultation && (
-                                <div className="mt-1">
-                                    <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
-                                        {doctor.consultation === 'home' ? '🏠 Home Visit' : '🏥 Clinic'}
-                                    </span>
-                                </div>
-                            )} */}
                         </CardContent>
                     </Card>
                 })}
             </section>
 
             <section className="lg:col-span-3 order-1 min-h-screen lg:order-2">
-                <div className="flex flex-col mb-8">
+                <div className="flex flex-col mb-4">
                     <h1 className="text-2xl font-semibold mb-6">Choose Specialty</h1>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                         <Button variant='outline' className={`${specialty === 'Dermatology' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'} rounded-3xl text-sm md:text-lg`} onClick={() => setSpecialty('Dermatology')}>Dermatology</Button>
@@ -268,12 +241,22 @@ export default function Map() {
                         <Button variant='outline' className={`${specialty === 'Ophthalmologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'} rounded-3xl text-sm md:text-lg`} onClick={() => setSpecialty('Ophthalmologist')}>Ophthalmologist</Button>
                     </div>
                 </div>
+
+                <div className="mb-2">
+                    <AutocompleteLocationInput
+                        onLocationSelect={(coords) => {
+                            setLocation(coords);
+                            handleSearch();
+                        }}
+                    />
+                </div>
+
                 <div className="relative h-[70%] rounded-b-2xl overflow-hidden">
-                    {/* Search button */}
+                    {/* Search button - positioned above the map container */}
                     <Button
                         onClick={handleSearch}
                         disabled={isPending}
-                        className="rounded-none rounded-t-2xl w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl transition-all relative overflow-hidden group"
+                        className="rounded-none rounded-t-2xl w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl transition-all relative overflow-hidden group z-10"
                     >
                         <span className="relative z-10 flex items-center justify-center gap-2">
                             {isPending ? (
@@ -293,22 +276,13 @@ export default function Map() {
                         )}
                     </Button>
 
-                    <MapComponent 
-                        location={location}
-                        addReturnButton={false}
-                        onLocationChange={handleLocationChange}
-                    />
-                    {/* Location Display */}
-                    <div className="absolute bg-background rounded-md shadow-lg px-3 py-2 left-2 bottom-7 z-30 flex items-center gap-2 max-w-md">
-                        <img src={LocationIcon} className="h-5" />
-                        <div className="flex flex-col">
-                            <span className="text-sm font-medium">
-                                {address || 'Select a location'}
-                            </span>
-                            <span className="text-xs text-neutral-700">
-                                {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
-                            </span>
-                        </div>
+
+                    <div className="relative  w-full h-[80%]">
+                        <MapLeaflet 
+                            location={location}
+                            onLocationChange={handleLocationChange}
+                            addReturnButton={false}
+                        />
                     </div>
                 </div>
             </section>

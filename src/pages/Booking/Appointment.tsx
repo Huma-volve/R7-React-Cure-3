@@ -347,7 +347,8 @@ const token = useSelector((state: RootState) => state.auth.token);
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
-                          <AddReviewDialog doctorId={appt.doctorId} closeDialog={() => setOpenDialog(false)} />
+                          {/* doctorId={appt.doctorId} */}
+                          <AddReviewDialog closeDialog={() => setOpenDialog(false)} />
                         </DialogContent>
                       </Dialog>
                     </>

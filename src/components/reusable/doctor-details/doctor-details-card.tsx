@@ -9,10 +9,9 @@ import StartPngIcon from '@/assets/icons/star.png'
 import ExperienceIcon from '@/assets/icons/medal.png'
 import MessagesIcon from '@/assets/icons/messages.png'
 import VerifiedIcon from '@/assets/icons/verified.png'
-import LocationIcon from '@/assets/icons/location.png'
 import { HeartIcon } from "lucide-react";
-import MapComponent from "../MapComponent";
-import { useToggleFavourite } from "@/hooks/useToggleFavourite";
+import { useToggleFavourite } from "@/hooks/doctor-details/useToggleFavourite";
+import MapLeaflet from "../Map/MapLeaflet";
 
 export interface DoctorProps {
   id: number;
@@ -37,7 +36,7 @@ export interface DoctorProps {
 export const onCardHoverStyle = 'transition-all duration-500 ease-in-out hover:shadow-lg hover:border-primary-600/80';
 
 const DoctorDetailsCard: React.FC<DoctorProps> = ({
-    id, name, specialty, avgRating, aboutMe, experience, patientCount, reviewsCount, location, clinicAddress, image
+    id, name, specialty, avgRating, aboutMe, experience, patientCount, reviewsCount, location, image
 }) => {
 
     const [expandAboutSection, setExpandAboutSection] = useState(false);
@@ -85,20 +84,6 @@ const DoctorDetailsCard: React.FC<DoctorProps> = ({
           </button>
         </CardHeader>
 
-{
-  /**
-   * {
-    "status": true,
-    "message": "success",
-    "data": {
-        "status": "added",
-        "message": "Favorite added successfully",
-        "doctor_id": 3
-    },
-    "errors": null
-}
-   */
-}
         <CardContent className="flex justify-center gap-5">
           <DoctorStats icon={UserIcon} amount={patientCount} label="Patients" />
           <DoctorStats icon={ExperienceIcon} amount={experience} label="Years Exp." />
@@ -129,12 +114,10 @@ const DoctorDetailsCard: React.FC<DoctorProps> = ({
         <CardFooter className="flex flex-col gap-3 px-4">
           <div className="self-start font-serif font-semibold text-xl">Location</div>
           <div className="relative w-full h-[220px] sm:h-[270px] rounded-2xl overflow-hidden">
-            <MapComponent location={location} addReturnButton />
-            
-            <div className="absolute bg-background rounded-md shadow px-2.5 py-1 left-2 bottom-2 z-3 flex items-center gap-2">
-              <img src={LocationIcon} className="h-5"/>
-              <span className="text-sm">{clinicAddress}</span>
-            </div>
+            <MapLeaflet 
+                location={location}
+                addReturnButton
+            />
           </div>
         </CardFooter>
       </Card>

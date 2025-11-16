@@ -4,11 +4,11 @@ import { Rating, RatingButton } from "@/components/ui/shadcn-io/rating";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useAddReview } from "@/hooks/useAddReviews";
+import { useAddReview } from "@/hooks/doctor-details/useAddReviews";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 
-export default function AddReviewDialog({doctorId, closeDialog}: { doctorId: number, closeDialog: () => void}) {
+export default function AddReviewDialog({closeDialog}: { closeDialog: () => void }) {
   const [rating, setRating] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const { mutate: addReview, isPending } = useAddReview();
@@ -35,10 +35,10 @@ export default function AddReviewDialog({doctorId, closeDialog}: { doctorId: num
     
     addReview(
       {
-        doctor_id: doctorId,
+        doctor_id: 9,
         rating,
         comment: inputValue,
-        booking_id: 56,
+        booking_id: 139,
         patient_id: patientId
       },
       {

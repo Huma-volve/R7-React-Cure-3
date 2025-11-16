@@ -1,19 +1,22 @@
-import { useState, type ReactNode } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useBookAppointment } from "@/hooks/useBookAppointment";
 // Components
-import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import PaymentSuccessModel from "./PaymentSuccessModel";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { toast } from "sonner";
 // icons
-import { FaCheckCircle, FaRegCircle, FaMoneyBillWave } from "react-icons/fa"
 import VerifiedIcon from '@/assets/icons/verified.png'
 import VisaIcon from '@/assets/icons/visa.svg'
 import PaypalIcon from '@/assets/icons/paypal.svg'
 import CalenderIcon from '@/assets/icons/calender.png'
 import LocationIcon from '@/assets/icons/location.png'
+import { FaCheckCircle, FaRegCircle, FaMoneyBillWave } from "react-icons/fa"
+// hooks
+import { useState, type ReactNode } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useCreatePaymentIntent } from "@/hooks/doctor-details/payment/useCreatePaymentIntent";
+import { useConfirmPayment } from "@/hooks/doctor-details/payment/useConfirmPayment";
+import { useBookAppointment } from "@/hooks/doctor-details/payment/useBookAppointment";
 
 type PaymentMethods = 'paypal' | 'stripe' | 'cash';
 
@@ -43,17 +46,8 @@ const paymentOptionsArray: PaymentProps[] = [
 
 export default function PaymentConfirmation() {
     const navigate = useNavigate()
-
-    const { mutate: bookAppointment, error, isSuccess } = useBookAppointment({
-        onSuccess: () => {
-            setConfirmDialog(false);
-            setOpenDialog(true);
-        },
-        onError: () => {
-            setConfirmDialog(true);
-            toast.error('Booking failed, You already have a booking at this day!');
-        },
-    });
+    const [transactionId, setTransactionId] = useState<string | null>(null);
+    const [, setBookingId] = useState<number | null>(null);
     
     const [openDialog, setOpenDialog] = useState(false)
     const [confirmDialog, setConfirmDialog] = useState(false);
@@ -65,16 +59,43 @@ export default function PaymentConfirmation() {
     const { state } = useLocation();
     const { day, timeSlot, month, doctor } = state || {};
 
+    const { mutate: bookAppointment, error, isSuccess } = useBookAppointment();
+
+    const { mutate: createPaymentIntent } = useCreatePaymentIntent({
+        onSuccess: (data) => {
+            console.log("Payment intent created:", data);
+            // Store the transaction ID for later use
+            console.log(data);
+            setTransactionId(data.data.transaction_id);
+            setLoading(false);
+            // Open confirmation dialog after payment intent is created
+            setConfirmDialog(true);
+        },
+        onError: () => {
+            toast.error("Failed to create payment intent");
+            setLoading(false);
+        },
+    });
+
+    const { mutate: confirmPayment } = useConfirmPayment({
+        onSuccess: (data) => {
+            console.log("Payment confirmed:", data);
+            toast.success(data.message);
+            toast.success('Payment Confirmed Successfully!');
+            setLoading(false);
+            setConfirmDialog(false);  // close the confirm modal
+            setOpenDialog(true);      // open the success modal
+        },
+        onError: () => {
+            toast.error('Booking failed, You already have a booking at this day!');
+            setLoading(false);
+        },
+    });
+
     const handleBook = () => {
-        bookAppointment({
-            doctor_id: doctor.doctor.id,
-            date_time: `${day} ${timeSlot}`,
-            payment_method: paymentMethod,
-            return_url: "https://app.example.com/paypal/return",
-            cancel_url: "https://app.example.com/paypal/cancel",
-        });
-        setLoading(true);
-    
+        if (loading) return;
+        setConfirmDialog(true)
+
         if(error) {
             setLoading(false)
             setConfirmDialog(false);
@@ -83,13 +104,51 @@ export default function PaymentConfirmation() {
         if(isSuccess) {
             setConfirmDialog(true)
         }
+    
+        bookAppointment(
+            {
+                doctor_id: doctor.doctor.id,
+                date_time: `${day} ${timeSlot}`,
+                payment_method: paymentMethod,
+                return_url: "https://app.example.com/paypal/return",
+                cancel_url: "https://app.example.com/paypal/cancel",
+            },
+            {
+                onSuccess: (res) => {
+                    const newBookingId = res.data?.booking.id;
+                    console.log("Booking created with ID:", newBookingId);
+                    
+                    setBookingId(newBookingId);
+                    
+                    // Create payment intent after booking is successful
+                    createPaymentIntent({
+                        booking_id: newBookingId,
+                        gateway: paymentMethod,
+                        currency: "USD",
+                        amount: doctor?.doctor?.session_price ?? 0,
+                        description: `Booking #${newBookingId} with ${doctor.doctor.user.name}`,
+                        return_url: "https://app.example.com/paypal/return",
+                        cancel_url: "https://app.example.com/paypal/cancel",
+                    });
+                },
+            }
+        );
+        
         const timeoutId = setTimeout(() => {
             setLoading(false);
-    
-        }, 1500);
-    
-        // Cleanup
+            
+        }, 3000);
         return () => clearTimeout(timeoutId);
+    };
+
+    const handleConfirmingBooking = () => {
+        setLoading(true);
+        confirmPayment(
+            {
+                gateway: paymentMethod,
+                payment_id: transactionId!,
+            },
+        );
     };
 
     return <Card className="bg-background md:w-[70%] lg:w-[50%] mx-3 md:mx-auto border-none shadow-none">
@@ -180,7 +239,7 @@ export default function PaymentConfirmation() {
             {/* CTA */}
             <Dialog open={confirmDialog} onOpenChange={setConfirmDialog}>
                 <DialogTrigger className="w-full">
-                    <Button className="w-full">
+                    <Button className="w-full" onClick={handleBook} disabled={loading}>
                         Pay
                     </Button>
                 </DialogTrigger>
@@ -193,8 +252,8 @@ export default function PaymentConfirmation() {
                         <Button
                             variant='outline'
                             className="text-primary-600 border-primary-600"
-                            onClick={handleBook}
-                            disabled={loading}
+                            onClick={handleConfirmingBooking}
+                            disabled={!transactionId || loading}
                         >
                             {loading ? (
                                 <div className="flex items-center gap-2">
