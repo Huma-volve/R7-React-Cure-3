@@ -30,7 +30,7 @@ import BlackCalenderIcon from '@/assets/icons/black-calendar.png'
 import { StarIcon } from "lucide-react"
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 // hooks
-import { useGetDoctorDetails } from "@/hooks/useGetDoctorDetails";
+import { useGetDoctorDetails } from "@/hooks/doctor-details/useGetDoctorDetails";
 // #endregion imports
 import DoctorSchedule from './../components/reusable/doctor-details/doctor-schedule';
 
@@ -100,7 +100,7 @@ export default function DoctorDetails() {
   document.title = `Dr. ${docDetails.doctor.user.name}`;
 
   return (
-    <main className="grid grid-cols-1 lg:grid-cols-3 gap-8 *:mt-15 px-6 overflow-x-hidden">
+    <main className="grid mb-10 grid-cols-1 lg:grid-cols-3 gap-8 *:mt-15 px-4 md:px-6 overflow-x-hidden">
       
       {/* Left side */}
       <section className="flex flex-col gap-10 lg:col-span-2">
@@ -135,6 +135,11 @@ export default function DoctorDetails() {
                           setSelectedTimeSlot("");
                         }
                       }}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0); // Reset time to start of day
+                          return date < today; // Disable all dates before today
+                        }}
                       className="bg-white w-[320px] sm:w-[374px] rounded-md"
                       initialFocus
                       required={false}
@@ -199,7 +204,8 @@ export default function DoctorDetails() {
             </DialogTrigger>
 
             <DialogContent>
-              <AddReviewDialog doctorId={docDetails.doctor.id} closeDialog={() => setOpenDialog(false)} />
+              {/* doctorId={docDetails.doctor.id}  */}
+              <AddReviewDialog closeDialog={() => setOpenDialog(false)} />
             </DialogContent>
           </Dialog>
         </div>
@@ -236,8 +242,8 @@ export default function DoctorDetails() {
         }
 
         {/* Reviews Cards */}
-        <div className="grid grid-cols-2 gap-2">
-          {docDetails.reviews ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+          {docDetails.reviews && docDetails.reviews.length > 0 ? (
             <>
               {
                 (showAllReviews ?
@@ -245,7 +251,7 @@ export default function DoctorDetails() {
                   docDetails.reviews.slice(0, 2)
                 ).map((rev: ReviewProps, index: number) => {
                     return <Card key={index} className={`selection:bg-white selection:text-primary-800 group bg-background hover:bg-primary-600 p-4 h-full hover:scale-102 ${onCardHoverStyle}`}>
-                      <CardTitle className="flex items-center justify-between">
+                      <CardTitle className="flex items-center justify-between flex-wrap">
                         <div className="flex items-center gap-2">
                           <img
                             src={rev.user.profile_photo ?? '/patient.jpg'}
@@ -272,7 +278,15 @@ export default function DoctorDetails() {
 
             </>
           ) : (
-            <p className="text-center text-muted-foreground">No reviews for this doctor yet.</p>
+            <div className="col-span-2 flex flex-col items-center justify-center py-12 px-4">
+              <div className="bg-neutral-100 rounded-full p-6 mb-4">
+                <StarIcon className="w-12 h-12" style={{color: starColor, fill: starColor}} />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">No Reviews Yet</h3>
+              <p className="text-center text-neutral-600 max-w-sm">
+                This doctor hasn't received any reviews yet. Be the first to share your experience!
+              </p>
+            </div>
           )}
         </div>
 
