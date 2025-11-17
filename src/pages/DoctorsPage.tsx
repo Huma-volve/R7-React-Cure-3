@@ -644,6 +644,7 @@ const DoctorsPage: React.FC = () => {
                   image={doc.user?.profile_photo ?? "avatar.PNG"}
                   isFavorite={favorites.includes(Number(doc.id))}
                   onToggleFavorite={toggleFavorite}
+                  selectedDay={availableDay} 
                 />
               ))}
             </div>
