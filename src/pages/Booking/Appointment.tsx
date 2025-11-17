@@ -19,36 +19,30 @@ interface DoctorUser {
   name?: string;
   profile_photo?: string | null;
 }
-
 interface Doctor {
   id?: number;
   specialty?: string;
   clinic_address?: string;
   user?: DoctorUser;
 }
-
 interface ApiAppointment {
   id: number;
   booking_id?: number;
   date_time: string;
   date_time_formatted: string;
-  status_label: string;
+  status: string;
   doctor?: Doctor;
 }
-
-
 interface DoctorUser {
   name?: string;
   profile_photo?: string | null;
 }
-
 interface Doctor {
   id?: number;
   specialty?: string;
   clinic_address?: string;
   user?: DoctorUser;
 }
-
 interface ApiAppointment {
   id: number;
   booking_id?: number;
@@ -56,8 +50,8 @@ interface ApiAppointment {
   date_time_formatted: string;
   status_label: string;
   doctor?: Doctor;
+  price:number
 }
-
 interface Appointment {
   id: number;
   date: string;
@@ -68,10 +62,9 @@ interface Appointment {
   status: "Upcoming" | "Completed" | "Canceled" | "Pending";
   imageSrc: string;
   doctorId: number;
+  price: number
 }
-
 const API_URL = "https://round7-cure.huma-volve.com/api";
-
 const Appointments: React.FC = () => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
@@ -95,23 +88,25 @@ const token = useSelector((state: RootState) => state.auth.token);
         });
 
         const apiData: ApiAppointment[] = res.data.data.data;
-
+        console.log("API DATA:", apiData); // Debugging line  
+        
         const formattedAppointments: Appointment[] = apiData.map((item) => {
   const parsedDate = parse(item.date_time, "yyyy-MM-dd HH:mm:ss", new Date());
 
   return {
     id: item.id,
     date: format(parsedDate, "yyyy-MM-dd"),
-    time: format(parsedDate, "HH:mm  "),
+    time: format(parsedDate, "HH:mm"),  
+    price: item?.price,
     doctor: item.doctor?.user?.name || "Unknown Doctor",
     specialty: item.doctor?.specialty || "Unknown Specialty",
     address: item.doctor?.clinic_address || "No address available",
     status:
-      item.status_label === "معلق"
+      item.status === "pending"
         ? "Pending"
-        : item.status_label === "ملغي"
+        : item.status === "cancelled"
         ? "Canceled"
-        : item.status_label === "مكتملة"
+        : item.status === "completed"
         ? "Completed"
         : "Upcoming",
     imageSrc: item.doctor?.user?.profile_photo || "/doctor.jpg",
@@ -192,17 +187,18 @@ const token = useSelector((state: RootState) => state.auth.token);
     const statusMatch = filter === "All" || appt.status === filter;
     const dateMatch = appt.date === format(selectedDate, "yyyy-MM-dd");
     return statusMatch && dateMatch;
+    
   });
 
-  if (loading) return <p className="text-center mt-10">Loading appointments...</p>;
+  if (loading) return <p className="text-center mt-10 py-70">Loading appointments...</p>;
 
   return (
     <div className="py-6 sm:px-8 lg:px-[72px] relative">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-6">
-        <div>
+        <div >
           <h2 className="text-xl font-semibold capitalize mb-3">Your appointments</h2>
           <Tabs defaultValue="All" onValueChange={(v: string) => setFilter(v as Appointment["status"])}>
-            <TabsList className="flex flex-wrap gap-2 bg-background mb-6 justify-center sm:justify-start">
+            <TabsList className="flex flex-wrap gap-2 bg-background mb-6 sm:w-full justify-center sm:justify-start">
               {["All", "Upcoming", "Pending", "Completed", "Canceled"].map((tab) => (
                 <TabsTrigger
                   key={tab}
@@ -244,15 +240,19 @@ const token = useSelector((state: RootState) => state.auth.token);
       </div>
 
       {/* Appointment Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-6 ">
+      <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-6 sm:p-2 ">
         {filteredAppointments.length > 0 ? (
           filteredAppointments.map((appt) => (
-            <Card key={appt.id} className="pt-1 pb-5 bg-background hover:bg-[#F3F4F6] w-full sm:w-[380px] rounded-xl">
+            <Card key={appt.id} className="pt-1 sm:w-full   pb-5 bg-background hover:bg-[#F3F4F6]  rounded-xl">
               <CardContent>
                 <div className="flex justify-between items-center border-b mb-4">
                   <p className="flex gap-2 items-center text-sm text-[#6D7379] font-medium">
                     <img src="/calendar-02.png" alt="Calendar" />
-                        {format(new Date(appt.date), `dd-MM-yyyy HH:mm`)}
+                        {format(new Date(appt.date), `dd-MM-yyyy `)}
+                        <span className="text-xs text-gray-500"> 
+                             {format(new Date(`${appt.date}T${appt.time}`), "hh:mm a")}
+                        </span>
+
                   </p>
                   <span
                     className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -285,24 +285,24 @@ const token = useSelector((state: RootState) => state.auth.token);
                   </div>
                 </div>
 
-                <div className="text-sm text-gray-600 flex gap-1 mb-4">
-                  <img src="/Location.svg" alt="location" className="mt-0.5" />
+                <div className="text-sm text-gray-600 w-full h-[50px] flex gap-1 mb-1">
+                  <img src="/Location.svg" alt="location" className="w-5 h-5 mt-0.5" />
                   <p>{appt.address}</p>
                 </div>
 
                 {/* Buttons */}
-                <div className="flex flex-wrap gap-3 justify-center">
+                <div className="flex flex-wrap gap-3 ">
                   {appt.status === "Upcoming" && (
                     <>
                       <Button
                         variant="outline"
-                        className="border-gray-500 text-gray-500 hover:text-gray-700 hover:border-gray-700 canceling-button w-[140px]"
+                        className="border-gray-500 text-gray-500 hover:text-gray-700 hover:border-gray-700 canceling-button w-[48%]"
                         onClick={() => setModalAppt(appt)}
                       >
                         Cancel
                       </Button>
                       <Button
-                        className="bg-primary-600 text-white w-[140px]"
+                        className="bg-primary-600 text-white w-[48%]"
                         onClick={() => setRescheduleModal(appt)}
                       >
                         Reschedule
@@ -314,17 +314,34 @@ const token = useSelector((state: RootState) => state.auth.token);
                     <>
                       <Button
                         variant="outline"
-                        className="canceling-button w-[140px]"
+                        className="canceling-button w-[48%]"
                         onClick={() => setModalAppt(appt)}
                       >
                         Cancel
                       </Button>
-                      <Button
-                        className="bg-primary-600 reschedule-button text-white w-[140px]"
-                        onClick={() => navigate(`/payment/${appt.id}`)}
-                      >
-                        Pay Now
-                      </Button>
+               <Button
+  className="bg-primary-600 reschedule-button text-white w-[48%]"
+  onClick={() =>
+    navigate("/checkout", {
+      state: {
+        appointmentId: appt.id,
+        timeSlot :`${appt.date} ${appt.time}`,
+        doctor: {
+          id: appt.doctorId,
+          name: appt.doctor,
+          specialization: appt.specialty,
+          location: appt.address,
+          imgSrc: appt.imageSrc,
+          price: appt.price, // ❗ If price comes from API, replace with correct value
+        }
+      },
+    })
+  }
+>
+  Pay Now
+</Button>
+
+
                     </>
                   )}
 
@@ -332,15 +349,15 @@ const token = useSelector((state: RootState) => state.auth.token);
                     <>
                       <Button
                         variant="outline"
-                        className="text-primary-400 canceling-button border-primary-400 w-[140px] sm:w-40"
-                        onClick={() => navigate(`/doctor-details/${appt.doctorId}`)}
+                        className="text-primary-400 canceling-button border-primary-400 w-[48%] "
+                        onClick={() => navigate(`/doctor/${appt.doctorId}`)}
                       >
                         Book again
                       </Button>
                       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                         <DialogTrigger asChild>
                           <Button
-                            className="w-[140px] reschedule-button bg-primary-600 text-white"
+                            className=" reschedule-button w-[48%] bg-primary-600 text-white"
                             onClick={() => setOpenDialog(true)}
                           >
                             Feedback
@@ -357,13 +374,13 @@ const token = useSelector((state: RootState) => state.auth.token);
                     <>
                       <Button
                         variant="outline"
-                        className=" canceling-button  w-[140px] sm:w-40"
-                        onClick={() => navigate(`/doctor-details/${appt.doctorId}`)}
+                        className=" canceling-button   w-[48%]"
+                        onClick={() => navigate(`/doctor/${appt.doctorId}`)}
                       >
                         Book again
                       </Button>
 
-                      <Button className="bg-primary-600 reschedule-button text-white w-[140px]" onClick={() => navigate(`/chat`)}>
+                      <Button className="bg-primary-600 reschedule-button text-white w-[48%]" onClick={() => navigate(`/chat`)}>
                         Support
                       </Button>
                     </>
@@ -373,7 +390,7 @@ const token = useSelector((state: RootState) => state.auth.token);
             </Card>
           ))
         ) : (
-          <p className="text-gray-500 col-span-full text-center py-8">No appointments found.</p>
+          <p className="text-gray-500 col-span-full text-center lg:py-60 md:py-40 sm:py-10">No appointments found.</p>
         )}
       </div>
 

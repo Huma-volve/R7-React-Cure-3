@@ -89,7 +89,7 @@ export default function PaymentConfirmation() {
                 <h2 className="font-medium">Dr. {doctor.name}</h2>
                 <p className="text-neutral-600">{doctor.specialization}</p>
                 <div className="flex items-center gap-1">
-                    <img src={LocationIcon} />
+                    <img alt="Location Icon" src={LocationIcon} />
                     <p className="text-neutral-600">{doctor.location}</p>
                 </div>
             </div>
@@ -97,7 +97,7 @@ export default function PaymentConfirmation() {
 
         <div className="flex items-center justify-around">
             <div className="flex items-center gap-2">
-                <img src={CalenderIcon} />
+                <img alt="Calendar Icon" src={CalenderIcon} />
                 <p className="hover:text-primary-600 transition duration-300 ease-in-out font-medium">{selectedDate}-{timeSlot}</p>
             </div>
             <Button variant='link' onClick={() => navigate(`/doctors/${doctor.id}`)}>Reschedule</Button>
