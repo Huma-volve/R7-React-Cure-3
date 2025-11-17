@@ -16,6 +16,7 @@ import { type User } from "@/redux/auth/authSlice";
 
 
 const schema = z.object({
+  mobile: z.string(),
   otp: z
     .string()
     .length(4, { message: "OTP must be 4 digits" })
@@ -24,7 +25,7 @@ const schema = z.object({
 type OTPForm = z.infer<typeof schema>;
 
 export const EditPhoneOTP = () => {
-  const { control, handleSubmit, formState: { errors } } = useForm<OTPForm>({
+  const { control, handleSubmit, register, formState: { errors } } = useForm<OTPForm>({
     resolver: zodResolver(schema),
   });
 
@@ -89,6 +90,13 @@ const token = useSelector((state: RootState) => state.auth.token);
           OTP Code Verification
         </h1>
         <p>Code has been sent to your phone</p>
+        <input
+        placeholder={new_mobile as string}
+  {...register("mobile")}
+  value={new_mobile || ""}
+  readOnly
+  className="w-full border border-gray-300 rounded-md p-2 bg-white text-gray-600 cursor-not-allowed"
+/>
       
 
         <div className="flex justify-center">
