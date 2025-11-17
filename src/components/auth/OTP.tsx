@@ -83,7 +83,7 @@ export const OTP = () => {
         <h1 className="text-2xl font-semibold text-gray-800 text-center">
           OTP Code Verification
         </h1>
-        <p>Code has been sent to +02 010 *** **88</p>
+        <p>Code has been sent to your phone</p>
         <input
   {...register("email")}
   value={email || ""}
