@@ -63,6 +63,7 @@ interface Appointment {
   imageSrc: string;
   doctorId: number;
   price: number
+  user?: DoctorUser;
 }
 const API_URL = "https://round7-cure.huma-volve.com/api";
 const Appointments: React.FC = () => {
@@ -88,7 +89,7 @@ const token = useSelector((state: RootState) => state.auth.token);
         });
 
         const apiData: ApiAppointment[] = res.data.data.data;
-        console.log("API DATA:", apiData); // Debugging line  
+        console.log("API DATA:", apiData); 
         
         const formattedAppointments: Appointment[] = apiData.map((item) => {
   const parsedDate = parse(item.date_time, "yyyy-MM-dd HH:mm:ss", new Date());
@@ -109,6 +110,8 @@ const token = useSelector((state: RootState) => state.auth.token);
         : item.status === "completed"
         ? "Completed"
         : "Upcoming",
+
+    user: item.doctor?.user,
     imageSrc: item.doctor?.user?.profile_photo || "/doctor.jpg",
     doctorId: item.doctor?.id || 0,
   };
@@ -319,27 +322,29 @@ const token = useSelector((state: RootState) => state.auth.token);
                       >
                         Cancel
                       </Button>
-               <Button
+<Button
   className="bg-primary-600 reschedule-button text-white w-[48%]"
   onClick={() =>
     navigate("/checkout", {
       state: {
-        appointmentId: appt.id,
-        timeSlot :`${appt.date} ${appt.time}`,
+        day: appt.date,
+        timeSlot: appt.time,
         doctor: {
-          id: appt.doctorId,
-          name: appt.doctor,
-          specialization: appt.specialty,
-          location: appt.address,
-          imgSrc: appt.imageSrc,
-          price: appt.price, // ❗ If price comes from API, replace with correct value
-        }
+          doctor: {          // wrap as `.doctor` to match PaymentConfirmation
+            id: appt.doctorId,
+            user: appt.user,
+            specialty: appt.specialty,
+            clinic_address: appt.address,
+            session_price: appt.price,
+          },
+        },
       },
     })
   }
 >
   Pay Now
 </Button>
+
 
 
                     </>
