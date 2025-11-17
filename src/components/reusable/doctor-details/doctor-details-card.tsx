@@ -9,9 +9,10 @@ import StartPngIcon from '@/assets/icons/star.png'
 import ExperienceIcon from '@/assets/icons/medal.png'
 import MessagesIcon from '@/assets/icons/messages.png'
 import VerifiedIcon from '@/assets/icons/verified.png'
-import { HeartIcon } from "lucide-react";
+import { BsChatText } from "react-icons/bs";
 import { useToggleFavourite } from "@/hooks/doctor-details/useToggleFavourite";
 import MapLeaflet from "../Map/MapLeaflet";
+import { HeartIcon } from "lucide-react";
 
 export interface DoctorProps {
   id: number;
@@ -68,20 +69,28 @@ const DoctorDetailsCard: React.FC<DoctorProps> = ({
           </CardTitle>
           <p className="text-neutral-700">{specialty}</p>
           
-          <button onClick={() =>
+          <div className="flex items-center gap-2 absolute right-4 top-2 *:bg-background *:p-2.5 *:rounded-full">
+            <button onClick={() =>
               toggleFavourite(id, {
                 onSuccess: (data) => {
                   setIsFavorite(data.data.status === "added");
                 },
               })}
               disabled={isPending}
-              className="bg-background p-2.5 rounded-full absolute right-6 top-2">
-            <HeartIcon
-                className={`${
-                isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
-              } transition-colors duration-300`}
-            />
-          </button>
+            >
+              <HeartIcon
+                  size={22}
+                  className={`${
+                  isFavorite && 'fill-red-500 text-red-500'
+                } transition-colors duration-300`}
+              />
+            </button>
+
+            {/* CHAT ICON YA ESRAA */}
+            <button>
+              <BsChatText size={22} className='transition-colors duration-300' />
+            </button>
+          </div>
         </CardHeader>
 
         <CardContent className="flex justify-center gap-5">

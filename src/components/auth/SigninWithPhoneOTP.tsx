@@ -101,7 +101,7 @@ export const SignInWithPhoneOTP = () => {
   {...register("mobile")}
   value={mobile || ""}
   readOnly
-  className="w-full border border-gray-300 rounded-md p-2 bg-gray-100 text-gray-600 cursor-not-allowed"
+  className="w-full border border-gray-300 rounded-md p-2 bg-white text-gray-600 cursor-not-allowed"
 />
 
 
