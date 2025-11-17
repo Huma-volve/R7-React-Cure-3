@@ -7,7 +7,6 @@ import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import googleIcon from "/google-icon.svg";
 import { format } from "date-fns"
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { Calendar } from "@/components/ui/calendar"
