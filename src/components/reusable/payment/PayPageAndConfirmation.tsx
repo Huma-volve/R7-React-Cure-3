@@ -168,7 +168,7 @@ export default function PaymentConfirmation() {
                 <h2 className="font-medium">{doctor.doctor.user.name}</h2>
                 <p className="text-neutral-600">{doctor.doctor.specialty}</p>
                 <div className="flex items-center gap-1">
-                    <img src={LocationIcon} />
+                    <img  src={LocationIcon} />
                     <p className="text-neutral-600">{doctor.doctor.clinic_address}</p>
                 </div>
             </div>
