@@ -192,7 +192,7 @@ export default function Map() {
                                 </Tooltip>
                             </div>
 
-                            <div className="text-sm text-neutral-600 flex items-center gap-1.5">
+                            <div className="text-xs text-neutral-600 flex-wrap flex items-center gap-1.5">
                                 <span>{doctor.specialty}</span>
                                 {doctor.clinic_address && (
                                     <>
@@ -232,13 +232,13 @@ export default function Map() {
             <section className="lg:col-span-3 order-1 min-h-screen lg:order-2">
                 <div className="flex flex-col mb-4">
                     <h1 className="text-2xl font-semibold mb-6">Choose Specialty</h1>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                        <Button variant='outline' className={`${specialty === 'Dermatology' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'} rounded-3xl text-sm md:text-lg`} onClick={() => setSpecialty('Dermatology')}>Dermatology</Button>
-                        <Button variant='outline' className={`${specialty === 'Dentist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'} rounded-3xl text-sm md:text-lg`} onClick={() => setSpecialty('Dentist')}>Dentist</Button>
-                        <Button variant='outline' className={`${specialty === 'ENT' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'} rounded-3xl text-sm md:text-lg`} onClick={() => setSpecialty('ENT')}>ENT</Button>
-                        <Button variant='outline' className={`${specialty === 'Neurologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'} rounded-3xl text-sm md:text-lg`} onClick={() => setSpecialty('Neurologist')}>Neurologist</Button>
-                        <Button variant='outline' className={`${specialty === 'Cardiologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'} rounded-3xl text-sm md:text-lg`} onClick={() => setSpecialty('Cardiologist')}>Cardiologist</Button>
-                        <Button variant='outline' className={`${specialty === 'Ophthalmologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'} rounded-3xl text-sm md:text-lg`} onClick={() => setSpecialty('Ophthalmologist')}>Ophthalmologist</Button>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 *:rounded-3xl *:text-sm">
+                        <Button variant='outline' className={`${specialty === 'Dermatology' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Dermatology')}>Dermatology</Button>
+                        <Button variant='outline' className={`${specialty === 'Dentist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Dentist')}>Dentist</Button>
+                        <Button variant='outline' className={`${specialty === 'ENT' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('ENT')}>ENT</Button>
+                        <Button variant='outline' className={`${specialty === 'Neurologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Neurologist')}>Neurologist</Button>
+                        <Button variant='outline' className={`${specialty === 'Cardiologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Cardiologist')}>Cardiologist</Button>
+                        <Button variant='outline' className={`${specialty === 'Ophthalmologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Ophthalmologist')}>Ophthalmologist</Button>
                     </div>
                 </div>
 
