@@ -11,7 +11,6 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  PopoverPortal,
 } from "@radix-ui/react-popover";
 import NotificationsPopup from "./NotificationsPopup";
 
@@ -69,7 +68,7 @@ const Navbar: React.FC = () => {
       <div
         className="
     relative items-center text-2xl bg-gray-100 rounded-lg px-3 py-2 
-    w-full sm:w-[568px]  h-10 mb-3 md:mb-0
+    w-full md:w-[330px] lg:w-[568px] h-10 mb-3 md:mb-0
     hidden md:flex
   "
       >
@@ -113,16 +112,20 @@ const Navbar: React.FC = () => {
             </button>
 
             {/* Notification */}
-            <button className="text-black bg-[#F5F6F7] cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
-              <Popover>
-                <PopoverTrigger>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="text-black bg-[#F5F6F7] cursor-pointer p-3 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
                   <FiBell />
-                </PopoverTrigger>
-                <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
-                  <NotificationsPopup />
-                </PopoverContent>
-              </Popover>
-            </button>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent 
+                className="z-100 p-0 border-none bg-background shadow-lg rounded-lg"
+                align="end"
+                sideOffset={8}
+              >
+                <NotificationsPopup />
+              </PopoverContent>
+            </Popover>
 
             <button
               className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
@@ -136,13 +139,6 @@ const Navbar: React.FC = () => {
               onClick={() => navigate("/chat")}
             >
               <BsChatText />
-            </button>
-
-              <button
-              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
-              onClick={() => navigate("/booking")}
-            >
-              <img src="/booking_icon.png" className="w-5 h-5" />
             </button>
             
             <button
@@ -179,18 +175,18 @@ const Navbar: React.FC = () => {
             </button>
 
             {/* Notification */}
-            <button className="text-black cursor-pointer bg-[#F5F6F7] px-3 py-2 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
-              <Popover>
-                <PopoverTrigger>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="text-black bg-[#F5F6F7] cursor-pointer p-3 rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105">
                   <FiBell />
-                </PopoverTrigger>
-                <PopoverPortal>
-                  <PopoverContent className="p-0 border-none min-w-xs ml-10 md:ml-0 md:min-w-sm rounded-lg mt-5">
-                      <NotificationsPopup />
-                  </PopoverContent>
-                </PopoverPortal>
-              </Popover>
-            </button>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent 
+                className="z-100 p-0 border-none shadow-lg rounded-lg"
+              >
+                <NotificationsPopup />
+              </PopoverContent>
+            </Popover>
 
             <button
               onClick={() => navigate("/favorite")}
@@ -204,13 +200,6 @@ const Navbar: React.FC = () => {
               onClick={() => navigate("/chat")}
             >
               <BsChatText />
-            </button>
-
-            <button
-              className="text-black bg-[#F5F6F7] p-3 cursor-pointer rounded-lg hover:bg-gray-300 transition-transform duration-200 hover:scale-105"
-              onClick={() => navigate("/booking")}
-            >
-              <img src="/booking_icon.png" className="w-5 h-5" />
             </button>
 
             <button

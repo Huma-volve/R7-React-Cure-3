@@ -9,7 +9,7 @@ export const useAddReview = () => {
   return useMutation({
     mutationFn: async (newReview: { doctor_id: number; booking_id: number; patient_id: number | undefined; rating: number; comment: string }) => {
       console.log("Sending review:", newReview);
-      console.log("Token:", token); // Add this
+      console.log("Token:", token);
       const response = await api.post("/reviews", newReview, {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiMapPin } from "react-icons/fi";
 import { IoIosStar } from "react-icons/io";
@@ -6,7 +6,6 @@ import { FaApple } from "react-icons/fa";
 import HeroSection from "@/components/reusable/HeroSection";
 import HowItWorksSection from "@/components/reusable/HowItWorksSection";
 import TopDoctorsSlider from "@/components/reusable/TopDoctorsSlider";
-import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector } from "react-redux";

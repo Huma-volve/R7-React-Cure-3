@@ -23,7 +23,6 @@ const FavoritePage: React.FC = () => {
       const rawData = response.data?.data?.favorites || [];
       
       setFavorites(rawData);
-      console.log(favorites)
       setLoading(false);
     } catch (error) {
       console.error("Error fetching favorites:", error);
