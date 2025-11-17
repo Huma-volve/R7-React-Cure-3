@@ -194,10 +194,10 @@ const token = useSelector((state: RootState) => state.auth.token);
     return statusMatch && dateMatch;
   });
 
-  if (loading) return <p className="text-center mt-10">Loading appointments...</p>;
+  if (loading) return <p className="text-center mt-10 py-70">Loading appointments...</p>;
 
   return (
-    <div className="py-6 sm:px-8 lg:px-[72px] relative">
+    <div className="py-6 sm:px-8 lg:px-[72px] relative ">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-6">
         <div>
           <h2 className="text-xl font-semibold capitalize mb-3">Your appointments</h2>
