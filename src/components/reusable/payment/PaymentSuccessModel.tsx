@@ -7,7 +7,7 @@ export default function PaymentSuccessModel({closeDialog, doctorName, doctorId, 
     const navigate = useNavigate()
 
     return <div className='flex flex-col text-center items-center justify-center'>
-        <img src={SuccessIcon} />
+        <img alt="sucess" src={SuccessIcon} />
         
         {/* Text */}
         <div className='flex flex-col gap-2 my-7'>
