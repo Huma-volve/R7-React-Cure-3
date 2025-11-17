@@ -11,7 +11,7 @@ const initialState: FiltersState = {
   gender: null,
   consultation: null,
   sort: null,
-  availableDay: [] // ✅ مبدئيًا فاضية
+  availableDay: [], // ✅ مبدئيًا فاضية
 };
 
 const filtersSlice = createSlice({
@@ -35,12 +35,12 @@ const filtersSlice = createSlice({
     },
 
     // ✅ هنا بقى toggle بدل setter
-    setAvailableDay(state, action: PayloadAction<"today" | "tomorrow">) {
-      const day = action.payload;
-      if (state.availableDay.includes(day)) {
-        state.availableDay = state.availableDay.filter((d) => d !== day);
+    setAvailableDay: (state, action) => {
+      const value = action.payload;
+      if (state.availableDay.includes(value)) {
+        state.availableDay = state.availableDay.filter((d) => d !== value);
       } else {
-        state.availableDay.push(day);
+        state.availableDay = [...state.availableDay, value];
       }
     },
 
@@ -53,7 +53,12 @@ const filtersSlice = createSlice({
   },
 });
 
-export const { setGender, setConsultation, setSort, setAvailableDay, resetFilters } =
-  filtersSlice.actions;
+export const {
+  setGender,
+  setConsultation,
+  setSort,
+  setAvailableDay,
+  resetFilters,
+} = filtersSlice.actions;
 
 export default filtersSlice.reducer;

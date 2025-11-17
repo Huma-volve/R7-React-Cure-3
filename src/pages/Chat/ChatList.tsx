@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { chatApis } from "./chatApis";
 import { getRealMessageType } from "./messageType";
+import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 // ===============================
 // ✅ TYPE DEFINITIONS
@@ -329,13 +331,16 @@ const handleDoctorSelect = async (doc: Doctor) => {
     console.error("❌ Failed to create chat:", err);
   }
 };
-
+  const navigate = useNavigate();
 
   return (
     <aside className="h-full bg-white flex flex-col">
       {/* header */}
       <div className="border-b flex items-center justify-between bg-primary-400 text-white relative">
-        <h2 className="font-semibold text-xl p-4">Chats</h2>
+        <div className="flex items-center font-semibold p-4 text-xl gap-4">
+          <FaArrowLeft onClick={() => navigate(-1)} size={20} className="cursor-pointer" />
+          <h2>Chats</h2>
+        </div>
 
         <button
           title="Filter"

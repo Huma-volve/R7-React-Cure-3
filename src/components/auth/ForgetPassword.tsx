@@ -74,8 +74,9 @@ export const ForgetPasswordComp = () => {
         <button
           type="submit"
           className="w-full  bg-[#145DB8] text-white py-2 rounded-md text-sm font-medium hover:bg-[#145DB8] hover:cursor-pointer"
+          disabled={otpMutation.isPending}
         >
-          Reset Password
+          {otpMutation.isPending ? "Submitting..." : "Submit"}
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-2">

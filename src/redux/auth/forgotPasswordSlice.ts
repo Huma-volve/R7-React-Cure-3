@@ -26,7 +26,7 @@ const forgotPasswordSlice = createSlice({
       state.otp = action.payload;
     },
     SetPasswordCurrentStep: (state, action) => {
-      state.otp = action.payload;},
+      state.currentStep = action.payload;},
     resetForgotState: () => initialState,
   },
 });

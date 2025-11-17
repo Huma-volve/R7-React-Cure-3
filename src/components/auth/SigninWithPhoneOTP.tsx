@@ -131,7 +131,7 @@ export const SignInWithPhoneOTP = () => {
 
        
           <button
-            disabled={secondsLeft <= 0}
+            disabled={secondsLeft <= 0|| otpMutation.isPending}
             type="submit"
             className={`w-full py-2 rounded-md text-sm font-medium ${
               secondsLeft <= 0
@@ -139,7 +139,7 @@ export const SignInWithPhoneOTP = () => {
                 : "bg-[#145DB8] text-white hover:bg-[#0F4A91] cursor-pointer"
             }`}
           >
-           otpMutation.isPending ? "Verifying..." : "Verify OTP"
+           {otpMutation.isPending ? "Verifying..." : "Verify OTP"}
           </button>
 
 

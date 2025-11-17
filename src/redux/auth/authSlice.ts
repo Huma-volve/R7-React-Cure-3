@@ -35,10 +35,16 @@ interface AuthState {
   isAuthenticated: boolean
 }
 
-const initialState: AuthState = {
+export interface LogInLocalState extends AuthState {
+  currentStep: 'none' | 'otp';
+}
+
+
+const initialState: LogInLocalState = {
   user: null,
   token: null,
   isAuthenticated: false,
+  currentStep: 'none',
 }
 
 const authSlice = createSlice({
@@ -55,8 +61,9 @@ const authSlice = createSlice({
       state.token = null
       state.isAuthenticated = false
     },
+    setCurrentStep: (state, action) => {state.currentStep= action.payload;},
   },
 })
 
-export const { loginSuccess, logout } = authSlice.actions
+export const { loginSuccess, logout, setCurrentStep } = authSlice.actions
 export default authSlice.reducer

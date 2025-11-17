@@ -7,6 +7,7 @@ import { store } from '@/redux/store.ts';
 import { router } from '@/routers/route.tsx';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner"
+import 'leaflet/dist/leaflet.css';
 
 const queryClient = new QueryClient();
 

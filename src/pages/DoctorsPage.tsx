@@ -30,7 +30,7 @@ const DoctorsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const favorites = useSelector((state: RootState) => state.favorites.list);
-  
+
   const { results, originalData, loading, query, currentPage, lastPage } =
     useSelector((state: RootState) => state.search);
   const { gender, consultation, sort, availableDay } = useSelector(
@@ -38,7 +38,6 @@ const DoctorsPage: React.FC = () => {
   );
 
   let doctorsToShow = query.trim() ? results ?? [] : originalData ?? [];
-
 
   if (gender) {
     doctorsToShow = doctorsToShow.filter(
@@ -82,62 +81,45 @@ const DoctorsPage: React.FC = () => {
     }
   };
 
- if (availableDay.length > 0) {
-  const days = [
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-  ];
-  const todayIndex = new Date().getDay();
-  const todayName = days[todayIndex];
-  const tomorrowName = days[(todayIndex + 1) % 7];
+  if (availableDay.length > 0) {
+    const days = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ];
+    const todayIndex = new Date().getDay();
+    const todayName = days[todayIndex];
+    const tomorrowName = days[(todayIndex + 1) % 7];
 
-  doctorsToShow = doctorsToShow.filter((doc: any) => {
-    const availability = doc.availability;
-    if (!availability) return false;
+    doctorsToShow = doctorsToShow.filter((doc: any) => {
+      const availability = doc.availability;
+      if (!availability) return false;
 
-    const hasSlots = (dayName: string) => {
-  const normalizeKey = (key: string) => key.toLowerCase();
-  for (const key of Object.keys(availability)) {
-    if (normalizeKey(key) === normalizeKey(dayName)) {
-      const slots = availability[key];
-      // ✅ لو اليوم عبارة عن كائن فيه أوقات
-      if (typeof slots === "object" && slots !== null) {
-        return Object.keys(slots).length > 0;
-      }
-      // ✅ لو اليوم عبارة عن Array (احتمال آخر)
-      if (Array.isArray(slots)) {
-        return slots.length > 0;
-      }
-    }
+      const isToday =
+        availability[todayName] &&
+        Object.keys(availability[todayName]).length > 0;
+      const isTomorrow =
+        availability[tomorrowName] &&
+        Object.keys(availability[tomorrowName]).length > 0;
+
+      return (
+        (availableDay.includes("today") && isToday) ||
+        (availableDay.includes("tomorrow") && isTomorrow)
+      );
+    });
   }
-  return false;
-};
 
-
-    const isToday = hasSlots(todayName);
-    const isTomorrow = hasSlots(tomorrowName);
-
-    return (
-      (availableDay.includes("today") && isToday) ||
-      (availableDay.includes("tomorrow") && isTomorrow)
-    );
-  });
-}
-
-
-
-useEffect(() => {
-  doctorsToShow.forEach((doc: any) => {
-    if (!favorites.includes(doc.id)) {
-      dispatch(checkFavoriteStatus(Number(doc.id)));
-    }
-  });
-}, [dispatch]);
+  useEffect(() => {
+    doctorsToShow.forEach((doc: any) => {
+      if (!favorites.includes(doc.id)) {
+        dispatch(checkFavoriteStatus(Number(doc.id)));
+      }
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     if (!query.trim()) {

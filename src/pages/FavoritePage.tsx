@@ -114,7 +114,7 @@ const FavoritePage: React.FC = () => {
               specialty={doc.specialty?.name || "Unknown Specialty"}
               clinic={doc.clinic_address || "Not specified"}
               rating={doc.average_rating || 0}
-              availability={doc.availability_json}
+              availability={doc.availability}
               price={Number(doc.session_price) || 0}
               image={
                 doc.user?.profile_photo && doc.user.profile_photo !== "null"
