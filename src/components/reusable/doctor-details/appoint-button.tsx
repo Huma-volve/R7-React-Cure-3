@@ -8,7 +8,7 @@ export default function AppointmentButton({day, month, timeSlot, doctor} : {day:
 
     return (
         <Button onClick={() => navigate('/checkout', {
-            state: { day, timeSlot, month, doctor: doctor}, 
+            state: { day, timeSlot, doctor: doctor}, 
         })} className="border-primary-600 text-primary-600 p-6 w-[123px] h-12" variant='outline' disabled={!canBook}>
             Book
         </Button>

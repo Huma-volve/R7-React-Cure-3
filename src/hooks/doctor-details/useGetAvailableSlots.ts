@@ -17,7 +17,7 @@ export const useGetAvailableSlots = (doctorId: number | undefined) => {
 
       // Extract the availability object from the response
       const availability = response.data.data.availability;
-      return availability; // e.g. { "2025-11-12": {...}, "2025-11-17": {...}, ... }
+      return availability;
     },
     enabled: !!doctorId,
   });
