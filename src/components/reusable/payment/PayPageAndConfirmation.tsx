@@ -8,58 +8,76 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import VerifiedIcon from '@/assets/icons/verified.png'
 import VisaIcon from '@/assets/icons/visa.svg'
 import PaypalIcon from '@/assets/icons/paypal.svg'
+import StripeIcon from '@/assets/icons/stripe.png'
+import CashIcon from '@/assets/icons/cash.png'
 import CalenderIcon from '@/assets/icons/calender.png'
 import LocationIcon from '@/assets/icons/location.png'
-import { FaCheckCircle, FaRegCircle, FaMoneyBillWave } from "react-icons/fa"
+import { FaCheckCircle, FaRegCircle } from "react-icons/fa"
 // hooks
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useCreatePaymentIntent } from "@/hooks/doctor-details/payment/useCreatePaymentIntent";
+import { useCreatePaymentIntent, type PaymentMethods } from "@/hooks/doctor-details/payment/useCreatePaymentIntent";
 import { useConfirmPayment } from "@/hooks/doctor-details/payment/useConfirmPayment";
 import { useBookAppointment } from "@/hooks/doctor-details/payment/useBookAppointment";
-
-type PaymentMethods = 'paypal' | 'stripe' | 'cash';
+import CreditCardMockup from "@/components/profile-setting/payment/CreditCardMockup";
+import { useDispatch, useSelector } from "react-redux";
+import { removeCard, type SavedCard } from "@/redux/edit-profile/SaveCardsSlice";
+import type { RootState } from "@/redux/store";
+import {Pencil, Trash2 } from "lucide-react";
 
 interface PaymentProps {
     id: number,
     name: PaymentMethods,
-    icon: string | ReactNode
+    icon: string
 }
 
 const paymentOptionsArray: PaymentProps[] = [
     {
         id: 0,
         name: 'paypal',
-        icon: VisaIcon
+        icon: PaypalIcon
     },
     {
         id: 1,
         name: 'stripe',
-        icon: PaypalIcon
+        icon: StripeIcon
     },
     {
         id: 2,
         name: 'cash',
-        icon: <FaMoneyBillWave className="text-green-500" />
+        icon: CashIcon
     },
 ]
 
 export default function PaymentConfirmation() {
+    document.title = 'Checkout';
     const navigate = useNavigate()
     const [transactionId, setTransactionId] = useState<string | null>(null);
     const [, setBookingId] = useState<number | null>(null);
     
     const [openDialog, setOpenDialog] = useState(false)
     const [confirmDialog, setConfirmDialog] = useState(false);
+    const [openAddingCardDialog, setOpenAddingCardDialog] = useState(false);
     const [loading, setLoading] = useState(false);
     
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethods>('paypal')
+    type SelectedPayment = PaymentMethods | string | null; 
+
+    const [selectedPayment, setSelectedPayment] = useState<SelectedPayment>('paypal');
+    const [selectedCardId, setSelectedCardId] = useState<string | null>(null); // ID of saved card
+    const savedCards: SavedCard[] = useSelector((state: RootState) => state.saveCards.cards);
+
+    const [editingCard, setEditingCard] = useState<SavedCard | null>(null);
+    const dispatch = useDispatch();
     
+    const handleEditCard = (card: SavedCard) => {
+        setEditingCard(card);
+        setOpenAddingCardDialog(true);
+    };
     // Taking the props that the path (doctors/id) gives
     const { state } = useLocation();
     const { day, timeSlot, doctor } = state || {};
 
-    const { mutate: bookAppointment, error, isSuccess } = useBookAppointment({
+    const { mutate: bookAppointment, error, isPending: isBookingPending, isSuccess } = useBookAppointment({
         onError: () => {
             toast.error("This date is already booked!");
             navigate(`/doctor/${doctor.doctor.id}`)
@@ -67,7 +85,7 @@ export default function PaymentConfirmation() {
         }
     });
 
-    const { mutate: createPaymentIntent } = useCreatePaymentIntent({
+    const { mutate: createPaymentIntent, isPending: isPaymentIntentPending } = useCreatePaymentIntent({
         onSuccess: (data) => {
             console.log("Payment intent created:", data);
             // Store the transaction ID for later use
@@ -114,7 +132,7 @@ export default function PaymentConfirmation() {
             {
                 doctor_id: doctor.doctor.id,
                 date_time: `${day} ${timeSlot}`,
-                payment_method: paymentMethod,
+                payment_method: selectedPayment,
                 return_url: "https://app.example.com/paypal/return",
                 cancel_url: "https://app.example.com/paypal/cancel",
             },
@@ -128,7 +146,7 @@ export default function PaymentConfirmation() {
                     // Create payment intent after booking is successful
                     createPaymentIntent({
                         booking_id: newBookingId,
-                        gateway: paymentMethod,
+                        gateway: selectedPayment,
                         currency: "USD",
                         amount: doctor?.doctor?.session_price ?? 0,
                         description: `Booking #${newBookingId} with ${doctor.doctor.user.name}`,
@@ -150,7 +168,7 @@ export default function PaymentConfirmation() {
         setLoading(true);
         confirmPayment(
             {
-                gateway: paymentMethod,
+                gateway: selectedPayment,
                 payment_id: transactionId!,
             },
         );
@@ -193,38 +211,79 @@ export default function PaymentConfirmation() {
             <h3 className="font-serif mb-3 text-lg">Payment Method</h3>
             <div className="grid gap-2">
                 {paymentOptionsArray.map((option) => {
-                    const isSelected = paymentMethod === option.name;
+                    const isSelected = !selectedCardId && selectedPayment === option.name;
                     return (
                         <Button
-                            variant='outline'
                             key={option.id}
-                            onClick={() => setPaymentMethod(option.name)}
-                            className={`flex items-center hover:bg-primary-50 hover:text-primary-500 cursor-pointer border-none justify-between rounded-md shadow-none transition-all duration-200 w-full
-                            ${isSelected && "bg-green-100"}`}
+                            variant='outline'
+                            onClick={() => {
+                                setSelectedPayment(option.name)
+                                setSelectedCardId(null);
+                            }}
+
+                            className={`flex items-center justify-between w-full ${isSelected ? "bg-green-100" : ""}`}
                         >
-                            {/* check icon + name */}
                             <div className="flex items-center gap-3">
-                                {isSelected ? (
-                                    <FaCheckCircle className={`${isSelected ? "text-green-500" : "text-gray-300"} text-lg`} />
-                                ) : (
-                                    <FaRegCircle className={`${isSelected ? "text-green-500" : "text-gray-300"} text-lg`} />
-                                )}
-                                <p className={`${isSelected && "text-green-500"} capitalize`}>{option.name}</p>
+                                {isSelected ? <FaCheckCircle className="text-green-500" /> : <FaRegCircle className="text-gray-300" />}
+                                <p className="capitalize">{option.name}</p>
+                            </div>
+                            <img src={option.icon} alt={option.name} className="h-7 w-7" />
+                        </Button>
+                    );
+                })}
+
+                {savedCards.map(card => {
+                    const isSelected = selectedCardId === card.id;
+                    return (
+                        <Button
+                            key={card.id}
+                            variant='outline'
+                            
+                            onClick={() => {
+                                setSelectedCardId(card.id);
+                                setSelectedPayment('stripe');
+                            }}
+                            className={`flex items-center justify-between w-full ${isSelected ? "bg-green-100" : ""}`}
+                        >
+                            <div className="flex items-center gap-3">
+                                {isSelected ? <FaCheckCircle className="text-green-500" /> : <FaRegCircle className="text-gray-300" />}
+                                <p>Visa •••• {card.last4}</p>
                             </div>
 
-                            {/* payment icon */}
-                            {typeof option.icon === "string" ?
-                                ( <img src={option.icon} alt={option.name} className="h-6 w-6" /> ) :
-                                (<i>{option.icon}</i>)
-                            }
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-1">
+                                    <Button onClick={(e) => { e.stopPropagation(); handleEditCard(card); }} size="sm"><Pencil /></Button>
+                                    <Button onClick={(e) => { e.stopPropagation(); dispatch(removeCard(card.id)); toast.success('Card deleted!') }} size="sm" variant="destructive"><Trash2 /></Button>
+                                </div>
+                                <img src={VisaIcon} className="w-7 h-7" />
+                            </div>
                         </Button>
                     );
                 })}
             </div>
 
-            <Button onClick={() => navigate('/profile-setting')} className="w-full border-dashed border-primary-500 text-primary-500 mt-3" variant='outline'>
-                + Add new card
-            </Button>
+            <Dialog open={openAddingCardDialog} onOpenChange={setOpenAddingCardDialog}>
+                <DialogTrigger className="w-full">
+                    <Button
+                        variant="outline"
+                        className="border-dashed border-primary-500 w-full text-primary-500 mt-3"
+                        onClick={() => {
+                            setEditingCard(null);
+                            setOpenAddingCardDialog(true);
+                        }}
+                    >
+                        + Add new card
+                    </Button>
+                </DialogTrigger>
+
+                <DialogContent>
+                    <CreditCardMockup
+                        closeDialog={() => setOpenAddingCardDialog(false)}
+                        editingCard={editingCard}
+                    />
+                </DialogContent>
+            </Dialog>
+
         </CardContent>
 
         <CardFooter className="flex flex-col gap-2">
@@ -285,7 +344,31 @@ export default function PaymentConfirmation() {
                                     Processing...
                                 </div>
                             ) : (
-                                "Yes, confirm"
+                                isPaymentIntentPending || isBookingPending ? (
+                                    <div className="flex items-center gap-2">
+                                        <svg
+                                            className="animate-spin h-4 w-4 text-black"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            >
+                                            <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                            ></circle>
+                                            <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z"
+                                            ></path>
+                                        </svg>
+                                        Loading...
+                                    </div>
+                                ) : "Yes, confirm"
                             )}
                         </Button>
                     </div>

@@ -16,11 +16,19 @@ import storage from "redux-persist/lib/storage"; // defaults to localStorage for
 const persistConfig = {
   key: "auth",         
   storage,              // use localStorage
-  whitelist: ["token", "user", "isAuthenticated", "expiresAt"], 
+  whitelist: ["token", "user", "isAuthenticated", "expiresAt", 'cards'],
 };
 
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
+
+const persistCardsConfig = {
+  key: "saveCards",  // unique key for localStorage
+  storage,
+  whitelist: ["cards"], // only persist the cards array
+};
+
+const persistedCardsReducer = persistReducer(persistCardsConfig, saveCardsReducer);
 
 export const store = configureStore({
   reducer: {
@@ -31,7 +39,7 @@ export const store = configureStore({
     forgetPassword:forgetPasswordReducer,
     newMobile: newMobileReducer,
     signWithPhone: SignWithPhoneReducer,
-    saveCards: saveCardsReducer,
+    saveCards: persistedCardsReducer,
     
   },
   middleware: (getDefaultMiddleware) =>
