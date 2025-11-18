@@ -481,6 +481,7 @@ import { chatApis } from "../Chat/chatApis";
 interface DoctorUser {
   name?: string;
   profile_photo?: string | null;
+  id:number;
 }
 
 interface Doctor {
@@ -512,6 +513,7 @@ interface Appointment {
   doctorId: number;
   price: number;
   user?: DoctorUser;
+  user_id: number | undefined;
 }
 
 const API_URL = "https://round7-cure.huma-volve.com/api";
@@ -562,6 +564,7 @@ const Appointments: React.FC = () => {
             user: item.doctor?.user,
             imageSrc: item.doctor?.user?.profile_photo || "/doctor.jpg",
             doctorId: item.doctor?.id || 0,
+            user_id :item.doctor?.user?.id
           };
         });
 
@@ -651,6 +654,7 @@ toast.success("Appointment resceduale successfully!");
     const dateMatch = selectedDate ? appt.date === format(selectedDate, "yyyy-MM-dd") : true;
     return statusMatch && dateMatch;
   });
+  console.log(filteredAppointments)
 
   if (loading) return <p className="text-center mt-10 py-70">Loading appointments...</p>;
 
@@ -859,7 +863,13 @@ toast.success("Appointment resceduale successfully!");
                       <Button
                         className="bg-primary-600 reschedule-button text-white w-[48%]"
                         onClick={() => {
-                            chatApis.createChatWithDoctor(token!, appt.doctorId).then((res) => {
+                        console.log("console",appt.user_id)
+                        if (!appt.user_id) {
+                          console.error("user_id is missing");
+                          return;
+                        }
+
+                            chatApis.createChatWithDoctor(token!, appt.user_id).then((res) => {
                               const chatId = res.data.chat.id;
                         
                               navigate("/chat", {

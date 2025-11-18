@@ -36,12 +36,14 @@ export interface DoctorProps {
   onToggleFavorite?: (id: number) => void;
   experience: number;
   patientCount: number;
-  aboutMe: string
+  aboutMe: string;
+  doctorId:number
+ 
 }
 
 export const onCardHoverStyle = 'transition-all duration-500 ease-in-out hover:shadow-lg hover:border-primary-600/80';
 const  DoctorDetailsCard: React.FC<DoctorProps> = ({
-    id, name, specialty, avgRating, aboutMe, experience, patientCount, reviewsCount, location, image
+    id, name, specialty, avgRating, aboutMe, experience, patientCount, reviewsCount, location, image , doctorId
 }) => {
 
     const [expandAboutSection, setExpandAboutSection] = useState(false);
@@ -94,8 +96,12 @@ const  DoctorDetailsCard: React.FC<DoctorProps> = ({
             {/* CHAT ICON YA ESRAA */}
 <button title="chat"
   onClick={() => {
-    chatApis.createChatWithDoctor(token!, id).then((res) => {
+    console.log(name)
+    console.log(id)
+    
+    chatApis.createChatWithDoctor(token!, doctorId).then((res) => {
       const chatId = res.data.chat.id;
+      console.log("the datat from doctor page",res.data)
 
       navigate("/chat", {
         state: {
