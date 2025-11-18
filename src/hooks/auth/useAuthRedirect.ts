@@ -12,23 +12,23 @@ export function useAuthRedirect() {
 
     const now = Date.now();
 
-    // if already expired — logout immediately
+ 
     if (now >= expiresAt) {
       dispatch(logout());
   
       return;
     }
 
-    // how long until expiration?
+
     const timeLeft = expiresAt - now;
 
-    // schedule auto logout
+
     const timer = setTimeout(() => {
       dispatch(logout());
     
     }, timeLeft);
 
-    // cleanup when component re-renders
+
     return () => clearTimeout(timer);
 
   }, [token, expiresAt]);

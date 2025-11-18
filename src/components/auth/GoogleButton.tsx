@@ -1,27 +1,40 @@
-import { useGoogleLogin } from "@react-oauth/google";
-import { Button } from "@/components/ui/button";
-import googleIcon from "/google-icon.svg";
+import { GoogleLogin } from "@react-oauth/google";
+import { useGoogle } from "@/hooks/auth/useGoogle"; 
 
 export default function GoogleButton() {
-
-  const login = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      console.log("Google token:", tokenResponse);
-    },
-    onError: (err) => {
-      console.error("Google login error:", err);
-    },
-  });
-
+  const loginMutation = useGoogle();
   return (
-    <Button
-      className="w-full flex items-center justify-center gap-3 border hover:cursor-pointer mt-5 bg-[#4285F4] text-white hover:bg-[#145DB8]"
-      onClick={() => login()}
-    >
-      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white">
-        <img src={googleIcon} alt="Google logo" className="w-5 h-5" />
+    <div className="w-full mt-5 flex justify-center">
+      <div
+        className="w-full max-w-sm"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+       <GoogleLogin
+  onSuccess={(res) => {
+    const idToken = res.credential; // Type: string | undefined
+
+    if (idToken) {
+      console.log("Google ID Token:", idToken);
+      
+      // TypeScript now knows 'idToken' is a string.
+      // We construct the object payload expected by the mutation.
+      const payload = {
+        token: idToken 
+      };
+      
+      loginMutation.mutate(payload); // Safe to call
+    } else {
+      // Handle the unexpected case where the credential is missing
+      console.error("❌ Google response missing ID token.");
+      // You might want to show a user-facing error here (e.g., using toast)
+    }
+  }}
+  onError={() => {
+    console.log("Google Login Failed");
+  }}
+  size="medium"
+/>
       </div>
-      Continue with Google
-    </Button>
+    </div>
   );
 }
