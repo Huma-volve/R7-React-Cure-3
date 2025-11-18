@@ -1,3 +1,464 @@
+// import React, { useState, useEffect } from "react";
+// import { Card, CardContent } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { ChevronDownIcon } from "lucide-react";
+// import { Calendar } from "@/components/ui/calendar";
+// import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+// import { format , parse} from "date-fns";
+// import { useNavigate } from "react-router-dom";
+// import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+// import AddReviewDialog from "@/components/reusable/doctor-details/add-review";
+// import axios from "axios";
+// import "./Appointment.css"
+// import {  useSelector } from "react-redux";
+// import { type RootState } from "@/redux/store"; 
+
+
+// interface DoctorUser {
+//   name?: string;
+//   profile_photo?: string | null;
+// }
+// interface Doctor {
+//   id?: number;
+//   specialty?: string;
+//   clinic_address?: string;
+//   user?: DoctorUser;
+// }
+// interface ApiAppointment {
+//   id: number;
+//   booking_id?: number;
+//   date_time: string;
+//   date_time_formatted: string;
+//   status: string;
+//   doctor?: Doctor;
+// }
+// interface DoctorUser {
+//   name?: string;
+//   profile_photo?: string | null;
+// }
+// interface Doctor {
+//   id?: number;
+//   specialty?: string;
+//   clinic_address?: string;
+//   user?: DoctorUser;
+// }
+// interface ApiAppointment {
+//   id: number;
+//   booking_id?: number;
+//   date_time: string;
+//   date_time_formatted: string;
+//   status_label: string;
+//   doctor?: Doctor;
+//   price:number
+// }
+// interface Appointment {
+//   id: number;
+//   date: string;
+//   time: string;
+//   doctor: string;
+//   specialty: string;
+//   address: string;
+//   status: "Upcoming" | "Completed" | "Canceled" | "Pending";
+//   imageSrc: string;
+//   doctorId: number;
+//   price: number
+//   user?: DoctorUser;
+// }
+// const API_URL = "https://round7-cure.huma-volve.com/api";
+// const Appointments: React.FC = () => {
+//   const navigate = useNavigate();
+//   const [openDialog, setOpenDialog] = useState(false);
+//   const [appointments, setAppointments] = useState<Appointment[]>();
+//   const [filter, setFilter] = useState<"All" | "Upcoming" | "Completed" | "Canceled" | "Pending">("All");
+//   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+//   const [modalAppt, setModalAppt] = useState<Appointment | null>(null);
+//   const [rescheduleModal, setRescheduleModal] = useState<Appointment | null>(null);
+//   const [selectedRescheduleDate, setSelectedRescheduleDate] = useState<Date | undefined>();
+//   const [selectedTime, setSelectedTime] = useState<string>("");
+//   const [loading, setLoading] = useState(true);
+
+// const token = useSelector((state: RootState) => state.auth.token);
+
+
+//   useEffect(() => {
+//     const fetchAppointments = async () => {
+//       try {
+//         const res = await axios.get(`${API_URL}/patient/bookings`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+
+//         const apiData: ApiAppointment[] = res.data.data.data;
+//         console.log("API DATA:", apiData); 
+        
+//         const formattedAppointments: Appointment[] = apiData.map((item) => {
+//   const parsedDate = parse(item.date_time, "yyyy-MM-dd HH:mm:ss", new Date());
+
+//   return {
+//     id: item.id,
+//     date: format(parsedDate, "yyyy-MM-dd"),
+//     time: format(parsedDate, "HH:mm"),  
+//     price: item?.price,
+//     doctor: item.doctor?.user?.name || "Unknown Doctor",
+//     specialty: item.doctor?.specialty || "Unknown Specialty",
+//     address: item.doctor?.clinic_address || "No address available",
+//     status:
+//       item.status === "pending"
+//         ? "Pending"
+//         : item.status === "cancelled"
+//         ? "Canceled"
+//         : item.status === "completed"
+//         ? "Completed"
+//         : "Upcoming",
+
+//     user: item.doctor?.user,
+//     imageSrc: item.doctor?.user?.profile_photo || "/doctor.jpg",
+//     doctorId: item.doctor?.id || 0,
+//   };
+// });
+
+
+//         setAppointments(formattedAppointments);
+//       } catch (error) {
+//         console.error("Error fetching appointments:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchAppointments();
+//   }, [token]);
+
+ 
+//   const handleConfirmCancel = async () => {
+//     if (!modalAppt) return;
+//     try {
+//       await axios.delete(`${API_URL}/patient/bookings/${modalAppt.id}/cancel`, {
+//         headers: {
+//           Accept: "application/json",
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "application/json",
+//         },
+//       });
+
+//       setAppointments((prev) =>
+//         prev.map((a) => (a.id === modalAppt.id ? { ...a, status: "Canceled" } : a))
+//       );
+//       alert("Appointment canceled successfully.");
+//     } catch (error) {
+//       console.error("Error canceling appointment:", error);
+//       alert("Failed to cancel appointment. Please try again.");
+//     } finally {
+//       setModalAppt(null);
+//     }
+//   };
+
+//   const handleSubmitReschedule = async () => {
+//     if (!rescheduleModal || !selectedRescheduleDate || !selectedTime) return;
+
+//     const newDateTime = `${format(selectedRescheduleDate, "yyyy-MM-dd")} ${selectedTime}:00`;
+
+//     try {
+//       await axios.put(
+//         `${API_URL}/patient/bookings/${rescheduleModal.id}/reschedule`,
+//         { date_time: newDateTime }, 
+//         {
+//           headers: {
+//             Accept: "application/json",
+//             Authorization: `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+
+//       alert("Appointment rescheduled successfully!");
+//       setAppointments((prev) =>
+//         prev.map((a) =>
+//           a.id === rescheduleModal.id
+//             ? { ...a, date: format(selectedRescheduleDate, "yyyy-MM-dd"), time: selectedTime, status: "Upcoming" }
+//             : a
+//         )
+//       );
+//     } catch (error) {
+//       console.error("Error rescheduling appointment:", error);
+//       alert("Failed to reschedule appointment. Please try again.");
+//     } finally {
+//       setRescheduleModal(null);
+//     }
+//   };
+
+//   const filteredAppointments = appointments.filter((appt) => {
+//     const statusMatch = filter === "All" || appt.status === filter;
+//     const dateMatch = appt.date === format(selectedDate, "yyyy-MM-dd");
+//     return statusMatch && dateMatch;
+    
+//   });
+
+//   if (loading) return <p className="text-center mt-10 py-70">Loading appointments...</p>;
+
+//   return (
+//     <div className="py-6 sm:px-8 lg:px-[72px] relative ">
+//       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-6">
+//         <div >
+//           <h2 className="text-xl font-semibold capitalize mb-3">Your appointments</h2>
+//           <Tabs defaultValue="All" onValueChange={(v: string) => setFilter(v as Appointment["status"])}>
+//             <TabsList className="flex flex-wrap gap-2 bg-background mb-6 sm:w-full justify-center sm:justify-start">
+//               {["All", "Upcoming", "Pending", "Completed", "Canceled"].map((tab) => (
+//                 <TabsTrigger
+//                   key={tab}
+//                   value={tab}
+//                   className="cursor-pointer hover:bg-neutral-50 transition-colors px-4 sm:px-6 text-sm sm:text-base text-[#6D7379] font-medium rounded-lg data-[state=active]:bg-primary-600 data-[state=active]:text-white py-3"
+//                 >
+//                   {tab}
+//                 </TabsTrigger>
+//               ))}
+//             </TabsList>
+//           </Tabs>
+//         </div>
+
+//         <div className="flex justify-center">
+//           <Popover>
+//             <PopoverTrigger asChild>
+//               <Button className="flex w-full sm:w-[396px] bg-background text-foreground hover:bg-primary-50 h-12 border-[#B2B7BE] rounded-xl border justify-between gap-2">
+//                 <div className="flex items-center gap-2">
+//                   <img src="/calendar-02.png" alt="Calendar Icon" />
+//                   <span>{format(selectedDate, "EEEE, MMMM d")}</span>
+//                 </div>
+//                 <ChevronDownIcon className="w-5 h-5 text-gray-500" />
+//               </Button>
+//             </PopoverTrigger>
+//                   <PopoverContent
+//                    className="w-auto p-0 border border-[#B2B7BE] bg-white shadow-md rounded-lg"
+//                align="end"
+//              >
+//                <Calendar
+//                  mode="single"
+//                  selected={selectedDate}
+//                  onSelect={(date) => date && setSelectedDate(date)}
+//                  className="bg-white w-[320px] sm:w-[374px] rounded-md"
+//                />
+//            </PopoverContent>
+            
+//           </Popover>
+//         </div>
+//       </div>
+
+//       {/* Appointment Cards */}
+//       <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-6 sm:p-2 ">
+//         {filteredAppointments.length > 0 ? (
+//           filteredAppointments.map((appt) => (
+//             <Card key={appt.id} className="pt-1 sm:w-full   pb-5 bg-background hover:bg-[#F3F4F6]  rounded-xl">
+//               <CardContent>
+//                 <div className="flex justify-between items-center border-b mb-4">
+//                   <p className="flex gap-2 items-center text-sm text-[#6D7379] font-medium">
+//                     <img src="/calendar-02.png" alt="Calendar" />
+//                         {format(new Date(appt.date), `dd-MM-yyyy `)}
+//                         <span className="text-xs text-gray-500"> 
+//                              {format(new Date(`${appt.date}T${appt.time}`), "hh:mm a")}
+//                         </span>
+
+//                   </p>
+//                   <span
+//                     className={`text-xs font-medium px-2 py-1 rounded-full ${
+//                       appt.status === "Upcoming"
+//                         ? "text-blue-700"
+//                         : appt.status === "Completed"
+//                         ? "text-green-700"
+//                         : appt.status === "Pending"
+//                         ? "text-yellow-600"
+//                         : "text-[#FC4B4E]"
+//                     }`}
+//                   >
+//                     {appt.status}
+//                   </span>
+//                 </div>
+
+//                 <div className="flex justify-between items-center mb-3">
+//                   <div className="flex items-center gap-2">
+//                     <img
+//                       src={appt.imageSrc}
+//                       alt={appt.doctor}
+//                       className="w-10 h-10 rounded-full object-cover"
+//                     />
+//                     <div>
+//                       <h3 className="font-semibold mb-1 text-[#33384B] text-sm sm:text-base">
+//                         {appt.doctor}
+//                       </h3>
+//                       <p className="text-[#6D7379] text-sm">{appt.specialty}</p>
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 <div className="text-sm text-gray-600 w-full h-[50px] flex gap-1 mb-1">
+//                   <img src="/Location.svg" alt="location" className="w-5 h-5 mt-0.5" />
+//                   <p>{appt.address}</p>
+//                 </div>
+
+//                 {/* Buttons */}
+//                 <div className="flex flex-wrap gap-3 ">
+//                   {appt.status === "Upcoming" && (
+//                     <>
+//                       <Button
+//                         variant="outline"
+//                         className="border-gray-500 text-gray-500 hover:text-gray-700 hover:border-gray-700 canceling-button w-[48%]"
+//                         onClick={() => setModalAppt(appt)}
+//                       >
+//                         Cancel
+//                       </Button>
+//                       <Button
+//                         className="bg-primary-600 text-white w-[48%]"
+//                         onClick={() => setRescheduleModal(appt)}
+//                       >
+//                         Reschedule
+//                       </Button>
+//                     </>
+//                   )}
+
+//                   {appt.status === "Pending" && (
+//                     <>
+//                       <Button
+//                         variant="outline"
+//                         className="canceling-button w-[48%]"
+//                         onClick={() => setModalAppt(appt)}
+//                       >
+//                         Cancel
+//                       </Button>
+// <Button
+//   className="bg-primary-600 reschedule-button text-white w-[48%]"
+//   onClick={() =>
+//     navigate("/checkout", {
+//       state: {
+//         day: appt.date,
+//         timeSlot: appt.time,
+//         doctor: {
+//           doctor: {          // wrap as `.doctor` to match PaymentConfirmation
+//             id: appt.doctorId,
+//             user: appt.user,
+//             specialty: appt.specialty,
+//             clinic_address: appt.address,
+//             session_price: appt.price,
+//           },
+//         },
+//       },
+//     })
+//   }
+// >
+//   Pay Now
+// </Button>
+
+
+
+//                     </>
+//                   )}
+
+//                   {appt.status === "Completed" && (
+//                     <>
+//                       <Button
+//                         variant="outline"
+//                         className="text-primary-400 canceling-button border-primary-400 w-[48%] "
+//                         onClick={() => navigate(`/doctor/${appt.doctorId}`)}
+//                       >
+//                         Book again
+//                       </Button>
+//                       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+//                         <DialogTrigger asChild>
+//                           <Button
+//                             className=" reschedule-button w-[48%] bg-primary-600 text-white"
+//                             onClick={() => setOpenDialog(true)}
+//                           >
+//                             Feedback
+//                           </Button>
+//                         </DialogTrigger>
+//                         <DialogContent>
+//                           {/* doctorId={appt.doctorId} */}
+//                           <AddReviewDialog closeDialog={() => setOpenDialog(false)} />
+//                         </DialogContent>
+//                       </Dialog>
+//                     </>
+//                   )}
+
+//                   {appt.status === "Canceled" && (
+//                     <>
+//                       <Button
+//                         variant="outline"
+//                         className=" canceling-button   w-[48%]"
+//                         onClick={() => navigate(`/doctor/${appt.doctorId}`)}
+//                       >
+//                         Book again
+//                       </Button>
+
+//                       <Button className="bg-primary-600 reschedule-button text-white w-[48%]" onClick={() => navigate(`/chat`)}>
+//                         Support
+//                       </Button>
+//                     </>
+//                   )}
+//                 </div>
+//               </CardContent>
+//             </Card>
+//           ))
+//         ) : (
+//           <p className="text-gray-500 col-span-full text-center lg:py-60 md:py-40 sm:py-10">No appointments found.</p>
+//         )}
+//       </div>
+
+//       {/* Cancel Modal */}
+//       {modalAppt && (
+//         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+//           <div className="bg-white p-6 rounded-[30px] w-full max-w-[400px] text-center">
+//             <div className="bg-[#FFF6E9] w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4">
+//               <img src="/alert-02.svg" alt="alert" className="w-10 h-10" />
+//             </div>
+//             <h2 className="text-[#FFA726] text-[26px] font-semibold mb-2">Warning!</h2>
+//             <p className="text-md text-gray-600 mb-4">Cancellation must be made 24 hours in advance.</p>
+//             <p className="text-md text-gray-600 mb-4">Are you sure?</p>
+//             <div className="flex flex-col gap-2">
+//               <Button className="bg-[#05162C] text-white" onClick={handleConfirmCancel}>
+//                 Yes, Cancel
+//               </Button>
+//               <Button variant="outline" className="text-[#05162C] border-[#05162C] hover:bg-[#05162C] hover:text-white" onClick={() => setModalAppt(null)}>
+//                 No
+//               </Button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+
+//       {rescheduleModal && (
+//         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+//           <div className="bg-white p-6 rounded-[30px] w-full max-w-[400px] text-center">
+//             <h2 className="text-primary-600 text-xl font-semibold mb-4">Reschedule Appointment</h2>
+
+//             <Calendar
+//               mode="single"
+//               title="Select Date"
+//               selected={selectedRescheduleDate}
+//               onSelect={(date) => date && setSelectedRescheduleDate(date)}
+//               className="bg-white mx-auto mb-4"
+//             />
+
+//             <input
+//             title="Select Time"
+//               type="time"
+//               value={selectedTime}
+//               onChange={(e) => setSelectedTime(e.target.value)}
+//               className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4"
+//             />
+
+//             <div className="flex flex-col gap-2">
+//               <Button className="bg-[#05162C] hover:bg-[#05162C]   text-white" onClick={handleSubmitReschedule}>
+//                 Confirm
+//               </Button>
+//               <Button variant="outline" className="text-[#05162C]   border-[#05162C] hover:bg-[#05162C] hover:text-white hover:cursor-pointer" onClick={() => setRescheduleModal(null)}>
+//                 Cancel
+//               </Button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Appointments;
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,26 +466,29 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronDownIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { format , parse} from "date-fns";
+import { format, parse } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import AddReviewDialog from "@/components/reusable/doctor-details/add-review";
 import axios from "axios";
-import "./Appointment.css"
-import {  useSelector } from "react-redux";
-import { type RootState } from "@/redux/store"; 
+import "./Appointment.css";
+import { useSelector } from "react-redux";
+import { type RootState } from "@/redux/store";
+import toast, { Toaster } from "react-hot-toast";
 
 
 interface DoctorUser {
   name?: string;
   profile_photo?: string | null;
 }
+
 interface Doctor {
   id?: number;
   specialty?: string;
   clinic_address?: string;
   user?: DoctorUser;
 }
+
 interface ApiAppointment {
   id: number;
   booking_id?: number;
@@ -32,26 +496,9 @@ interface ApiAppointment {
   date_time_formatted: string;
   status: string;
   doctor?: Doctor;
+  price: number;
 }
-interface DoctorUser {
-  name?: string;
-  profile_photo?: string | null;
-}
-interface Doctor {
-  id?: number;
-  specialty?: string;
-  clinic_address?: string;
-  user?: DoctorUser;
-}
-interface ApiAppointment {
-  id: number;
-  booking_id?: number;
-  date_time: string;
-  date_time_formatted: string;
-  status_label: string;
-  doctor?: Doctor;
-  price:number
-}
+
 interface Appointment {
   id: number;
   date: string;
@@ -62,25 +509,28 @@ interface Appointment {
   status: "Upcoming" | "Completed" | "Canceled" | "Pending";
   imageSrc: string;
   doctorId: number;
-  price: number
+  price: number;
   user?: DoctorUser;
 }
+
 const API_URL = "https://round7-cure.huma-volve.com/api";
+
 const Appointments: React.FC = () => {
   const navigate = useNavigate();
-  const [openDialog, setOpenDialog] = useState(false);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const token = useSelector((state: RootState) => state.auth.token);
+
+  const [allAppointments, setAllAppointments] = useState<Appointment[]>([]);
   const [filter, setFilter] = useState<"All" | "Upcoming" | "Completed" | "Canceled" | "Pending">("All");
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+
   const [modalAppt, setModalAppt] = useState<Appointment | null>(null);
   const [rescheduleModal, setRescheduleModal] = useState<Appointment | null>(null);
   const [selectedRescheduleDate, setSelectedRescheduleDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string>("");
+  const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(true);
 
-const token = useSelector((state: RootState) => state.auth.token);
-
-
+  // Fetch appointments from API
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -89,36 +539,32 @@ const token = useSelector((state: RootState) => state.auth.token);
         });
 
         const apiData: ApiAppointment[] = res.data.data.data;
-        console.log("API DATA:", apiData); 
-        
+
         const formattedAppointments: Appointment[] = apiData.map((item) => {
-  const parsedDate = parse(item.date_time, "yyyy-MM-dd HH:mm:ss", new Date());
+          const parsedDate = parse(item.date_time, "yyyy-MM-dd HH:mm:ss", new Date());
+          return {
+            id: item.id,
+            date: format(parsedDate, "yyyy-MM-dd"),
+            time: format(parsedDate, "HH:mm"),
+            price: item.price,
+            doctor: item.doctor?.user?.name || "Unknown Doctor",
+            specialty: item.doctor?.specialty || "Unknown Specialty",
+            address: item.doctor?.clinic_address || "No address available",
+            status:
+              item.status === "pending"
+                ? "Pending"
+                : item.status === "cancelled"
+                ? "Canceled"
+                : item.status === "completed"
+                ? "Completed"
+                : "Upcoming",
+            user: item.doctor?.user,
+            imageSrc: item.doctor?.user?.profile_photo || "/doctor.jpg",
+            doctorId: item.doctor?.id || 0,
+          };
+        });
 
-  return {
-    id: item.id,
-    date: format(parsedDate, "yyyy-MM-dd"),
-    time: format(parsedDate, "HH:mm"),  
-    price: item?.price,
-    doctor: item.doctor?.user?.name || "Unknown Doctor",
-    specialty: item.doctor?.specialty || "Unknown Specialty",
-    address: item.doctor?.clinic_address || "No address available",
-    status:
-      item.status === "pending"
-        ? "Pending"
-        : item.status === "cancelled"
-        ? "Canceled"
-        : item.status === "completed"
-        ? "Completed"
-        : "Upcoming",
-
-    user: item.doctor?.user,
-    imageSrc: item.doctor?.user?.profile_photo || "/doctor.jpg",
-    doctorId: item.doctor?.id || 0,
-  };
-});
-
-
-        setAppointments(formattedAppointments);
+        setAllAppointments(formattedAppointments);
       } catch (error) {
         console.error("Error fetching appointments:", error);
       } finally {
@@ -127,8 +573,12 @@ const token = useSelector((state: RootState) => state.auth.token);
     };
     fetchAppointments();
   }, [token]);
+const playSuccessSound = () => {
+  const audio = new Audio("/success-sound.mp3"); // place your sound file in public folder
+  audio.play();
+};
 
- 
+  // Cancel appointment
   const handleConfirmCancel = async () => {
     if (!modalAppt) return;
     try {
@@ -140,18 +590,21 @@ const token = useSelector((state: RootState) => state.auth.token);
         },
       });
 
-      setAppointments((prev) =>
+      // Update appointment status immediately in state
+      setAllAppointments((prev) =>
         prev.map((a) => (a.id === modalAppt.id ? { ...a, status: "Canceled" } : a))
       );
-      alert("Appointment canceled successfully.");
+      playSuccessSound()
+    toast.success("Appointment canceled successfully."); 
     } catch (error) {
       console.error("Error canceling appointment:", error);
-      alert("Failed to cancel appointment. Please try again.");
+      toast.error("Failed to cancel appointment. Please try again.")
     } finally {
       setModalAppt(null);
     }
   };
 
+  // Reschedule appointment
   const handleSubmitReschedule = async () => {
     if (!rescheduleModal || !selectedRescheduleDate || !selectedTime) return;
 
@@ -160,7 +613,7 @@ const token = useSelector((state: RootState) => state.auth.token);
     try {
       await axios.put(
         `${API_URL}/patient/bookings/${rescheduleModal.id}/reschedule`,
-        { date_time: newDateTime }, 
+        { date_time: newDateTime },
         {
           headers: {
             Accept: "application/json",
@@ -170,35 +623,69 @@ const token = useSelector((state: RootState) => state.auth.token);
         }
       );
 
-      alert("Appointment rescheduled successfully!");
-      setAppointments((prev) =>
+      // Update appointment immediately in state
+      setAllAppointments((prev) =>
         prev.map((a) =>
           a.id === rescheduleModal.id
             ? { ...a, date: format(selectedRescheduleDate, "yyyy-MM-dd"), time: selectedTime, status: "Upcoming" }
             : a
         )
       );
+
+playSuccessSound();
+toast.success("Appointment resceduale successfully!");
     } catch (error) {
       console.error("Error rescheduling appointment:", error);
-      alert("Failed to reschedule appointment. Please try again.");
+      toast.error("Failed to reschedule appointment. Please try again.")
     } finally {
       setRescheduleModal(null);
+      setSelectedRescheduleDate(undefined);
+      setSelectedTime("");
     }
   };
 
-  const filteredAppointments = appointments.filter((appt) => {
+  // Filter appointments by status and date
+  const filteredAppointments = allAppointments.filter((appt) => {
     const statusMatch = filter === "All" || appt.status === filter;
-    const dateMatch = appt.date === format(selectedDate, "yyyy-MM-dd");
+    const dateMatch = selectedDate ? appt.date === format(selectedDate, "yyyy-MM-dd") : true;
     return statusMatch && dateMatch;
-    
   });
 
   if (loading) return <p className="text-center mt-10 py-70">Loading appointments...</p>;
 
   return (
-    <div className="py-6 sm:px-8 lg:px-[72px] relative ">
+    <div className="py-6 sm:px-8 lg:px-[72px] relative">
+            <Toaster
+  position="bottom-right"
+  reverseOrder={false} // newest at bottom
+  gutter={8}
+  toastOptions={{
+    duration: 3000,
+    style: {
+      fontSize: "14px",
+      padding: "10px 16px",
+      borderRadius: "8px",
+    },
+    success: {
+      icon: "✅",
+      style: {
+        background: "white",
+        color: "black",
+      },
+    },
+    error: {
+      icon: "❌",
+      style: {
+        background: "#FC4B4E",
+        color: "#fff",
+      },
+    },
+  }}
+/>
+
+
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-6">
-        <div >
+        <div>
           <h2 className="text-xl font-semibold capitalize mb-3">Your appointments</h2>
           <Tabs defaultValue="All" onValueChange={(v: string) => setFilter(v as Appointment["status"])}>
             <TabsList className="flex flex-wrap gap-2 bg-background mb-6 sm:w-full justify-center sm:justify-start">
@@ -221,41 +708,37 @@ const token = useSelector((state: RootState) => state.auth.token);
               <Button className="flex w-full sm:w-[396px] bg-background text-foreground hover:bg-primary-50 h-12 border-[#B2B7BE] rounded-xl border justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <img src="/calendar-02.png" alt="Calendar Icon" />
-                  <span>{format(selectedDate, "EEEE, MMMM d")}</span>
+                  <span>{selectedDate ? format(selectedDate, "EEEE, MMMM d") : "All Dates"}</span>
                 </div>
                 <ChevronDownIcon className="w-5 h-5 text-gray-500" />
               </Button>
             </PopoverTrigger>
-                  <PopoverContent
-                   className="w-auto p-0 border border-[#B2B7BE] bg-white shadow-md rounded-lg"
-               align="end"
-             >
-               <Calendar
-                 mode="single"
-                 selected={selectedDate}
-                 onSelect={(date) => date && setSelectedDate(date)}
-                 className="bg-white w-[320px] sm:w-[374px] rounded-md"
-               />
-           </PopoverContent>
-            
+            <PopoverContent
+              className="w-auto p-0 border border-[#B2B7BE] bg-white shadow-md rounded-lg"
+              align="end"
+            >
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                className="bg-white w-[320px] sm:w-[374px] rounded-md"
+              />
+            </PopoverContent>
           </Popover>
         </div>
       </div>
 
       {/* Appointment Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-6 sm:p-2 ">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:p-2">
         {filteredAppointments.length > 0 ? (
           filteredAppointments.map((appt) => (
-            <Card key={appt.id} className="pt-1 sm:w-full   pb-5 bg-background hover:bg-[#F3F4F6]  rounded-xl">
+            <Card key={appt.id} className="pt-1 sm:w-full pb-5 bg-background hover:bg-[#F3F4F6] rounded-xl">
               <CardContent>
                 <div className="flex justify-between items-center border-b mb-4">
                   <p className="flex gap-2 items-center text-sm text-[#6D7379] font-medium">
                     <img src="/calendar-02.png" alt="Calendar" />
-                        {format(new Date(appt.date), `dd-MM-yyyy `)}
-                        <span className="text-xs text-gray-500"> 
-                             {format(new Date(`${appt.date}T${appt.time}`), "hh:mm a")}
-                        </span>
-
+                    {format(new Date(appt.date), "dd-MM-yyyy")}
+                    <span className="text-xs text-gray-500">{format(new Date(`${appt.date}T${appt.time}`), "hh:mm a")}</span>
                   </p>
                   <span
                     className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -274,15 +757,9 @@ const token = useSelector((state: RootState) => state.auth.token);
 
                 <div className="flex justify-between items-center mb-3">
                   <div className="flex items-center gap-2">
-                    <img
-                      src={appt.imageSrc}
-                      alt={appt.doctor}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
+                    <img src={appt.imageSrc} alt={appt.doctor} className="w-10 h-10 rounded-full object-cover" />
                     <div>
-                      <h3 className="font-semibold mb-1 text-[#33384B] text-sm sm:text-base">
-                        {appt.doctor}
-                      </h3>
+                      <h3 className="font-semibold mb-1 text-[#33384B] text-sm sm:text-base">{appt.doctor}</h3>
                       <p className="text-[#6D7379] text-sm">{appt.specialty}</p>
                     </div>
                   </div>
@@ -294,7 +771,7 @@ const token = useSelector((state: RootState) => state.auth.token);
                 </div>
 
                 {/* Buttons */}
-                <div className="flex flex-wrap gap-3 ">
+                <div className="flex flex-wrap gap-3">
                   {appt.status === "Upcoming" && (
                     <>
                       <Button
@@ -304,10 +781,7 @@ const token = useSelector((state: RootState) => state.auth.token);
                       >
                         Cancel
                       </Button>
-                      <Button
-                        className="bg-primary-600 text-white w-[48%]"
-                        onClick={() => setRescheduleModal(appt)}
-                      >
+                      <Button className="bg-primary-600 text-white w-[48%]" onClick={() => setRescheduleModal(appt)}>
                         Reschedule
                       </Button>
                     </>
@@ -322,31 +796,28 @@ const token = useSelector((state: RootState) => state.auth.token);
                       >
                         Cancel
                       </Button>
-<Button
-  className="bg-primary-600 reschedule-button text-white w-[48%]"
-  onClick={() =>
-    navigate("/checkout", {
-      state: {
-        day: appt.date,
-        timeSlot: appt.time,
-        doctor: {
-          doctor: {          // wrap as `.doctor` to match PaymentConfirmation
-            id: appt.doctorId,
-            user: appt.user,
-            specialty: appt.specialty,
-            clinic_address: appt.address,
-            session_price: appt.price,
-          },
-        },
-      },
-    })
-  }
->
-  Pay Now
-</Button>
-
-
-
+                      <Button
+                        className="bg-primary-600 reschedule-button text-white w-[48%]"
+                        onClick={() =>
+                          navigate("/checkout", {
+                            state: {
+                              day: appt.date,
+                              timeSlot: appt.time,
+                              doctor: {
+                                doctor: {
+                                  id: appt.doctorId,
+                                  user: appt.user,
+                                  specialty: appt.specialty,
+                                  clinic_address: appt.address,
+                                  session_price: appt.price,
+                                },
+                              },
+                            },
+                          })
+                        }
+                      >
+                        Pay Now
+                      </Button>
                     </>
                   )}
 
@@ -354,7 +825,7 @@ const token = useSelector((state: RootState) => state.auth.token);
                     <>
                       <Button
                         variant="outline"
-                        className="text-primary-400 canceling-button border-primary-400 w-[48%] "
+                        className="text-primary-400 canceling-button border-primary-400 w-[48%]"
                         onClick={() => navigate(`/doctor/${appt.doctorId}`)}
                       >
                         Book again
@@ -362,14 +833,13 @@ const token = useSelector((state: RootState) => state.auth.token);
                       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                         <DialogTrigger asChild>
                           <Button
-                            className=" reschedule-button w-[48%] bg-primary-600 text-white"
+                            className="reschedule-button w-[48%] bg-primary-600 text-white"
                             onClick={() => setOpenDialog(true)}
                           >
                             Feedback
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
-                          {/* doctorId={appt.doctorId} */}
                           <AddReviewDialog closeDialog={() => setOpenDialog(false)} />
                         </DialogContent>
                       </Dialog>
@@ -380,13 +850,15 @@ const token = useSelector((state: RootState) => state.auth.token);
                     <>
                       <Button
                         variant="outline"
-                        className=" canceling-button   w-[48%]"
+                        className="canceling-button w-[48%]"
                         onClick={() => navigate(`/doctor/${appt.doctorId}`)}
                       >
                         Book again
                       </Button>
-
-                      <Button className="bg-primary-600 reschedule-button text-white w-[48%]" onClick={() => navigate(`/chat`)}>
+                      <Button
+                        className="bg-primary-600 reschedule-button text-white w-[48%]"
+                        onClick={() => navigate(`/chat`)}
+                      >
                         Support
                       </Button>
                     </>
@@ -414,7 +886,11 @@ const token = useSelector((state: RootState) => state.auth.token);
               <Button className="bg-[#05162C] text-white" onClick={handleConfirmCancel}>
                 Yes, Cancel
               </Button>
-              <Button variant="outline" className="text-[#05162C] border-[#05162C] hover:bg-[#05162C] hover:text-white" onClick={() => setModalAppt(null)}>
+              <Button
+                variant="outline"
+                className="text-[#05162C] border-[#05162C] hover:bg-[#05162C] hover:text-white"
+                onClick={() => setModalAppt(null)}
+              >
                 No
               </Button>
             </div>
@@ -422,11 +898,11 @@ const token = useSelector((state: RootState) => state.auth.token);
         </div>
       )}
 
+      {/* Reschedule Modal */}
       {rescheduleModal && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-[30px] w-full max-w-[400px] text-center">
             <h2 className="text-primary-600 text-xl font-semibold mb-4">Reschedule Appointment</h2>
-
             <Calendar
               mode="single"
               title="Select Date"
@@ -434,20 +910,22 @@ const token = useSelector((state: RootState) => state.auth.token);
               onSelect={(date) => date && setSelectedRescheduleDate(date)}
               className="bg-white mx-auto mb-4"
             />
-
             <input
-            title="Select Time"
+              title="Select Time"
               type="time"
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value)}
               className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4"
             />
-
             <div className="flex flex-col gap-2">
-              <Button className="bg-[#05162C] hover:bg-[#05162C]   text-white" onClick={handleSubmitReschedule}>
+              <Button className="bg-[#05162C] hover:bg-[#05162C] text-white" onClick={handleSubmitReschedule}>
                 Confirm
               </Button>
-              <Button variant="outline" className="text-[#05162C]   border-[#05162C] hover:bg-[#05162C] hover:text-white hover:cursor-pointer" onClick={() => setRescheduleModal(null)}>
+              <Button
+                variant="outline"
+                className="text-[#05162C] border-[#05162C] hover:bg-[#05162C] hover:text-white hover:cursor-pointer"
+                onClick={() => setRescheduleModal(null)}
+              >
                 Cancel
               </Button>
             </div>

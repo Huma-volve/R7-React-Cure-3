@@ -13,6 +13,11 @@ import { BsChatText } from "react-icons/bs";
 import { useToggleFavourite } from "@/hooks/doctor-details/useToggleFavourite";
 import MapLeaflet from "../Map/MapLeaflet";
 import { HeartIcon } from "lucide-react";
+import { chatApis } from "@/pages/Chat/chatApis";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
+import { useNavigate } from "react-router-dom";
+
 
 export interface DoctorProps {
   id: number;
@@ -35,8 +40,7 @@ export interface DoctorProps {
 }
 
 export const onCardHoverStyle = 'transition-all duration-500 ease-in-out hover:shadow-lg hover:border-primary-600/80';
-
-const DoctorDetailsCard: React.FC<DoctorProps> = ({
+const  DoctorDetailsCard: React.FC<DoctorProps> = ({
     id, name, specialty, avgRating, aboutMe, experience, patientCount, reviewsCount, location, image
 }) => {
 
@@ -47,7 +51,8 @@ const DoctorDetailsCard: React.FC<DoctorProps> = ({
     const isLong = aboutText.length > maxLength;
     const previewAboutText = isLong && !expandAboutSection ? aboutText.slice(0, maxLength) + "..." : aboutText;
     const { mutate: toggleFavourite, isPending } = useToggleFavourite();
-
+    const token = useSelector((state: RootState) => state.auth.token);
+    const navigate = useNavigate();
     return <Card className={`bg-card pt-8 pb-6 h-fit border-none shadow-none lg:col-span-1 hover:bg-neutral-50/80 ${onCardHoverStyle}`}>
         <CardHeader className="flex relative flex-col items-center justify-center text-center gap-2">
           {/* Img + Basic Info */}
@@ -70,7 +75,7 @@ const DoctorDetailsCard: React.FC<DoctorProps> = ({
           <p className="text-neutral-700">{specialty}</p>
           
           <div className="flex items-center gap-2 absolute right-4 top-2 *:bg-background *:p-2.5 *:rounded-full">
-            <button onClick={() =>
+            <button title="fav" onClick={() =>
               toggleFavourite(id, {
                 onSuccess: (data) => {
                   setIsFavorite(data.data.status === "added");
@@ -87,9 +92,27 @@ const DoctorDetailsCard: React.FC<DoctorProps> = ({
             </button>
 
             {/* CHAT ICON YA ESRAA */}
-            <button>
-              <BsChatText size={22} className='transition-colors duration-300' />
-            </button>
+<button title="chat"
+  onClick={() => {
+    chatApis.createChatWithDoctor(token!, id).then((res) => {
+      const chatId = res.data.chat.id;
+
+      navigate("/chat", {
+        state: {
+          openChatId: chatId, // <<< SEND CHAT ID TO CHAT PAGE
+          doctorId: id,
+          doctorName: name,
+          doctorImage: image,
+        },
+      });
+    });
+  }}
+>
+  <BsChatText size={22} className="transition-colors duration-300" />
+</button>
+
+
+
           </div>
         </CardHeader>
 
