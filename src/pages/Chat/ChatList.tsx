@@ -268,12 +268,11 @@ const getAttachmentTypeFromUrl = (url: string ) => {
   // Otherwise, show text body if exists
   if (msg.body) return msg.body;
 
-  return "No messages yet";
-
+  return "No messages yet" ;
 
 };
 
-// ✅ Returns last message timestamp for display
+
 const getLastMessageTime = (chat: Chat) => {
   let msg = chat.last_message;
   if (!msg && chat.messages?.length) {
