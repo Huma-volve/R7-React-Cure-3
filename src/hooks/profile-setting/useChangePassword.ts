@@ -6,6 +6,9 @@ import api from "@/lib/axios";
 import { toast } from "sonner"
 import type { User } from "@/redux/auth/authSlice";
 import type { RootState } from "@/redux/store";
+import type { AxiosError } from "axios";
+
+
 
 interface ChangePasswordPayload {
   current_password: string;
@@ -48,8 +51,14 @@ export const useChangePassword = () => {
       }
     },
     onError: (error) => {
-      console.error("❌ Change password error:", error);
-      toast("Change password failed: An error occurred");
+      const err = error as AxiosError<any>;
+
+      const backendMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Something went wrong";
+    
+      toast(backendMessage);
     },
   });
 }
