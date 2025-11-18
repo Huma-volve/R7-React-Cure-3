@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import { TiSocialFacebook } from "react-icons/ti";
@@ -6,6 +6,7 @@ import { FaYoutube } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { TfiLinkedin } from "react-icons/tfi";
 import { FaWhatsapp } from "react-icons/fa";
+import axios from "axios";
 const Footer: React.FC = () => {
   const [open, setOpen] = useState<number | null>(null);
 
@@ -13,6 +14,23 @@ const Footer: React.FC = () => {
     setOpen(open === i ? null : i);
   };
   const navigate = useNavigate();
+  const [contactInfo, setContactInfo] = useState<any>(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          "https://round7-cure.huma-volve.com/api/contact-info"
+        );
+        if (res.data?.success) {
+          setContactInfo(res.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching contact info:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <footer className="relative z-10 bg-[#021024] text-white pt-30 lg:pt-40 pb-10">
@@ -24,30 +42,30 @@ const Footer: React.FC = () => {
           </div>
 
           <h1 className="text-white text-lg leading-relaxed max-w-xs md:max-w-sm">
-            Cure helps you find trusted doctors, book appointments, and manage
-            your health—quickly and easily.
+            {contactInfo?.brand?.tagline ??
+              "Cure helps you find trusted doctors..."}
           </h1>
 
           <div className="flex gap-3 mt-4 justify-end md:justify-start">
-            <Link to="https://facebook.com/" target="_blank">
+            <Link to={contactInfo?.socials?.facebook ?? "#"} target="_blank">
               <div className="w-8 h-8 rounded-full border border-white flex justify-center items-center hover:bg-white hover:text-black transition">
                 <TiSocialFacebook size={22} />
               </div>
             </Link>
 
-            <Link to="https://youtube.com/" target="_blank">
+            <Link to={contactInfo?.socials?.youtube ?? "#"} target="_blank">
               <div className="w-8 h-8 rounded-full border border-white flex justify-center items-center hover:bg-white hover:text-black transition">
                 <FaYoutube />
               </div>
             </Link>
 
-            <Link to="https://www.linkedin.com/" target="_blank">
+            <Link to={contactInfo?.socials?.linkedin ?? "#"} target="_blank">
               <div className="w-8 h-8 rounded-full border border-white flex justify-center items-center hover:bg-white hover:text-black transition">
                 <TfiLinkedin />
               </div>
             </Link>
 
-            <Link to="https://web.whatsapp.com/" target="_blank">
+            <Link to={contactInfo?.socials?.whatsapp ?? "#"} target="_blank">
               <div className="w-8 h-8 rounded-full border border-white flex justify-center items-center hover:bg-white hover:text-black transition">
                 <FaWhatsapp size={20} />
               </div>
@@ -83,7 +101,12 @@ const Footer: React.FC = () => {
                 >
                   <li onClick={() => navigate("/")}>Home</li>
                   <li onClick={() => navigate("/doctors")}>Doctors</li>
-                  <li onClick={() => navigate("/profile-setting")}>FAQs</li>
+                  <li onClick={() => {
+                  const section = document.getElementById("FAQ");
+                  if (section) {
+                    section.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}>FAQs</li>
                   <li onClick={() => navigate("/chat")}>Contact Us</li>
                 </motion.ul>
               )}
@@ -93,7 +116,12 @@ const Footer: React.FC = () => {
             <ul className="hidden md:block space-y-2 text-gray-300">
               <li onClick={() => navigate("/")}>Home</li>
               <li onClick={() => navigate("/doctors")}>Doctors</li>
-              <li onClick={() => navigate("/profile-setting")}>FAQs</li>
+              <li onClick={() => {
+                  const section = document.getElementById("FAQ");
+                  if (section) {
+                    section.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}>FAQs</li>
               <li onClick={() => navigate("/chat")}>Contact Us</li>
             </ul>
           </div>
@@ -182,24 +210,24 @@ const Footer: React.FC = () => {
                   transition={{ duration: 0.25 }}
                   className="space-y-2 text-gray-300 pl-4 md:hidden"
                 >
-                  <li>📞 080 707 555-321</li>
-                  <li>📧 demo@example.com</li>
-                  <li>📍 526 Melrose Street, Water Mill, 11976, NY</li>
+                  <li>📞 {contactInfo?.contact?.phone}</li>
+                  <li>📧 {contactInfo?.contact?.email}</li>
+                  <li>📍 {contactInfo?.contact?.address}</li>
                 </motion.ul>
               )}
             </AnimatePresence>
 
             <ul className="hidden md:block space-y-2 text-gray-300">
-              <li>📞 080 707 555-321</li>
-              <li>📧 demo@example.com</li>
-              <li>📍 526 Melrose Street, Water Mill, 11976, NY</li>
+              <li>📞 {contactInfo?.contact?.phone}</li>
+              <li>📧 {contactInfo?.contact?.email}</li>
+              <li>📍 {contactInfo?.contact?.address}</li>
             </ul>
           </div>
         </div>
       </div>
       <div className="text-center text-gray-400 text-sm mt-10 border-t border-white/10 pt-5">
-        ©{new Date().getFullYear()} Huma-Volve - All Rights Reserved | Terms & Conditions | Privacy
-        Policy
+        ©{new Date().getFullYear()} Huma-Volve - All Rights Reserved | Terms &
+        Conditions | Privacy Policy
       </div>
     </footer>
   );

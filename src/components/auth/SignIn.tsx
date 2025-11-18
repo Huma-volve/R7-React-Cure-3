@@ -3,13 +3,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import googleIcon from "/google-icon.svg";
+
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useLogin } from "@/hooks/auth/useLogin"; 
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/redux/store";
 import { useEffect } from "react";
+import GoogleButton from "./GoogleButton";
+
 
 const passwordSchema = z
   .string()
@@ -119,19 +121,7 @@ export const SignIn = () => {
   </p>
 </div>
 
-  <a
-  href="https://accounts.google.com/v3/signin/accountchooser?dsh=S2064670113%3A1762466372533891&elo=1&ifkv=ARESoU1kk6R-3OWzfij6pvamMf042bcBE0T330AKbfPOnuiw7RIr6Sy0kbR_GCwEro9z3BiMY2vLhQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin"
-  target="_blank"
-  rel="noopener noreferrer"
->
-<Button className="w-full flex items-center justify-center gap-3 border hover:cursor-pointer mt-5 bg-[#4285F4] text-white hover:bg-[#145DB8]">
-  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white">
-    <img src={googleIcon} alt="Google logo" className="w-5 h-5" />
-  </div>
-  Sign in with Google
-</Button>
-
-</a>
+<GoogleButton />
 
 <a
   className="block text-[#145DB8] mt-3 text-sm  hover:underline"

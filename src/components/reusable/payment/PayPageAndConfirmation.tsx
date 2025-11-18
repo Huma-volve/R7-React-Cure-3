@@ -61,7 +61,8 @@ export default function PaymentConfirmation() {
 
     const { mutate: bookAppointment, error, isSuccess } = useBookAppointment({
         onError: () => {
-            toast.error("This date is already");
+            toast.error("This date is already booked!");
+            navigate(`/doctor/${doctor.doctor.id}`)
             setConfirmDialog(false)
         }
     });

@@ -7,7 +7,6 @@ import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import googleIcon from "/google-icon.svg";
 import { format } from "date-fns"
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { Calendar } from "@/components/ui/calendar"
@@ -19,6 +18,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/redux/store";
 import { useEffect } from "react";
+import GoogleButton from "./GoogleButton";
 
 
 const passwordSchema = z
@@ -240,18 +240,7 @@ export const PatientSignupForm = () => {
   </p>
 </div>
 
-          <a 
-  href="https://accounts.google.com/v3/signin/accountchooser?dsh=S2064670113%3A1762466372533891&elo=1&ifkv=ARESoU1kk6R-3OWzfij6pvamMf042bcBE0T330AKbfPOnuiw7RIr6Sy0kbR_GCwEro9z3BiMY2vLhQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin"
-  target="_blank"
-  rel="noopener noreferrer"
->
-
-  
-  <Button className="w-full flex items-center justify-center gap-2 border hover:cursor-pointer mt-5 bg-[#ffffff] hover:bg-[#ffffff] text-black">
-    <img src={googleIcon} alt="Google logo" className="w-5 h-5" />
-    Sign Up with Google
-  </Button>
-</a>
+<GoogleButton/>
 
 
         </CardContent>

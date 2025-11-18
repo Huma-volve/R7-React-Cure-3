@@ -107,7 +107,7 @@ export default function DoctorDetails() {
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
             <Link to='/doctors'>
-              <img src={GoBackArrow} />
+              <img alt="go back" src={GoBackArrow} />
             </Link>
             <span className="font-serif">Make an appointment</span>
           </div>
@@ -118,7 +118,7 @@ export default function DoctorDetails() {
               <div className="flex items-center gap-2.5">
                 <Popover>
                   <PopoverTrigger>
-                    <img src={BlackCalenderIcon} className="cursor-pointer" />
+                    <img alt="back" src={BlackCalenderIcon} className="cursor-pointer" />
                   </PopoverTrigger>
                   <PopoverContent
                     className="w-auto ml-3 sm:ml-0 p-0 shadow-md rounded-lg"
@@ -176,7 +176,7 @@ export default function DoctorDetails() {
             
             <CardFooter className="flex justify-between flex-col md:flex-row gap-3 md:gap-0">
               <div className="flex items-center gap-2">
-                <img src={CalenderIcon} />
+                <img alt="go back" src={CalenderIcon} />
                   {selectedDay ? (
                     <div className="capitalize">
                       {selectedDay}, {selectedTimeSlot ? selectedTimeSlot : 'Choose a time.'}
@@ -309,6 +309,7 @@ export default function DoctorDetails() {
       <DoctorDetailsCard
         id={docDetails.doctor.id}
         name={docDetails.doctor.user.name}
+        doctorId ={docDetails.doctor.user.id}
         specialty={docDetails.doctor.specialty}
         location={{ lat: docDetails.doctor.location.lat, lng: docDetails.doctor.location.lng}}
         image={docDetails.doctor.user.profile_photo}
