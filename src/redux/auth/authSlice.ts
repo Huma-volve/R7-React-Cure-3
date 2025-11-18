@@ -32,6 +32,7 @@ export interface User {
 interface AuthState {
   user: User | null
   token: string | null
+  expiresAt: number | null
   isAuthenticated: boolean
 }
 
@@ -44,6 +45,7 @@ const initialState: LogInLocalState = {
   user: null,
   token: null,
   isAuthenticated: false,
+  expiresAt: null,
   currentStep: 'none',
 }
 
@@ -55,11 +57,14 @@ const authSlice = createSlice({
       state.user = action.payload.user
       state.token = action.payload.token
       state.isAuthenticated = true
+      const ONE_HOUR_MS = 60* 60 * 1000
+      state.expiresAt = Date.now() + ONE_HOUR_MS
     },
     logout: (state) => {
       state.user = null
       state.token = null
       state.isAuthenticated = false
+      state.expiresAt = null
     },
     setCurrentStep: (state, action) => {state.currentStep= action.payload;},
   },
