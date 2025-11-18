@@ -475,6 +475,7 @@ import "./Appointment.css";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store";
 import toast, { Toaster } from "react-hot-toast";
+import { chatApis } from "../Chat/chatApis";
 
 
 interface DoctorUser {
@@ -857,7 +858,18 @@ toast.success("Appointment resceduale successfully!");
                       </Button>
                       <Button
                         className="bg-primary-600 reschedule-button text-white w-[48%]"
-                        onClick={() => navigate(`/chat`)}
+                        onClick={() => {
+                            chatApis.createChatWithDoctor(token!, appt.doctorId).then((res) => {
+                              const chatId = res.data.chat.id;
+                        
+                              navigate("/chat", {
+                                state: {
+                                  openChatId: chatId, // <<< SEND CHAT ID TO CHAT PAGE
+                               
+                                },
+                              });
+                            });
+                          }}
                       >
                         Support
                       </Button>
