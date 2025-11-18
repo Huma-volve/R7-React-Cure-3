@@ -8,9 +8,10 @@ import { MapPin, StarIcon } from "lucide-react";
 import AutocompleteLocationInput from "@/components/reusable/Map/AutocompleteLocationInput";
 import MapLeaflet, { type LocationProps } from "@/components/reusable/Map/MapLeaflet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useGetNearestDoctors } from "@/hooks/useGetNearestDoctors";
+import { useGetNearestDoctors } from "@/hooks/map/useGetNearestDoctors";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import SpecialtyCarousel from "@/components/reusable/Map/SpecialtyCarousel";
 
 interface Doctor {
     id: number;
@@ -36,7 +37,7 @@ interface Doctor {
 export default function Map() {
     const navigate = useNavigate()
     const [location, setLocation] = useState<LocationProps>({lat: 30.01511, lng: 31.17477});
-    const [specialty, setSpecialty] = useState<string>('Dermatology');
+    const [specialty, setSpecialty] = useState<string>('Cardiology');
     const [hasSearched, setHasSearched] = useState(false);
 
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -230,16 +231,11 @@ export default function Map() {
             </section>
 
             <section className="lg:col-span-3 order-1 min-h-screen lg:order-2">
-                <div className="flex flex-col mb-4">
-                    <h1 className="text-2xl font-semibold mb-6">Choose Specialty</h1>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 *:rounded-3xl *:text-sm">
-                        <Button variant='outline' className={`${specialty === 'Dermatology' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Dermatology')}>Dermatology</Button>
-                        <Button variant='outline' className={`${specialty === 'Dentist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Dentist')}>Dentist</Button>
-                        <Button variant='outline' className={`${specialty === 'ENT' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('ENT')}>ENT</Button>
-                        <Button variant='outline' className={`${specialty === 'Neurologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Neurologist')}>Neurologist</Button>
-                        <Button variant='outline' className={`${specialty === 'Cardiologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Cardiologist')}>Cardiologist</Button>
-                        <Button variant='outline' className={`${specialty === 'Ophthalmologist' ? 'bg-primary-500 text-white hover:bg-primary-700 hover:text-white' : 'bg-background border-primary-700 text-primary-700 border'}`} onClick={() => setSpecialty('Ophthalmologist')}>Ophthalmologist</Button>
-                    </div>
+                <div className="flex flex-col mb-5">
+                    <h1 className="text-2xl font-semibold mb-0">Choose Specialty
+                        <span className="inline-block md:hidden text-lg text-neutral-400 ml-2">(Swipe to see more)</span>
+                    </h1>
+                    <SpecialtyCarousel specialty={specialty} setSpecialty={setSpecialty}/>
                 </div>
 
                 <div className="mb-2">

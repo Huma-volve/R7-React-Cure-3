@@ -3,9 +3,11 @@ import api from "@/lib/axios";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store";
 
+export type PaymentMethods = 'paypal' | 'stripe' | 'cash';
+
 type CreatePaymentPayload = {
   booking_id: number;
-  gateway: "stripe" | "paypal" | "cash";
+  gateway: PaymentMethods | string | null;
   currency: string;
   amount: number;
   description: string;

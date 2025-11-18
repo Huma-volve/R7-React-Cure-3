@@ -102,7 +102,7 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="relative top-40 text-3xl font-semibold text-gray-800 flex items-center gap-2">
+          <div id="how-it-works" className="scroll-mt-32 relative top-40 text-3xl font-semibold text-gray-800 flex items-center gap-2">
              How it works
           </div>
         </div>

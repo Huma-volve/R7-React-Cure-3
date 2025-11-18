@@ -99,7 +99,14 @@ export default function AutocompleteLocationInput({
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setShowDropdown(true)}
         />
-        <Button disabled={loading}>
+        <Button 
+          disabled={loading}
+          onClick={() => {
+            if (query.length === 0) {
+              toast.error("Please enter a location");
+            }
+          }}
+        >
           {loading ? "..." : <Search size={18} />}
         </Button>
       </div>

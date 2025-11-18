@@ -45,7 +45,7 @@ export default function FAQ() {
           <AccordionItem
             key={index}
             value={`item-${index}`}
-            className=" px-4"
+            className="px-4"
           >
             <AccordionTrigger className="text-base font-medium">
               {faq.question}

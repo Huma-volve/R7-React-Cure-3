@@ -2,9 +2,10 @@ import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 import api from "@/lib/axios";
 import { useSelector } from "react-redux";
 import { type RootState } from "@/redux/store";
+import type { PaymentMethods } from "./useCreatePaymentIntent";
 
 type ConfirmPaymentPayload = {
-  gateway: string;
+  gateway: PaymentMethods | string | null;
   payment_id: string;
 };
 
