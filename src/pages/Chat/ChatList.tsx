@@ -235,7 +235,7 @@ const getAttachmentTypeFromUrl = (url: string ) => {
     case "video":
       return (
         <div className="flex items-center pt-1 gap-1 text-gray-700">
-          <FaVideo className="w-4 h-4" />
+          <FaVideo className="w-4 h-4 text-blue-500" />
           <span>Video</span>
         </div>
       );
@@ -243,7 +243,7 @@ const getAttachmentTypeFromUrl = (url: string ) => {
     case "audio":
       return (
         <div className="flex items-center gap-1 pt-1 text-gray-700">
-          <FaMusic className="w-4 h-4" />
+          <FaMusic className="w-4 h-4 text-blue-500" />
           <span>Audio</span>
         </div>
       );
@@ -251,7 +251,7 @@ const getAttachmentTypeFromUrl = (url: string ) => {
     case "file":
       return (
         <div className="flex items-center gap-1 pt-1 text-gray-700">
-          <FaFileAlt className="w-4  h-4" />
+          <FaFileAlt className="w-4 hext-blue-500 h-4" />
           <span>File</span>
         </div>
       );
@@ -259,7 +259,7 @@ const getAttachmentTypeFromUrl = (url: string ) => {
     case "image":
       return (
         <div className="flex items-center gap-1 pt-1  text-gray-700">
-          <FaImage className="w-4 pt-1 h-4" />
+          <FaImage className="w-4 pt-1 text-blue-500 h-4" />
           <span>Image</span>
         </div>
       );}
