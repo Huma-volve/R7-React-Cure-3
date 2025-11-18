@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiMapPin } from "react-icons/fi";
 import { IoIosStar } from "react-icons/io";
 import { FaApple } from "react-icons/fa";
@@ -178,7 +178,7 @@ const Home: React.FC = () => {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.35, ease: "easeInOut" }}
                       >
-                        <div className="px-4 sm:px-6 pb-5 text-gray-600 text-sm sm:text-base border-t border-gray-200 leading-relaxed">
+                        <div className="px-4 sm:px-6 py-5 text-gray-600 text-sm sm:text-base border-t border-gray-200 leading-relaxed">
                           {f.a}
                         </div>
                       </motion.div>
@@ -213,18 +213,18 @@ const Home: React.FC = () => {
       <div className="mt-6 flex items-center justify-center lg:justify-start gap-4 flex-wrap">
         <button className="hover:bg-white hover:text-black transition-all flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg">
           <img src="logos_google-play-icon.png" alt="icon" className="w-6" />
-          <div className="flex flex-col leading-tight">
+          <Link to="https://play.google.com/store/games" target="_blank" className="flex flex-col leading-tight">
             <span className="text-[10px] text-gray-300">GET IT ON</span>
             <span className="text-lg font-medium">Google Play</span>
-          </div>
+          </Link>
         </button>
 
         <button className="hover:bg-white hover:text-black transition-all flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg">
           <FaApple className="w-7 h-7" />
-          <div className="flex flex-col leading-tight">
+          <Link to="https://www.apple.com/eg-ar/app-store/" target="_blank" className="flex flex-col leading-tight">
             <span className="text-[10px] text-gray-300">Download on the</span>
             <span className="text-lg font-medium">App Store</span>
-          </div>
+          </Link>
         </button>
       </div>
     </div>

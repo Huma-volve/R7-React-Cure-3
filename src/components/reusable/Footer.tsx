@@ -120,7 +120,16 @@ const Footer: React.FC = () => {
                   className="space-y-2 text-gray-300 pl-4 md:hidden"
                 >
                   <li onClick={() => navigate("/chat")}>Help Center</li>
-                  <li onClick={() => navigate("/")}>How it works</li>
+                  <li
+                    onClick={() => {
+                      const section = document.getElementById("how-it-works");
+                      if (section) {
+                        section.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                  >
+                    How it works
+                  </li>
                   <li onClick={() => navigate("/profile-setting")}>
                     Privacy Policy
                   </li>
@@ -133,7 +142,16 @@ const Footer: React.FC = () => {
 
             <ul className="hidden md:block space-y-2 text-gray-300">
               <li onClick={() => navigate("/chat")}>Help Center</li>
-              <li onClick={() => navigate("/")}>How it works</li>
+              <li
+                onClick={() => {
+                  const section = document.getElementById("how-it-works");
+                  if (section) {
+                    section.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+              >
+                How it works
+              </li>
               <li onClick={() => navigate("/profile-setting")}>
                 Privacy Policy
               </li>
@@ -180,7 +198,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
       <div className="text-center text-gray-400 text-sm mt-10 border-t border-white/10 pt-5">
-        ©2024 Techvio - All Rights Reserved | Terms & Conditions | Privacy
+        ©{new Date().getFullYear()} Huma-Volve - All Rights Reserved | Terms & Conditions | Privacy
         Policy
       </div>
     </footer>
