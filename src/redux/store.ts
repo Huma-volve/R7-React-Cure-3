@@ -7,6 +7,7 @@ import newMobileReducer from "./edit-profile/newPhone";
 import SignWithPhoneReducer from "./auth/signinPhoneSlice";
 import favoritesReducer from "./favoritesSlice";
 import authReducer from "./auth/authSlice";
+import saveCardsReducer from "./edit-profile/SaveCardsSlice";
 
 import {persistStore,persistReducer,FLUSH,REHYDRATE,PAUSE,PERSIST,PURGE,REGISTER,} from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
@@ -15,7 +16,7 @@ import storage from "redux-persist/lib/storage"; // defaults to localStorage for
 const persistConfig = {
   key: "auth",         
   storage,              // use localStorage
-  whitelist: ["token", "user", "isAuthenticated"], 
+  whitelist: ["token", "user", "isAuthenticated", "expiresAt"], 
 };
 
 
@@ -30,6 +31,8 @@ export const store = configureStore({
     forgetPassword:forgetPasswordReducer,
     newMobile: newMobileReducer,
     signWithPhone: SignWithPhoneReducer,
+    saveCards: saveCardsReducer,
+    
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

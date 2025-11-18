@@ -13,6 +13,16 @@ import { useSelector, useDispatch }  from "react-redux";
 import type { RootState } from "@/redux/store";
 import { useEditProfile, useEditProfileVerify } from "@/hooks/profile-setting/useEditProfile";
 import { setNewMobile } from "@/redux/edit-profile/newPhone";
+// import MapLeaflet from "../reusable/Map/MapLeaflet";
+// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
+
+// async function reverseGeocode(lat: number, lng: number) {
+//   const res = await fetch(
+//     `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+//   );
+//   const data = await res.json();
+//   return data.display_name; // readable location name
+// }
 
 const birthDate = z
 .date({})
@@ -40,6 +50,13 @@ const schema= z.object({
 type FormField=z.infer<typeof schema>;
 
 export const ProfileInfo = () => {
+  // const [locationName, setLocationName] = useState("");
+  // const [location, setLocation] = useState({
+  //   lat: 30.0444,
+  //   lng: 31.2357
+  // });
+  // const [open, setOpen] = useState(false)
+  
    const [date] = useState<Date | undefined>(
     new Date(2025, 5, 12)
   )
@@ -135,14 +152,49 @@ export const ProfileInfo = () => {
       
         <div className="flex flex-col items-center mt-2">
           <p className="p-1 text-base font-semibold text-foreground">{name}</p>
+          
           <div className="flex items-center text-sm text-muted-foreground mt-0.5">
-            <MapPin className="w-4 h-4 mr-1" />
+          <MapPin className="w-4 h-4 mr-1" />
             <span>San Francisco, CA</span>
+            {/* <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="bg-white text-[#145DB8] underline hover:bg-white"><MapPin className="w-4 h-4 mr-1" /> Select Location</Button>
+      </DialogTrigger>
+
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Choose your location</DialogTitle>
+        </DialogHeader>
+
+        <div className="h-[400px] w-full rounded-lg overflow-hidden border">
+          <MapLeaflet
+            location={location}
+            onLocationChange={(loc) => setLocation(loc)}
+          />
+        </div>
+
+        <DialogFooter>
+        
+          <Button onClick={async () => {
+    const name = await reverseGeocode(location.lat, location.lng);
+    setLocationName(name);
+    setOpen(false);
+  }}>
+            Submit
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog> */}
           </div>
         </div>
       </div>
+      {/* {locationName && (
+  <p className="text-sm text-gray-600 mt-[-20px]">
+    <span className="font-medium">{locationName}</span>
+  </p>
+)} */}
     </Card>
-
+  
     <Card className="bg-white shadow-none border-0 w-full max-w-md flex justify-center mx-auto">
         <CardContent >
           <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>

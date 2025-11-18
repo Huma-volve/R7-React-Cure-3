@@ -9,7 +9,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import {  useDispatch } from "react-redux";
+import { addCard } from "@/redux/edit-profile/SaveCardsSlice";
+import { toast } from "sonner";
 
+
+
+interface CreditCardMockupProps {
+  closeDialog: () => void;
+}
 
 const cardSchema = z.object({
   cardNumber: z
@@ -32,15 +40,31 @@ const cardSchema = z.object({
 type CardFormValues = z.infer<typeof cardSchema>;
 
 
-export default function CreditCardMockup() {
+export default function CreditCardMockup({ closeDialog }: CreditCardMockupProps) {
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
 
+  const dispatch = useDispatch();
+
+
   const {register, handleSubmit, formState: { errors }} =useForm<CardFormValues>({resolver: zodResolver(cardSchema)});
 
-  const onSubmit = (data: CardFormValues) => {console.log(data);};
+  const onSubmit = (data: CardFormValues) => {  const payload = {
+    id: crypto.randomUUID(),
+    last4: data.cardNumber.slice(-4),
+    cardName: data.cardName,
+    expiry: data.expiry,
+  };
+
+  dispatch(addCard(payload));
+
+  toast.success("Card saved successfully!");
+
+  closeDialog();
+
+};
 
   const formatCardNumber = (num: string) => {
     return num.replace(/\s?/g, "").replace(/(\d{4})/g, "$1 ").trim();
@@ -72,8 +96,9 @@ export default function CreditCardMockup() {
      
       <div className="space-y-4">
         <div>
-          <Label htmlFor="cardNumber">Card Number</Label>
+          <Label className="mb-2 mt-1" htmlFor="cardNumber">Card Number</Label>
           <Input
+          className="mb-2 border-gray-300"
             id="cardNumber"
             placeholder="1234 5678 9012 3456"
             maxLength={16}
@@ -84,8 +109,9 @@ export default function CreditCardMockup() {
           {errors.cardNumber && (<p className="text-red-500 text-sm mt-1">{errors.cardNumber.message}</p>)}
         </div>
         <div>
-          <Label htmlFor="cardName">Card Holder</Label>
+          <Label className="mb-2 mt-1" htmlFor="cardName">Card Holder</Label>
           <Input
+        className="mb-2 border-gray-300"
             id="cardName"
             placeholder="John Doe"
             {...register("cardName")}
@@ -96,8 +122,9 @@ export default function CreditCardMockup() {
         </div>
         <div className="flex gap-4">
           <div className="flex-1">
-            <Label htmlFor="expiry">Expiry</Label>
+            <Label className="mb-2 mt-1" htmlFor="expiry">Expiry</Label>
             <Input
+            className="mb-2 border-gray-300"
               id="expiry"
               {...register("expiry")}
               placeholder="MM/YY"
@@ -109,8 +136,9 @@ export default function CreditCardMockup() {
           </div>
 
           <div className="flex-1">
-            <Label htmlFor="cvv">CVV</Label>
+            <Label className="mb-2 mt-1" htmlFor="cvv">CVV</Label>
             <Input
+             className="mb-2 border-gray-300"
               id="cvv"
               {...register("cvv")}
               placeholder="123"
