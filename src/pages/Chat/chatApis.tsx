@@ -66,7 +66,52 @@ export const chatApis = {
     return res.data.meta;
   },
 
-async sendMessage(
+// async sendMessage(
+//   token: string,
+//   chatId: number,
+//   receiverId: number,
+//   text?: string,
+//   file?: File
+// ) {
+//   const formData = new FormData();
+//   formData.append("receiver_id", receiverId.toString());
+//   formData.append("chat_id", chatId.toString());
+
+//   let realType = "text"; // used internally in the app
+
+//   if (file) {
+//     const mimeType = file.type;
+
+//     if (mimeType.startsWith("image/")) realType = "image";
+//     else if (mimeType.startsWith("video/")) realType = "video";
+//     else if (mimeType.startsWith("audio/")) realType = "audio";
+//     else if (mimeType === "application/pdf") realType = "pdf";
+//     else realType = "file";
+
+//     formData.append("attachment", file);
+//     console.log("File attached:", file.name);
+//     console.log("Detected type:", realType);
+//   } else if (text) {
+//     formData.append("body", text);
+//   }
+
+//   // Always send 'text' to API
+//   formData.append("type", "text");
+
+//   const res = await axios.post(`${BASE_URL}/chats/send`, formData, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       "Content-Type": "multipart/form-data",
+//       Accept: "application/json",
+//     },
+//   });
+//   const data = res.data.data;
+//     return data
+  
+// }
+
+
+async  sendMessage(
   token: string,
   chatId: number,
   receiverId: number,
@@ -77,25 +122,44 @@ async sendMessage(
   formData.append("receiver_id", receiverId.toString());
   formData.append("chat_id", chatId.toString());
 
-  let realType = "text"; // used internally in the app
+  // ---- 1) Detect URL in body ----
+  const isURL = text && /(https?:\/\/[^\s]+)/.test(text);
+  let detectedType: "text" | "image" | "video" | "audio" | "pdf" | "file" = "text";
 
+  if (isURL) {
+    const url = text!;
+    const ext = url.split(".").pop()?.toLowerCase();
+
+    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext!)) detectedType = "image";
+    else if (["mp4", "webm"].includes(ext!)) detectedType = "video";
+    else if (["mp3", "wav", "ogg"].includes(ext!)) detectedType = "audio";
+    else if (ext === "pdf") detectedType = "pdf";
+    else detectedType = "file";
+
+    formData.append("body", url);
+  }
+
+  // ---- 2) If sending a file normally ----
   if (file) {
     const mimeType = file.type;
 
-    if (mimeType.startsWith("image/")) realType = "image";
-    else if (mimeType.startsWith("video/")) realType = "video";
-    else if (mimeType.startsWith("audio/")) realType = "audio";
-    else if (mimeType === "application/pdf") realType = "pdf";
-    else realType = "file";
+    if (mimeType.startsWith("image/")) detectedType = "image";
+    else if (mimeType.startsWith("video/")) detectedType = "video";
+    else if (mimeType.startsWith("audio/")) detectedType = "audio";
+    else if (mimeType === "application/pdf") detectedType = "pdf";
+    else detectedType = "file";
 
-    formData.append("attachment_path", file);
-    console.log("File attached:", file.name);
-    console.log("Detected type:", realType);
-  } else if (text) {
-    formData.append("body", text);
+    formData.append("attachment", file);
+    formData.append("body", "");
   }
 
-  // Always send 'text' to API
+  // ---- 3) If normal text ----
+  if (!file && !isURL && text) {
+    formData.append("body", text);
+    detectedType = "text";
+  }
+
+  // ✔ Backend wants "type" = text ALWAYS
   formData.append("type", "text");
 
   const res = await axios.post(`${BASE_URL}/chats/send`, formData, {
@@ -105,9 +169,64 @@ async sendMessage(
       Accept: "application/json",
     },
   });
-  const data = res.data.data;
-    return data
+
+  // ---- 4) RETURN message with detectedType so UI can show it immediately ----
+  return {
+    chat: res.data.data.chat_id,
+    message: {
+      ...res.data.data.message,
+      realType: detectedType,
+      attachment_url: isURL ? text : res.data.data.message.attachment_url,
+    },
+  };
 }
+
+ 
+
+// async sendMessage(
+//   token: string,
+//   chatId: number,
+//   receiverId: number,
+//   text?: string,
+//   file?: File
+// ) {
+//   const formData = new FormData();
+//   formData.append("receiver_id", receiverId.toString());
+//   formData.append("chat_id", chatId.toString());
+
+//   // Detect file type
+//   if (file) {
+//     const mimeType = file.type;
+
+//     let realType = "file"; // default
+//     if (mimeType.startsWith("image/")) realType = "image";
+//     else if (mimeType.startsWith("video/")) realType = "video";
+//     else if (mimeType.startsWith("audio/")) realType = "audio";
+//     else if (mimeType === "application/pdf") realType = "pdf";
+
+//     formData.append("attachment", file);
+//     formData.append("body", ""); // backend may require body
+//   } else if (text) {
+//     formData.append("body", text);
+//   }
+
+//   // API wants "text" always
+//   formData.append("type", "text");
+
+//   const res = await axios.post(`${BASE_URL}/chats/send`, formData, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       "Content-Type": "multipart/form-data",
+//       Accept: "application/json",
+//     },
+//   });
+
+//   // 🚀 THIS is the part you want!
+//   return {
+//     chat: res.data.data.chat_id,
+//     message: res.data.data.message,
+//   };
+// }
 
 // async sendMessage(
 //   token: string,

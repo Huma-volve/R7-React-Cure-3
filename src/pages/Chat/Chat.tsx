@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { chatApis } from "./chatApis";
@@ -42,13 +42,16 @@ interface Message {
 
 // ✅ Fixed handleSelect to match expected (non-async)
 
+import { useLocation } from "react-router-dom";
 
 export default function ChatPage() {
   const token = useSelector((state: RootState) => state.auth.token);
   const currentUser = useSelector((state: RootState) => state.auth.user);
+const location = useLocation();
+const openChatId = location.state?.openChatId;
 
   const [chats, setChats] = useState<Chat[]>([]);
-  const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+  const [selectedChat, setSelectedChat] = useState<Chat | null>(openChatId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
 
@@ -73,24 +76,66 @@ export default function ChatPage() {
   }, []);
 
   // Fetch chats (poll every 5s)
-  useEffect(() => {
-    if (!token) return;
-    let mounted = true;
-    const fetchChats = async () => {
-      try {
-        const data = await chatApis.getAllChats(token);
-        if (mounted) setChats(data || []);
-      } catch (err) {
-        console.error("❌ Failed to fetch chats:", err);
+  // useEffect(() => {
+  //   if (!token) return;
+  //   let mounted = true;
+  //   const fetchChats = async () => {
+  //     try {
+  //       const data = await chatApis.getAllChats(token);
+  //       if (mounted) setChats(data || []);
+  //     } catch (err) {
+  //       console.error("❌ Failed to fetch chats:", err);
+  //     }
+  //   };
+  //   fetchChats();
+  //   const interval = setInterval(fetchChats, 5000);
+  //   return () => {
+  //     mounted = false;
+  //     clearInterval(interval);
+  //   };
+  // }, [token]);
+
+
+const initialChatSelected = useRef(false);
+
+useEffect(() => {
+  if (!token) return;
+  let mounted = true;
+
+  const fetchChats = async () => {
+    try {
+      const data = await chatApis.getAllChats(token);
+      if (!mounted) return;
+
+      setChats(data || []);
+
+      // Only select the initial chat once
+      if (!initialChatSelected.current && openChatId) {
+        const data: Chat[] = await chatApis.getAllChats(token);
+        const targetChat = data.find((c) => c.chat_id === openChatId);
+        if (targetChat) {
+          setSelectedChat(targetChat);
+          fetchMessages(targetChat.chat_id);
+          if (isMobile) setShowChatList(false);
+          initialChatSelected.current = true;
+        }
       }
-    };
-    fetchChats();
-    const interval = setInterval(fetchChats, 5000);
-    return () => {
-      mounted = false;
-      clearInterval(interval);
-    };
-  }, [token]);
+
+    } catch (err) {
+      console.error("❌ Failed to fetch chats:", err);
+    }
+  };
+
+  fetchChats();
+  const interval = setInterval(fetchChats, 5000);
+  return () => {
+    mounted = false;
+    clearInterval(interval);
+  };
+}, [token, openChatId, isMobile]);
+
+
+
 
   // Fetch messages for selected chat
   const fetchMessages = async (chatId: number) => {
@@ -108,11 +153,10 @@ export default function ChatPage() {
 
 const handleSelect = (chat: Chat) => {
   setSelectedChat(chat);
-  (async () => {
-    await fetchMessages(chat.chat_id);
-  })();
+  fetchMessages(chat.chat_id);
   if (isMobile) setShowChatList(false);
 };
+
 
 
   const handleChatDelete = async () => {
@@ -192,13 +236,41 @@ const handleSelect = (chat: Chat) => {
     }
   };
 
+// const handleSend = async (text: string, file?: File) => {
+//   if (!selectedChat || !token) return;
+//   const receiverId = selectedChat.receiver?.id;
+//   if (!receiverId) return;
+
+//   try {
+//     const message = await chatApis.sendMessage(
+//       token,
+//       selectedChat.chat_id,
+//       receiverId,
+//       text,
+//       file
+//     );
+
+//     if (message) {
+//       setMessages((prev) => [...prev, message]);
+//     }
+// } catch (err: unknown) {
+//   if (axios.isAxiosError(err)) {
+//     console.error("❌ Failed to send message:", err.response?.data || err.message);
+//   } else if (err instanceof Error) {
+//     console.error("❌ Failed to send message:", err.message);
+//   } else {
+//     console.error("❌ Failed to send message:", err);
+//   }
+// }
+
+// };
 const handleSend = async (text: string, file?: File) => {
   if (!selectedChat || !token) return;
   const receiverId = selectedChat.receiver?.id;
   if (!receiverId) return;
 
   try {
-    const message = await chatApis.sendMessage(
+    const res = await chatApis.sendMessage(
       token,
       selectedChat.chat_id,
       receiverId,
@@ -206,19 +278,21 @@ const handleSend = async (text: string, file?: File) => {
       file
     );
 
-    if (message) {
-      setMessages((prev) => [...prev, message]);
-    }
-} catch (err: unknown) {
-  if (axios.isAxiosError(err)) {
-    console.error("❌ Failed to send message:", err.response?.data || err.message);
-  } else if (err instanceof Error) {
-    console.error("❌ Failed to send message:", err.message);
-  } else {
-    console.error("❌ Failed to send message:", err);
-  }
-}
+    // Extract the actual message object
+    const msg: Message | null = res?.message ?? null;
 
+    if (msg) {
+      setMessages((prev) => [...prev, msg]);
+    }
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      console.error("❌ Failed to send message:", err.response?.data || err.message);
+    } else if (err instanceof Error) {
+      console.error("❌ Failed to send message:", err.message);
+    } else {
+      console.error("❌ Failed to send message:", err);
+    }
+  }
 };
 
 

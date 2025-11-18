@@ -81,6 +81,7 @@ export default function ChatWindow({
 }, [messages]);
 
 
+
 //  const fetchMessages = async () => {
 //   if (!selectedChat) return;
 //   try {
@@ -127,7 +128,7 @@ useEffect(() => {
 
   fetchMessages(); // initial fetch
 
-  const interval = setInterval(fetchMessages, 5000);
+  const interval = setInterval(fetchMessages, 1000);
   return () => clearInterval(interval);
 }, [ token, selectedChat]);
 
