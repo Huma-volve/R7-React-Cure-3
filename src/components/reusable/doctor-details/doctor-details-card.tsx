@@ -17,6 +17,7 @@ import { chatApis } from "@/pages/Chat/chatApis";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 
 export interface DoctorProps {
@@ -81,6 +82,7 @@ const  DoctorDetailsCard: React.FC<DoctorProps> = ({
               toggleFavourite(id, {
                 onSuccess: (data) => {
                   setIsFavorite(data.data.status === "added");
+                  toast.success(data.data.status === "added" ? 'Doctor added to your favorites!' : 'Doctor removed from your favorites.')
                 },
               })}
               disabled={isPending}

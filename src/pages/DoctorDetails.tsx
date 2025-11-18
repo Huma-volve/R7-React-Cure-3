@@ -97,7 +97,7 @@ export default function DoctorDetails() {
         </div>
       </div>
   );
-  document.title = `Dr. ${docDetails.doctor.user.name}`;
+  document.title = docDetails.doctor.user.name;
 
   return (
     <main className="grid mb-10 grid-cols-1 lg:grid-cols-3 gap-8 *:mt-15 px-4 md:px-6 overflow-x-hidden">
@@ -117,9 +117,17 @@ export default function DoctorDetails() {
               <p className="group-hover:text-primary-600">Choose date and time</p>
               <div className="flex items-center gap-2.5">
                 <Popover>
-                  <PopoverTrigger>
-                    <img alt="back" src={BlackCalenderIcon} className="cursor-pointer" />
+                  <PopoverTrigger asChild>
+                    <div className="flex items-center gap-2 cursor-pointer">
+                      <img alt="back" src={BlackCalenderIcon} />
+                      <p>
+                        {selectedDay
+                          ? currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })
+                          : "Please select a date first"}
+                      </p>
+                    </div>
                   </PopoverTrigger>
+
                   <PopoverContent
                     className="w-auto ml-3 sm:ml-0 p-0 shadow-md rounded-lg"
                   >
@@ -135,11 +143,11 @@ export default function DoctorDetails() {
                           setSelectedTimeSlot("");
                         }
                       }}
-                        disabled={(date) => {
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0); // Reset time to start of day
-                          return date < today; // Disable all dates before today
-                        }}
+                      disabled={(date) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return date < today;
+                      }}
                       className="bg-white w-[320px] sm:w-[374px] rounded-md"
                       initialFocus
                       required={false}
@@ -147,17 +155,12 @@ export default function DoctorDetails() {
                   </PopoverContent>
                 </Popover>
 
-                <p>
-                  {selectedDay
-                    ? currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })
-                    : "Please select a date first"}
-                </p>
-                <div className={`flex flex-col items-center gap-1 justify-center *:cursor-pointer ${selectedDay && '*:hover:opacity-70'}`}>
+                <div className={`flex flex-col items-center gap-1 justify-center *:cursor-pointer ${selectedDay ? '*:hover:opacity-70' : 'opacity-40 pointer-events-none'}`}>
                     <IoIosArrowUp
-                      onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}/>
+                      onClick={() => selectedDay && setCurrentMonth(addMonths(currentMonth, 1))}/>
 
                     <IoIosArrowDown
-                      onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+                      onClick={() => selectedDay && setCurrentMonth(subMonths(currentMonth, 1))}
                     />
                 </div>
               </div>

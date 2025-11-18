@@ -99,7 +99,7 @@ export default function SavedCards() {
                 <DialogTitle>Add New Card</DialogTitle>
               </DialogHeader>
          
-              <CreditCardMockup closeDialog={() => setOpen(false)} />
+              <CreditCardMockup  closeDialog={() => setOpen(false)} />
 
             </DialogContent>
           </Dialog>
