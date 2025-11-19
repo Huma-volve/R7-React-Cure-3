@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom"
 import { addMonths, subMonths } from "date-fns";
 import moment from "moment";
 // Reusable (custom) components
-import AddReviewDialog from "@/components/reusable/doctor-details/add-review"
+import AddReviewDialog from "@/components/reusable/doctor-details/AddReviewButton"
 import AppointmentButton from "@/components/reusable/doctor-details/appoint-button"
 import PageSkeleton from "@/components/reusable/PageSkeleton";
 import DoctorDetailsCard, { onCardHoverStyle } from "@/components/reusable/doctor-details/doctor-details-card";
@@ -19,12 +19,10 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Calendar } from "@/components/ui/calendar"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 // Icons
 import GoBackArrow from '@/assets/icons/left-arrow.png'
-import AddReviewIcon from '@/assets/icons/pencil.png'
 import CalenderIcon from '@/assets/icons/calender.png'
 import BlackCalenderIcon from '@/assets/icons/black-calendar.png'
 import { StarIcon } from "lucide-react"
@@ -33,8 +31,9 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { useGetDoctorDetails } from "@/hooks/doctor-details/useGetDoctorDetails";
 // #endregion imports
 import DoctorSchedule from './../components/reusable/doctor-details/doctor-schedule';
+import ReviewCard, { type ReviewProps } from "@/components/reusable/doctor-details/review-card";
 
-const starColor = '#F9E000';
+export const starColor = '#F9E000';
 function renderStars(rating: number) {
   const stars = []
   for (let i = 1; i <= 5; i++) {
@@ -54,25 +53,12 @@ function renderStars(rating: number) {
   return stars
 }
 
-interface ReviewProps {
-  id: number,
-  rating: number
-  comment: string
-  created_at: string
-  user: {
-    name: string
-    profile_photo: string | null
-    id: number
-  }
-}
-
 export default function DoctorDetails() {
   const { id } = useParams();
   const doctorId = id ? parseInt(id) : -1;
   
   const { data: docDetails, isLoading: isDocLoading, isError: isDocError } = useGetDoctorDetails(doctorId);
   
-  const [openDialog, setOpenDialog] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false)
 
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
@@ -197,20 +183,7 @@ export default function DoctorDetails() {
         {/* Reviews section */}
         <div className="flex items-center justify-between mt-10">
           <h3 className="text-xl font-semibold font-serif">Reviews & Ratings</h3>
-
-          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-            <DialogTrigger>
-              <Button variant='link'>
-                <img src={AddReviewIcon} alt="Add Review Icon" className="h-5 w-5" />
-                <span className="text-primary-500">Add review</span>
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent>
-              {/* doctorId={docDetails.doctor.id}  */}
-              <AddReviewDialog closeDialog={() => setOpenDialog(false)} />
-            </DialogContent>
-          </Dialog>
+            <AddReviewDialog doctorId={docDetails.doctor.id} />
         </div>
 
         {/* Reviewers number with stars */}
@@ -252,33 +225,10 @@ export default function DoctorDetails() {
                 (showAllReviews ?
                   docDetails.reviews :
                   docDetails.reviews.slice(0, 2)
-                ).map((rev: ReviewProps, index: number) => {
-                    return <Card key={index} className={`selection:bg-white selection:text-primary-800 group bg-background hover:bg-primary-600 p-4 h-full hover:scale-102 ${onCardHoverStyle}`}>
-                      <CardTitle className="flex items-center justify-between flex-wrap">
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={rev.user.profile_photo ?? '/patient.jpg'}
-                            className="h-[62px] w-[62px] rounded-full object-cover"
-                            alt={`Review of ${rev.user.name}`}
-                          />
-                          <div className="flex flex-col gap-1 group-hover:text-white ml-2">
-                            <h3>{rev.user.name}</h3>
-                            <p className="text-neutral-600 font-normal group-hover:text-white/60 text-sm">{moment(rev.created_at).startOf('day').fromNow()}</p>
-                          </div>
-                        </div>
-
-                        <div style={{color: starColor}} className={`bg-[#F9E000]/10 flex gap-1 items-center rounded-lg p-1.5`}>
-                          <StarIcon style={{color: starColor, fill: starColor}} /> {rev.rating}
-                        </div>
-                      </CardTitle>
-
-                      <CardContent className="-px-2 text-neutral-900 group-hover:text-white text-sm">
-                        {rev.comment}
-                      </CardContent>
-                    </Card>
+                ).map((rev: ReviewProps) => {
+                    return <ReviewCard currentReview={rev} doctorId={docDetails.doctor.id} />
                   })
               }
-
             </>
           ) : (
             <div className="col-span-2 flex flex-col items-center justify-center py-12 px-4">
