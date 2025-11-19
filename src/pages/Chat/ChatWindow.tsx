@@ -114,7 +114,7 @@ useEffect(() => {
         if (!m.body && (m.attachment_path || m.attachment_path)) {
           return {
             ...m,
-            body: m.attachment_path || m.attachment_path || "",
+            body: m.body  || "",
           };
         }
         return m;
@@ -358,47 +358,43 @@ useEffect(() => {
 
     switch (realType) {
       case "image":
-        return <img src={url} alt="img" className="max-h-60 rounded-lg" />;
+        return <img src={url} alt="img" className="max-h-60 pt-4 lg:w-[350px] rounded-lg" />;
 
       case "video":
         return (
-          <video controls className="w-full rounded-lg">
+          <video controls className="lg:w-[350px] md:w-[350px] pt-4 sm:w-full  rounded-lg">
             <source src={url} type={m.attachment_mime || "video/mp4"} />
           </video>
         );
 
       case "audio":
-        return <audio controls src={url} className="w-full" />;
+        return <audio controls src={url} className="lg:w-[350px] lg:pt-2 lg:pe-3 sm:w-[200px] pe-2 w-[200px] sm:pe-3 " />;
 
-      case "pdf":
-        return (
-          <object
-            data={url}
-            type="application/pdf"
-            width="100%"
-            height="400px"
-            className="rounded-lg"
-          >
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              📎 Open PDF
-            </a>
-          </object>
-        );
+case "pdf":
+case "file": {
+  const fileName = url?.split("/").pop(); // get just the file name from URL
+  return (
+    <div className="flex pt-4 flex-col">
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bg-gray-100  w-full break-words lg:w-[350px] px-3 py-2 rounded-lg inline-block text-sm text-blue-600 hover:bg-gray-200"
+      >
+        {fileName || "Download File"}
+      </a>
 
-      case "file":
-      default:
-        return (
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline text-sm"
-          >
-            📎 Download File
-          </a>
-        );
+      {m.body?.trim() && (
+        <p className="px-4 pt-2 pb-1 text-left">{m.body}</p>
+      )}
+    </div>
+  );
+}
+
+
     }
   })()
+  
 ) : (
   <p className="px-4 pt-2 pb-1 text-left">{m.body}</p>
 )}

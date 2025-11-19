@@ -111,7 +111,76 @@ export const chatApis = {
 // }
 
 
-async  sendMessage(
+// async  sendMessage(
+//   token: string,
+//   chatId: number,
+//   receiverId: number,
+//   text?: string,
+//   file?: File
+// ) {
+//   const formData = new FormData();
+//   formData.append("receiver_id", receiverId.toString());
+//   formData.append("chat_id", chatId.toString());
+
+//   // ---- 1) Detect URL in body ----
+//   const isURL = text && /(https?:\/\/[^\s]+)/.test(text);
+//   let detectedType: "text" | "image" | "video" | "audio" | "pdf" | "file" = "text";
+
+//   if (isURL) {
+//     const url = text!;
+//     const ext = url.split(".").pop()?.toLowerCase();
+
+//     if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext!)) detectedType = "image";
+//     else if (["mp4", "webm"].includes(ext!)) detectedType = "video";
+//     else if (["mp3", "wav", "ogg"].includes(ext!)) detectedType = "audio";
+//     else if (ext === "pdf") detectedType = "pdf";
+//     else detectedType = "file";
+
+//     formData.append("body", url);
+//   }
+
+//   // ---- 2) If sending a file normally ----
+//   if (file) {
+//     const mimeType = file.type;
+
+//     if (mimeType.startsWith("image/")) detectedType = "image";
+//     else if (mimeType.startsWith("video/")) detectedType = "video";
+//     else if (mimeType.startsWith("audio/")) detectedType = "audio";
+//     else if (mimeType === "application/pdf") detectedType = "pdf";
+//     else detectedType = "file";
+
+//     formData.append("attachment", file);
+//     formData.append("body", "");
+//   }
+
+//   // ---- 3) If normal text ----
+//   if (!file && !isURL && text) {
+//     formData.append("body", text);
+//     detectedType = "text";
+//   }
+
+//   // ✔ Backend wants "type" = text ALWAYS
+//   formData.append("type", "text");
+
+//   const res = await axios.post(`${BASE_URL}/chats/send`, formData, {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       "Content-Type": "multipart/form-data",
+//       Accept: "application/json",
+//     },
+//   });
+
+//   // ---- 4) RETURN message with detectedType so UI can show it immediately ----
+//   return {
+//     chat: res.data.data.chat_id,
+//     message: {
+//       ...res.data.data.message,
+//       realType: detectedType,
+//       attachment_url: isURL ? text : res.data.data.message.attachment_url,
+//     },
+//   };
+// }
+async sendMessage(
   token: string,
   chatId: number,
   receiverId: number,
@@ -122,24 +191,9 @@ async  sendMessage(
   formData.append("receiver_id", receiverId.toString());
   formData.append("chat_id", chatId.toString());
 
-  // ---- 1) Detect URL in body ----
-  const isURL = text && /(https?:\/\/[^\s]+)/.test(text);
   let detectedType: "text" | "image" | "video" | "audio" | "pdf" | "file" = "text";
 
-  if (isURL) {
-    const url = text!;
-    const ext = url.split(".").pop()?.toLowerCase();
-
-    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext!)) detectedType = "image";
-    else if (["mp4", "webm"].includes(ext!)) detectedType = "video";
-    else if (["mp3", "wav", "ogg"].includes(ext!)) detectedType = "audio";
-    else if (ext === "pdf") detectedType = "pdf";
-    else detectedType = "file";
-
-    formData.append("body", url);
-  }
-
-  // ---- 2) If sending a file normally ----
+  // ---- 1) If sending a file ----
   if (file) {
     const mimeType = file.type;
 
@@ -150,16 +204,28 @@ async  sendMessage(
     else detectedType = "file";
 
     formData.append("attachment", file);
-    formData.append("body", "");
   }
 
-  // ---- 3) If normal text ----
-  if (!file && !isURL && text) {
+  // ---- 2) If sending text (URL or normal text) ----
+  if (text) {
     formData.append("body", text);
-    detectedType = "text";
+
+    // Detect URL if text is a URL
+    const isURL = /(https?:\/\/[^\s]+)/.test(text);
+    if (isURL) {
+      const url = text;
+      const ext = url.split(".").pop()?.toLowerCase();
+      if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext!)) detectedType = "image";
+      else if (["mp4", "webm"].includes(ext!)) detectedType = "video";
+      else if (["mp3", "wav", "ogg"].includes(ext!)) detectedType = "audio";
+      else if (ext === "pdf") detectedType = "pdf";
+      else detectedType = "file";
+    } else if (!file) {
+      detectedType = "text";
+    }
   }
 
-  // ✔ Backend wants "type" = text ALWAYS
+  // Always send type as "text" for backend
   formData.append("type", "text");
 
   const res = await axios.post(`${BASE_URL}/chats/send`, formData, {
@@ -170,13 +236,13 @@ async  sendMessage(
     },
   });
 
-  // ---- 4) RETURN message with detectedType so UI can show it immediately ----
+  // Return message with detectedType for immediate UI rendering
   return {
     chat: res.data.data.chat_id,
     message: {
       ...res.data.data.message,
       realType: detectedType,
-      attachment_url: isURL ? text : res.data.data.message.attachment_url,
+      attachment_url: file ? res.data.data.message.attachment_url : text,
     },
   };
 }

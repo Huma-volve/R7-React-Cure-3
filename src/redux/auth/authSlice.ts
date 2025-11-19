@@ -57,7 +57,7 @@ const authSlice = createSlice({
       state.user = action.payload.user
       state.token = action.payload.token
       state.isAuthenticated = true
-      const ONE_HOUR_MS = 60* 60 * 1000
+      const ONE_HOUR_MS = 60 * 60 * 1000
       state.expiresAt = Date.now() + ONE_HOUR_MS
     },
     logout: (state) => {
