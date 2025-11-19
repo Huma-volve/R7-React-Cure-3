@@ -137,12 +137,17 @@ const DoctorCard: React.FC<DoctorCardProps> = ({
           <p className="text-gray-600 text-[15px] mb-1">
             {specialty} | {clinic}
           </p>
-          <div className="text-[15px] text-gray-700 flex gap-2 items-center">
+          <div>
+            <div className="text-[15px] text-gray-700 flex gap-2 items-center">
             <IoIosStar className="text-[#f0f80b] text-xl" />
             <span>
-              {rating} • {availableTime} {/* ✅ استخدم الوقت المحسوب داخليًا */}
+              {rating}
             </span>
           </div>
+          <span className="text-[15px] text-gray-700 ">
+             {availableTime} {/* ✅ استخدم الوقت المحسوب داخليًا */}
+          </span>
+          </div>   
         </div>
       </div>
 
