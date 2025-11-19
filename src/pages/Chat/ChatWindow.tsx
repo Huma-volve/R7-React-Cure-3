@@ -6,11 +6,13 @@ import {
   Heart,
   MoreVertical,
   ArrowLeft,
+  Loader2,
 } from "lucide-react";
 import { getRealMessageType } from "./messageType";
 import {chatApis} from "./chatApis"
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
+import Spinner from "@/components/Spinner";
 
 interface User {
   id: number;
@@ -76,6 +78,11 @@ export default function ChatWindow({
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const dropdownRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [localMessages, setLocalMessages] = useState<Message[]>(messages);
+  const [favLoading, setFavLoading] = useState(false);
+const [archiveLoading, setArchiveLoading] = useState(false);
+const [deleteChatLoading, setDeleteChatLoading] = useState(false);
+
+
   useEffect(() => {
   setLocalMessages(messages);
 }, [messages]);
@@ -154,15 +161,38 @@ useEffect(() => {
       )
     );
   }, [selectedChat]);
+const handleFavoriteClick = async () => {
+  setFavLoading(true);             // start spinner
+  setIsFavorite((prev) => !prev);
 
-  const handleFavoriteClick = async () => {
+  try {
+    await onChatFavorite?.();
+  } catch {
     setIsFavorite((prev) => !prev);
-    try {
-      await onChatFavorite?.();
-    } catch {
-      setIsFavorite((prev) => !prev);
-    }
-  };
+  } finally {
+    setFavLoading(false);          // stop spinner
+  }
+};
+const handleArchiveClick = async () => {
+  setArchiveLoading(true);
+
+  try {
+    await onChatArchive?.();
+  } finally {
+    setArchiveLoading(false);
+  }
+};
+const handleDeleteChat = async () => {
+  setDeleteChatLoading(true);
+
+  try {
+    await onChatDelete?.();
+  } finally {
+    setDeleteChatLoading(false);
+  }
+};
+
+
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -178,7 +208,7 @@ useEffect(() => {
   }, [openDropdownId]);
 
   if (loading)
-    return <div className="flex-1 flex items-center pt-70 justify-center">Loading...</div>;
+    return <div className="flex-1 flex items-center pt-60 justify-center"><Spinner  /></div>;
 
   // if (!messages.length)
   //   return (
@@ -217,37 +247,56 @@ useEffect(() => {
           </div>
 
           <div className="flex gap-2">
+      <button
+  title="Favorite"
+  onClick={handleFavoriteClick}
+  disabled={favLoading}
+  className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50"
+>
+  {favLoading ? (
+    // Spinner here
+    <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+  ) : (
+    <Heart
+      className={`w-5 h-5 ${
+        isFavorite ? "text-red-500 fill-red-500" : "text-gray-400"
+      }`}
+    />
+  )}
+</button>
+
+           <button
+  title="Archive Chat"
+  onClick={handleArchiveClick}
+  disabled={archiveLoading}
+  className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50"
+>
+  {archiveLoading ? (
+    <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+  ) : (
+    <Archive
+      className={`w-5 h-5 ${
+        selectedChat?.meta?.archived
+          ? "text-gray-500 fill-[#99A1AF]"
+          : "text-gray-400"
+      }`}
+    />
+  )}
+</button>
+
             <button
-              title="Favorite"
-              onClick={handleFavoriteClick}
-              className="p-2 rounded-full hover:bg-gray-100"
-            >
-              <Heart
-                className={`w-5 h-5 ${
-                  isFavorite ? "text-red-500 fill-red-500" : "text-gray-400"
-                }`}
-              />
-            </button>
-            <button
-              title="Archive Chat"
-              onClick={onChatArchive}
-              className="p-2 rounded-full hover:bg-gray-100"
-            >
-              <Archive
-                className={`w-5 h-5 ${
-                  selectedChat?.meta?.archived
-                    ? "text-gray-500 fill-[#99A1AF]"
-                    : "text-gray-400"
-                }`}
-              />
-            </button>
-            <button
-              title="Delete Chat"
-              onClick={onChatDelete}
-              className="p-2 rounded-full hover:bg-gray-100"
-            >
-              <Trash2 className="w-5 h-5 text-gray-500" />
-            </button>
+  title="Delete Chat"
+  onClick={handleDeleteChat}
+  disabled={deleteChatLoading}
+  className="p-2 rounded-full hover:bg-red-50 disabled:opacity-50"
+>
+  {deleteChatLoading ? (
+    <Loader2 className="w-5 h-5 animate-spin text-red-500" />
+  ) : (
+    <Trash2 className="w-5 h-5 text-red-500" />
+  )}
+</button>
+
           </div>
         </div>
       )}
