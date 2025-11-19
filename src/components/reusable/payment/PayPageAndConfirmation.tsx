@@ -65,6 +65,7 @@ export default function PaymentConfirmation() {
     const [selectedPayment, setSelectedPayment] = useState<SelectedPayment>('paypal');
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null); // ID of saved card
     const savedCards: SavedCard[] = useSelector((state: RootState) => state.saveCards.cards);
+    const patientName = useSelector((state: RootState) => state.auth.user?.name);
 
     const [editingCard, setEditingCard] = useState<SavedCard | null>(null);
     const dispatch = useDispatch();
@@ -86,14 +87,23 @@ export default function PaymentConfirmation() {
     });
 
     const { mutate: createPaymentIntent, isPending: isPaymentIntentPending } = useCreatePaymentIntent({
-        onSuccess: (data) => {
-            console.log("Payment intent created:", data);
+        onSuccess: (res) => {
             // Store the transaction ID for later use
-            console.log(data);
-            setTransactionId(data.data.transaction_id);
+            setTransactionId(res.data.transaction_id);
             setLoading(false);
-            // Open confirmation dialog after payment intent is created
             setConfirmDialog(true);
+
+            // Get current stored array or empty array
+            const storedPayments = JSON.parse(localStorage.getItem("payments") || "[]");
+
+            // Add new payment with id and status
+            const updatedPayments = [
+                ...storedPayments,
+                { bookingId: res.data.booking_id, status: res.data.status || "pending", doctorId: doctor.doctor.id, patientName: patientName, isReviewed: false },
+            ];
+
+            // Save updated array back to localStorage
+            localStorage.setItem("payments", JSON.stringify(updatedPayments));
         },
         onError: () => {
             toast.error("Failed to create payment intent");
@@ -103,11 +113,10 @@ export default function PaymentConfirmation() {
 
     const { mutate: confirmPayment } = useConfirmPayment({
         onSuccess: (data) => {
-            console.log("Payment confirmed:", data);
             toast.success(data.message);
             setLoading(false);
-            setConfirmDialog(false);  // close the confirm modal
-            setOpenDialog(true);      // open the success modal
+            setConfirmDialog(false); 
+            setOpenDialog(true);     
         },
         onError: () => {
             toast.error('Booking failed, You already have a booking at this day!');
@@ -139,8 +148,6 @@ export default function PaymentConfirmation() {
             {
                 onSuccess: (res) => {
                     const newBookingId = res.data?.booking.id;
-                    console.log("Booking created with ID:", newBookingId);
-                    
                     setBookingId(newBookingId);
                     
                     // Create payment intent after booking is successful
@@ -247,12 +254,12 @@ export default function PaymentConfirmation() {
                         >
                             <div className="flex items-center gap-3">
                                 {isSelected ? <FaCheckCircle className="text-green-500" /> : <FaRegCircle className="text-gray-300" />}
-                                <p>Visa •••• {card.last4}</p>
+                                <p className="text-xs sm:text-base">{card.cardName} <span className="text-neutral-500">•••• {card.last4}</span></p>
                             </div>
 
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1">
-                                    <Button onClick={(e) => { e.stopPropagation(); handleEditCard(card); }} size="sm"><Pencil /></Button>
+                                    <Button variant='outline' className="border-primary-700 text-primary-700" onClick={(e) => { e.stopPropagation(); handleEditCard(card); }} size="sm"><Pencil /></Button>
                                     <Button onClick={(e) => { e.stopPropagation(); dispatch(removeCard(card.id)); toast.success('Card deleted!') }} size="sm" variant="destructive"><Trash2 /></Button>
                                 </div>
                                 <img src={VisaIcon} className="w-7 h-7" />

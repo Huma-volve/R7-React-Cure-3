@@ -12,6 +12,7 @@ interface DoctorInfo {
 
 interface PatientInfo {
   birthdate: string
+  patient_id: number
   gender: string
   medical_notes: string | null
 }

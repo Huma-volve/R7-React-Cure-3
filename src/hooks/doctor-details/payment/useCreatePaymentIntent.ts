@@ -22,6 +22,7 @@ type CreatePaymentResponse = {
     gateway: string;
     currency: string;
     amount: number;
+    status: string
     description: string;
     return_url: string;
     cancel_url: string;
