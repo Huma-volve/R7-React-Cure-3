@@ -27,6 +27,32 @@ h1{
 button,li{
   cursor: pointer;
 }
+
+.custom-arrow {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50%;
+  background: white !important;
+  border: 1px solid #e5e5e5 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-arrow:hover {
+  background: white !important;
+}
+
+.custom-arrow::after {
+  color: black !important;
+  font-size: 18px !important;
+}
+
+.custom-arrow:hover::after {
+  color: #145DB8 !important;
+}
+
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.007 278.5);

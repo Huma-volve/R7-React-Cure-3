@@ -10,6 +10,7 @@ import { Minus, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import type { RootState } from "@/redux/store";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -20,12 +21,12 @@ const Home: React.FC = () => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const user = useSelector((state: any) => state.auth.user);
+ const token = useSelector((state: RootState) => state.auth.token);
   useEffect(() => {
-    if (!user) {
+    if (!token) {
       navigate("/signin");
     }
-  }, [user, navigate]);
+  }, [token, navigate]);
 
   useEffect(() => {
     const fetchFaqs = async () => {
@@ -229,7 +230,7 @@ const Home: React.FC = () => {
                 </Link>
               </button>
 
-              <button className="hover:bg-white hover:text-black transition-all flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg">
+              <button className="hover:bg-white w-[177.88px] hover:text-black transition-all flex items-center gap-2 bg-black text-white px-6 py-2 rounded-lg">
                 <FaApple className="w-7 h-7" />
                 <Link
                   to="https://www.apple.com/eg-ar/app-store/"
