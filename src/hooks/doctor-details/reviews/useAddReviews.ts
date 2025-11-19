@@ -5,11 +5,13 @@ import { type RootState } from "@/redux/store";
 
 export const useAddReview = () => {
   const token = useSelector((state: RootState) => state.auth.token);
+  const patientId = useSelector((state: RootState) => state.auth.user?.patient?.patient_id);
 
   return useMutation({
     mutationFn: async (newReview: { doctor_id: number; booking_id: number; patient_id: number | undefined; rating: number; comment: string }) => {
       console.log("Sending review:", newReview);
-      console.log("Token:", token);
+      console.log(patientId);
+
       const response = await api.post("/reviews", newReview, {
         headers: {
           Authorization: `Bearer ${token}`,
