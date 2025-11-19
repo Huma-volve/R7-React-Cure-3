@@ -11,7 +11,7 @@ const FavoritePage: React.FC = () => {
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const token = useSelector((state: RootState) => state.auth.token);
-
+  const [preLoading, setPreLoading] = useState(true);
   const fetchFavorites = async () => {
     try {
       const response = await axios.get(
@@ -49,6 +49,28 @@ const FavoritePage: React.FC = () => {
   }, []);
 
   const hasFavorites = favorites.length > 0;
+
+  // ⭐⭐ تشغيل لودر أول ثانية قبل كل الصفحة
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPreLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // ⭐ لووووودر أول ثانية قبل الصفحة كلها
+  if (preLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-primary-500 mb-3"></div>
+          <p className="text-neutral-600 text-lg">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen px-3 md:px-14 py-10">
