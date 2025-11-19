@@ -8,6 +8,7 @@ import { chatApis } from "./chatApis";
 import { FaArrowLeft, FaImage } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FaVideo, FaMusic, FaFileAlt } from "react-icons/fa";
+import Spinner from "@/components/Spinner";
 
 // ===============================
 // ✅ TYPE DEFINITIONS
@@ -251,7 +252,7 @@ const getAttachmentTypeFromUrl = (url: string ) => {
     case "file":
       return (
         <div className="flex items-center gap-1 pt-1 text-gray-700">
-          <FaFileAlt className="w-4 hext-blue-500 h-4" />
+          <FaFileAlt className="w-4 text-blue-500 h-4" />
           <span>File</span>
         </div>
       );
@@ -303,7 +304,7 @@ const getLastMessageTime = (chat: Chat) => {
       case "favorites": return "No favorite chats found.";
       case "archived": return "No archived chats.";
       case "unread": return "No unread chats.";
-      default: return "No chats found.";
+      default: return <Spinner />;
     }
   };
 
@@ -413,7 +414,7 @@ const getLastMessageTime = (chat: Chat) => {
 
       <div className="overflow-y-auto flex-1">
         {searchLoading ? (
-          <div className="p-6 text-center text-gray-400">Searching...</div>
+          <div className="p-6 text-center text-gray-400"> <Spinner /></div>
         ) : sortedChats.length === 0 ? (
           <div className="p-6 text-center text-gray-400">{getEmptyMessage()}</div>
         ) : (

@@ -15,6 +15,7 @@ import Chat from '@/pages/Chat/Chat';
 import { EditOTP } from '@/pages/profile-setting/EditOTP';
 import { SigninWithPhonePage } from '@/pages/auth/SigninWithPhonePage';
 import { SigninWithPhoneOTPpage } from '@/pages/auth/SigninWithPhoneOTP';
+import Spinner from '@/components/Spinner';
 
 // Lazily loaded
 const DoctorsPage = lazy(() => import('@/pages/DoctorsPage'));
@@ -89,7 +90,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/booking',
-        element: <Suspense fallback={<PageSkeleton />}>
+        element: <Suspense fallback={<Spinner />}>
           <Appointments />
         </Suspense>,
       },
@@ -110,7 +111,9 @@ export const router = createBrowserRouter([
       },
       {
         path:"chat",
-        element:<Chat />
+              element: <Suspense fallback={<Spinner />}>
+                <Chat />
+                </Suspense>
       }
     ]
   }

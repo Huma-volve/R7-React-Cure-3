@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 
 export interface DoctorProps {
@@ -46,7 +47,7 @@ export const onCardHoverStyle = 'transition-all duration-500 ease-in-out hover:s
 const  DoctorDetailsCard: React.FC<DoctorProps> = ({
     id, name, specialty, avgRating, aboutMe, experience, patientCount, reviewsCount, location, image , doctorId
 }) => {
-
+const [loading, setLoading] = useState(false);
     const [expandAboutSection, setExpandAboutSection] = useState(false);
     const maxLength: number = 200;
     const [isFavorite, setIsFavorite] = useState<boolean>();
@@ -96,28 +97,38 @@ const  DoctorDetailsCard: React.FC<DoctorProps> = ({
             </button>
 
             {/* CHAT ICON YA ESRAA */}
-<button title="chat"
+<button
+  title="chat"
+  disabled={loading}
   onClick={() => {
-    console.log(name)
-    console.log(id)
-    
-    chatApis.createChatWithDoctor(token!, doctorId).then((res) => {
-      const chatId = res.data.chat.id;
-      console.log("the datat from doctor page",res.data)
+    setLoading(true); // show spinner
 
-      navigate("/chat", {
-        state: {
-          openChatId: chatId, // <<< SEND CHAT ID TO CHAT PAGE
-          doctorId: id,
-          doctorName: name,
-          doctorImage: image,
-        },
+    chatApis.createChatWithDoctor(token!, doctorId)
+      .then((res) => {
+        const chatId = res.data.chat.id;
+
+        navigate("/chat", {
+          state: {
+            openChatId: chatId,
+            doctorId: id,
+            doctorName: name,
+            doctorImage: image,
+          },
+        });
+      })
+      .finally(() => {
+        setLoading(false); // hide spinner
       });
-    });
   }}
+  className="p-2 rounded bg-blue-600 text-white disabled:opacity-50"
 >
-  <BsChatText size={22} className="transition-colors duration-300" />
+  {loading ? (
+    <Loader2 size={20} className="animate-spin text-gray-600" />
+  ) : (
+    <BsChatText size={22} className="transition-colors text-black duration-300" />
+  )}
 </button>
+
 
 
 
