@@ -16,7 +16,7 @@ import storage from "redux-persist/lib/storage"; // defaults to localStorage for
 const persistConfig = {
   key: "auth",         
   storage,              // use localStorage
-  whitelist: ["token", "user", "isAuthenticated", "expiresAt", 'cards'],
+  whitelist: ["token", "user", "isAuthenticated", "expiresAt"],
 };
 
 
