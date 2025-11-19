@@ -48,6 +48,7 @@ const  DoctorDetailsCard: React.FC<DoctorProps> = ({
     id, name, specialty, avgRating, aboutMe, experience, patientCount, reviewsCount, location, image , doctorId
 }) => {
 const [loading, setLoading] = useState(false);
+
     const [expandAboutSection, setExpandAboutSection] = useState(false);
     const maxLength: number = 200;
     const [isFavorite, setIsFavorite] = useState<boolean>();
